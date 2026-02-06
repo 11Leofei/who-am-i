@@ -53,6 +53,8 @@ class App {
             pillarMonth: document.getElementById('pillar-month'),
             pillarDay: document.getElementById('pillar-day'),
             pillarHour: document.getElementById('pillar-hour'),
+            // Analyzing interlude
+            testAnalyzingSection: document.getElementById('test-analyzing'),
             // Personality test
             testEnterBtn: document.getElementById('test-enter-btn'),
             startTestBtn: document.getElementById('start-test-btn'),
@@ -564,15 +566,74 @@ class App {
     async calculateAndShowResults() {
         const results = this.personalityTest.calculateResults(this.testAnswers);
 
+        // Hide questions
         this.ui.testQuestionsSection.classList.remove('active');
-        await wait(800);
+        await wait(600);
         this.ui.testQuestionsSection.classList.add('hidden');
 
+        // Show analyzing interlude
+        this.showAnalyzingPhase();
+        this.starfield.warpSpeed();
+        await wait(3500);
+        this.starfield.steadySpeed();
+        await wait(400);
+        this.hideAnalyzingPhase();
+        await wait(400);
+
+        // Populate and show results
         this.populateTestResults(results);
 
         this.ui.testResultsSection.classList.remove('hidden');
         void this.ui.testResultsSection.offsetWidth;
         this.ui.testResultsSection.classList.add('active');
+
+        // Starfield results mode
+        this.starfield.setResultsMode();
+
+        // 3D tilt + holo on result cards
+        this.initResultCardEffects();
+
+        // Spawn type particles
+        setTimeout(() => {
+            this.spawnTypeParticles(this.ui.mbtiType);
+            this.spawnTypeParticles(this.ui.enneagramType);
+        }, 600);
+    }
+
+    showAnalyzingPhase() {
+        // Reset step animations
+        this.ui.testAnalyzingSection.querySelectorAll('.analyzing-step').forEach(step => {
+            step.classList.remove('done');
+            step.style.animation = 'none';
+            void step.offsetWidth;
+            step.style.animation = '';
+        });
+        // Reset progress ring
+        const progress = this.ui.testAnalyzingSection.querySelector('.analyzing-progress');
+        if (progress) {
+            progress.style.animation = 'none';
+            void progress.offsetWidth;
+            progress.style.animation = '';
+        }
+
+        this.ui.testAnalyzingSection.classList.remove('hidden');
+        void this.ui.testAnalyzingSection.offsetWidth;
+        this.ui.testAnalyzingSection.classList.add('active');
+
+        // Mark steps as done sequentially
+        const steps = this.ui.testAnalyzingSection.querySelectorAll('.analyzing-step');
+        [1000, 1800, 2600].forEach((delay, i) => {
+            setTimeout(() => {
+                if (steps[i]) steps[i].classList.add('done');
+            }, delay);
+        });
+    }
+
+    hideAnalyzingPhase() {
+        this.ui.testAnalyzingSection.classList.remove('active');
+        setTimeout(() => {
+            this.ui.testAnalyzingSection.classList.add('hidden');
+        }, 400);
     }
 
     populateTestResults(results) {
@@ -581,9 +642,9 @@ class App {
         this.ui.mbtiCosmicName.textContent = results.mbti.cosmic;
         this.ui.mbtiTitle.textContent = results.mbti.title || '';
 
-        // Keywords
+        // Keywords with staggered animation
         this.ui.mbtiKeywords.innerHTML = (results.mbti.keywords || [])
-            .map(k => `<span class="keyword-tag">${k}</span>`).join('');
+            .map((k, i) => `<span class="keyword-tag" style="animation: tagAppear 0.4s ease-out ${0.8 + i * 0.12}s both;">${k}</span>`).join('');
 
         // Multi-paragraph description
         this.ui.mbtiDesc.innerHTML = (results.mbti.desc || '')
@@ -593,7 +654,7 @@ class App {
         this.ui.mbtiStrengths.textContent = results.mbti.strengths || '';
         this.ui.mbtiGrowth.textContent = results.mbti.growth || '';
 
-        // Dimension bars
+        // Dimension bars with animated counters
         const dims = results.mbti.dimensions;
         const labels = this.personalityTest.mbtiDimLabels;
         this.ui.mbtiDimensions.innerHTML = ['ei', 'sn', 'tf', 'jp'].map(dim => {
@@ -607,7 +668,7 @@ class App {
                     <div class="mbti-dim-track">
                         <div class="mbti-dim-fill" style="width: 0%;" data-target="${pct}"></div>
                     </div>
-                    <span class="mbti-dim-pct">${dominant}%</span>
+                    <span class="mbti-dim-pct" data-counter="${dominant}">0%</span>
                     <span class="mbti-dim-label right">${negLabel}</span>
                 </div>
             `;
@@ -617,32 +678,17 @@ class App {
             this.ui.mbtiDimensions.querySelectorAll('.mbti-dim-fill').forEach(el => {
                 el.style.width = el.dataset.target + '%';
             });
-        }, 200);
+            this.ui.mbtiDimensions.querySelectorAll('[data-counter]').forEach(el => {
+                this.animateCounter(el, parseInt(el.dataset.counter, 10));
+            });
+        }, 300);
 
-        // ===== Big Five =====
+        // ===== Big Five — SVG Radar Chart =====
         const b5 = results.big5;
         const dimKeys = ['o', 'c', 'ex', 'a', 'n'];
 
-        // Chart bars
-        this.ui.big5Chart.innerHTML = dimKeys.map(key => {
-            const dim = b5.dimensions[key];
-            const pct = b5.percentages[key];
-            return `
-                <div class="big5-row">
-                    <span class="big5-label">${dim.label}</span>
-                    <div class="big5-track">
-                        <div class="big5-fill" style="width: 0%;" data-target="${pct}"></div>
-                    </div>
-                    <span class="big5-pct">${pct}%</span>
-                </div>
-            `;
-        }).join('');
-
-        setTimeout(() => {
-            this.ui.big5Chart.querySelectorAll('.big5-fill').forEach(el => {
-                el.style.width = el.dataset.target + '%';
-            });
-        }, 400);
+        this.ui.big5Chart.innerHTML = this.renderBig5Radar(b5.percentages, b5.dimensions);
+        setTimeout(() => this.animateRadar(), 500);
 
         // Per-dimension detail cards
         this.ui.big5Details.innerHTML = dimKeys.map(key => {
@@ -666,9 +712,9 @@ class App {
         this.ui.enneagramCosmicName.textContent = enn.cosmic;
         this.ui.enneagramWing.textContent = `${enn.name} · ${enn.type}w${enn.wing}`;
 
-        // Keywords
+        // Keywords with staggered animation
         this.ui.enneagramKeywords.innerHTML = (enn.keywords || [])
-            .map(k => `<span class="keyword-tag">${k}</span>`).join('');
+            .map((k, i) => `<span class="keyword-tag" style="animation: tagAppear 0.4s ease-out ${0.8 + i * 0.12}s both;">${k}</span>`).join('');
 
         // Core & Fear
         this.ui.enneagramCore.textContent = enn.core || '';
@@ -683,10 +729,192 @@ class App {
             .split('\n\n').filter(Boolean).map(p => `<p>${p}</p>`).join('');
     }
 
+    // ==================== VISUAL EFFECTS ====================
+
+    animateCounter(element, targetValue, duration = 1200) {
+        const start = performance.now();
+        const animate = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            element.textContent = Math.round(eased * targetValue) + '%';
+            if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+    }
+
+    renderBig5Radar(percentages, dimensions) {
+        const size = 220;
+        const cx = size / 2, cy = size / 2;
+        const maxR = 85;
+        const dims = ['o', 'c', 'ex', 'a', 'n'];
+        const dimLabels = ['开放', '自律', '社交', '亲和', '情绪'];
+
+        const getPoint = (index, radius) => {
+            const angle = (Math.PI * 2 * index / 5) - Math.PI / 2;
+            return { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
+        };
+
+        // Grid rings
+        let gridLines = '';
+        [0.25, 0.5, 0.75, 1.0].forEach(pct => {
+            const pts = dims.map((_, i) => { const p = getPoint(i, maxR * pct); return `${p.x},${p.y}`; }).join(' ');
+            gridLines += `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>`;
+        });
+
+        // Axis lines
+        let axisLines = '';
+        dims.forEach((_, i) => {
+            const p = getPoint(i, maxR);
+            axisLines += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>`;
+        });
+
+        // Data polygon (start from center)
+        const zeroPoints = dims.map(() => `${cx},${cy}`).join(' ');
+        const targetPoints = dims.map((dim, i) => {
+            const p = getPoint(i, maxR * percentages[dim] / 100);
+            return `${p.x},${p.y}`;
+        }).join(' ');
+
+        // Labels
+        let labelEls = '';
+        dims.forEach((dim, i) => {
+            const p = getPoint(i, maxR + 20);
+            labelEls += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central"
+                fill="rgba(255,255,255,0.5)" font-size="11" font-family="Outfit, sans-serif">${dimLabels[i]}</text>`;
+        });
+
+        // Dots (hidden initially)
+        let dots = '';
+        dims.forEach((dim, i) => {
+            const p = getPoint(i, maxR * percentages[dim] / 100);
+            dots += `<circle cx="${cx}" cy="${cy}" r="3" fill="rgba(200,160,255,0.9)"
+                class="radar-dot" data-tx="${p.x}" data-ty="${p.y}" style="opacity:0; filter: drop-shadow(0 0 4px rgba(200,160,255,0.6));"/>`;
+        });
+
+        // Pct labels near dots
+        let pctLabels = '';
+        dims.forEach((dim, i) => {
+            const p = getPoint(i, maxR * percentages[dim] / 100 + 14);
+            pctLabels += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central"
+                fill="rgba(200,160,255,0.7)" font-size="9" font-family="Outfit, sans-serif"
+                class="radar-pct-label" data-target="${percentages[dim]}" style="opacity:0;">0%</text>`;
+        });
+
+        return `
+            <svg viewBox="0 0 ${size} ${size}" class="big5-radar" style="width: 100%; max-width: 260px;">
+                ${gridLines}
+                ${axisLines}
+                <polygon points="${zeroPoints}" fill="rgba(200,160,255,0.08)" stroke="rgba(200,160,255,0.6)"
+                    stroke-width="1.5" class="radar-polygon" data-target="${targetPoints}"
+                    style="filter: drop-shadow(0 0 6px rgba(200,160,255,0.3));"/>
+                ${dots}
+                ${labelEls}
+                ${pctLabels}
+            </svg>
+        `;
+    }
+
+    animateRadar() {
+        const polygon = this.ui.big5Chart.querySelector('.radar-polygon');
+        if (!polygon) return;
+
+        const targetStr = polygon.dataset.target;
+        const targetPts = targetStr.split(' ').map(s => { const [x, y] = s.split(',').map(Number); return { x, y }; });
+        const cx = 110, cy = 110;
+        const startPts = targetPts.map(() => ({ x: cx, y: cy }));
+
+        const duration = 1200;
+        const start = performance.now();
+
+        const dots = this.ui.big5Chart.querySelectorAll('.radar-dot');
+        const pctLabels = this.ui.big5Chart.querySelectorAll('.radar-pct-label');
+
+        const animate = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+
+            const currentPts = startPts.map((sp, i) => ({
+                x: sp.x + (targetPts[i].x - sp.x) * eased,
+                y: sp.y + (targetPts[i].y - sp.y) * eased
+            }));
+
+            polygon.setAttribute('points', currentPts.map(p => `${p.x},${p.y}`).join(' '));
+
+            // Move dots
+            dots.forEach((dot, i) => {
+                dot.setAttribute('cx', currentPts[i].x);
+                dot.setAttribute('cy', currentPts[i].y);
+                dot.style.opacity = eased;
+            });
+
+            // Animate pct labels
+            pctLabels.forEach(label => {
+                const target = parseInt(label.dataset.target, 10);
+                label.textContent = Math.round(eased * target) + '%';
+                label.style.opacity = eased;
+            });
+
+            if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+    }
+
+    initCardTilt(card) {
+        if (!window.matchMedia('(hover: hover)').matches) return;
+
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateY = ((x / rect.width) - 0.5) * 10;
+            const rotateX = ((y / rect.height) - 0.5) * -10;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            const angle = Math.atan2(y - rect.height / 2, x - rect.width / 2) * 180 / Math.PI + 180;
+            card.style.setProperty('--holo-angle', angle + 'deg');
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+        });
+    }
+
+    initResultCardEffects() {
+        document.querySelectorAll('#test-results-card .result-card').forEach(card => {
+            this.initCardTilt(card);
+        });
+    }
+
+    spawnTypeParticles(el) {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const parent = el.closest('.result-card');
+        if (!parent) return;
+
+        for (let i = 0; i < 8; i++) {
+            const particle = document.createElement('span');
+            particle.className = 'type-particle';
+            const px = (Math.random() - 0.5) * 30;
+            const dur = 1.2 + Math.random() * 1;
+            particle.style.setProperty('--px', px + 'px');
+            particle.style.setProperty('--dur', dur + 's');
+            particle.style.left = (rect.left - parent.getBoundingClientRect().left + rect.width * Math.random()) + 'px';
+            particle.style.top = (rect.top - parent.getBoundingClientRect().top) + 'px';
+            particle.style.width = (2 + Math.random() * 3) + 'px';
+            particle.style.height = particle.style.width;
+            parent.appendChild(particle);
+            setTimeout(() => particle.remove(), dur * 1000);
+        }
+    }
+
     async retakeTest() {
         this.ui.testResultsSection.classList.remove('active');
         await wait(500);
         this.ui.testResultsSection.classList.add('hidden');
+
+        this.starfield.reset();
 
         this.ui.testIntroSection.classList.remove('hidden');
         void this.ui.testIntroSection.offsetWidth;
@@ -695,13 +923,15 @@ class App {
 
     async goHome() {
         // Hide whichever test section is visible
-        const sections = [this.ui.testIntroSection, this.ui.testQuestionsSection, this.ui.testResultsSection];
+        const sections = [this.ui.testIntroSection, this.ui.testQuestionsSection, this.ui.testResultsSection, this.ui.testAnalyzingSection];
         sections.forEach(s => {
             s.classList.remove('active');
             s.classList.add('hidden');
         });
 
         await wait(300);
+
+        this.starfield.reset();
 
         this.ui.entranceSection.classList.remove('hidden');
         void this.ui.entranceSection.offsetWidth;
@@ -712,12 +942,17 @@ class App {
         const card = this.ui.testResultsCard;
         if (!card) return;
 
+        // Reset 3D transforms on all result cards before capture
+        const resultCards = card.querySelectorAll('.result-card');
+        resultCards.forEach(rc => { rc.style.transform = 'none'; });
+
         html2canvas(card, {
             backgroundColor: '#050510',
             scale: 2,
             logging: false,
             useCORS: true
         }).then(canvas => {
+            resultCards.forEach(rc => { rc.style.transform = ''; });
             const link = document.createElement('a');
             link.download = 'stardust-personality.png';
             link.href = canvas.toDataURL('image/png');

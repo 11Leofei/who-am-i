@@ -1225,12 +1225,14 @@ body::before {
     overflow: hidden;
     text-align: center;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
-    animation: fadeSlideUp 0.8s ease-out backwards;
+    animation: cardMaterialize 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
 }
 
-.result-card:nth-child(2) { animation-delay: 0.15s; }
-.result-card:nth-child(3) { animation-delay: 0.3s; }
-.result-card:nth-child(4) { animation-delay: 0.45s; }
+.result-card:nth-child(2) { animation-delay: 0.3s; }
+.result-card:nth-child(3) { animation-delay: 0.6s; }
+.result-card:nth-child(4) { animation-delay: 0.9s; }
 
 .result-card::before {
     content: '';
@@ -1636,4 +1638,196 @@ body::before {
         width: 42px;
         font-size: 0.55rem;
     }
+}
+
+/* ===== VISUAL UPGRADE: New Keyframes ===== */
+
+@keyframes cardMaterialize {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.92);
+        filter: blur(12px) brightness(1.5);
+    }
+    40% {
+        opacity: 0.6;
+        filter: blur(4px) brightness(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0) brightness(1);
+    }
+}
+
+@keyframes tagAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(8px);
+        filter: blur(4px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 0.9;
+        transform: translateY(0) translateX(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) translateX(var(--px, 10px)) scale(0.2);
+    }
+}
+
+@keyframes analyzingPulse {
+    0%, 100% {
+        box-shadow: 0 0 30px rgba(200, 160, 255, 0.3), 0 0 60px rgba(200, 160, 255, 0.1);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 50px rgba(200, 160, 255, 0.5), 0 0 100px rgba(200, 160, 255, 0.2);
+        transform: scale(1.08);
+    }
+}
+
+@keyframes analyzingProgress {
+    from { stroke-dashoffset: 339.3; }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes analyzingStepIn {
+    0% {
+        opacity: 0;
+        transform: translateY(16px);
+        filter: blur(6px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes analyzingStepDone {
+    0% { color: rgba(255, 255, 255, 0.6); }
+    100% { color: rgba(200, 160, 255, 0.9); text-shadow: 0 0 12px rgba(200, 160, 255, 0.4); }
+}
+
+@keyframes radarExpand {
+    from { opacity: 0; r: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== Analyzing Interlude ===== */
+
+.analyzing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 2.5rem;
+}
+
+.analyzing-orb {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.analyzing-ring {
+    width: 100%;
+    height: 100%;
+    animation: orbitSpin 4s linear infinite;
+}
+
+.analyzing-progress {
+    animation: analyzingProgress 3.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    stroke-linecap: round;
+}
+
+.analyzing-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    background: radial-gradient(circle, rgba(200, 160, 255, 0.8), rgba(140, 180, 255, 0.3));
+    border-radius: 50%;
+    animation: analyzingPulse 1.5s ease-in-out infinite;
+}
+
+.analyzing-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+}
+
+.analyzing-step {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    animation: analyzingStepIn 0.6s ease-out forwards;
+}
+
+.analyzing-step:nth-child(1) { animation-delay: 0.2s; }
+.analyzing-step:nth-child(2) { animation-delay: 1.0s; }
+.analyzing-step:nth-child(3) { animation-delay: 1.8s; }
+
+.analyzing-step.done {
+    animation: analyzingStepIn 0.6s ease-out forwards, analyzingStepDone 0.4s ease-out forwards;
+}
+.analyzing-step.done:nth-child(1) { animation-delay: 0.2s, 1.0s; }
+.analyzing-step.done:nth-child(2) { animation-delay: 1.0s, 1.8s; }
+.analyzing-step.done:nth-child(3) { animation-delay: 1.8s, 2.6s; }
+
+/* ===== Results title entrance ===== */
+.results-title {
+    animation: cardMaterialize 0.8s ease-out forwards;
+}
+
+.results-subtitle {
+    animation: cardMaterialize 0.8s ease-out 0.15s both;
+}
+
+/* ===== Keyword tag animation ===== */
+.keyword-tag {
+    opacity: 0;
+}
+
+/* ===== SVG Radar Chart for Big Five ===== */
+.big5-radar {
+    margin: 1.2rem auto;
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(200, 160, 255, 0.15));
+}
+
+/* ===== Type particles ===== */
+.type-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(200, 160, 255, 0.8);
+    pointer-events: none;
+    animation: particleFloat var(--dur, 1.5s) ease-out forwards;
+    box-shadow: 0 0 6px rgba(200, 160, 255, 0.5);
+}
+
+/* ===== Result card holographic for result cards ===== */
+.result-card .holo-overlay {
+    z-index: 1;
+}
+
+.result-card > *:not(.holo-overlay) {
+    position: relative;
+    z-index: 2;
 }

@@ -9,7 +9,10 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\n星尘·身份 — Stardust Identity\n\n八字命理 + 宇宙人格测试 Web App\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\n星尘·身份 — 完整版\n\n八字命理 + 三维人格测试（MBTI / 大五 / 九型）\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\n星尘·身份 — 完整版\n\n八字命理 + 三维人格测试（MBTI / 大五 / 九型）\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git remote set-url:*)",
+      "Bash(git push:*)",
+      "Bash(node -c:*)"
     ]
   }
 }

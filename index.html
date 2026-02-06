@@ -270,6 +270,25 @@
             </div>
         </section>
 
+        <!-- Phase: Test Analyzing Interlude -->
+        <section id="test-analyzing" class="screen hidden">
+            <div class="analyzing-container">
+                <div class="analyzing-orb">
+                    <svg class="analyzing-ring" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(200,160,255,0.1)" stroke-width="1"/>
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(200,160,255,0.8)" stroke-width="1.5"
+                            stroke-dasharray="339.3" stroke-dashoffset="339.3" class="analyzing-progress"/>
+                    </svg>
+                    <div class="analyzing-core"></div>
+                </div>
+                <div class="analyzing-steps">
+                    <p class="analyzing-step">解码MBTI频率...</p>
+                    <p class="analyzing-step">扫描大五人格光谱...</p>
+                    <p class="analyzing-step">锁定九型人格坐标...</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Phase: Test Results -->
         <section id="test-results" class="screen hidden">
             <div class="results-scroll">
@@ -279,6 +298,7 @@
 
                     <!-- MBTI -->
                     <div class="result-card">
+                        <div class="holo-overlay"></div>
                         <div class="result-badge">MBTI</div>
                         <div class="result-type-row">
                             <span class="result-type" id="mbti-type">INTJ</span>
@@ -302,6 +322,7 @@
 
                     <!-- Big Five -->
                     <div class="result-card">
+                        <div class="holo-overlay"></div>
                         <div class="result-badge">大五人格</div>
                         <div class="big5-chart" id="big5-chart"></div>
                         <div class="big5-details" id="big5-details"></div>
@@ -309,6 +330,7 @@
 
                     <!-- Enneagram -->
                     <div class="result-card">
+                        <div class="holo-overlay"></div>
                         <div class="result-badge">九型人格</div>
                         <div class="result-type-row">
                             <span class="result-type" id="enneagram-type">Type 5</span>
@@ -331,6 +353,7 @@
 
                     <!-- Combined Analysis -->
                     <div class="result-card combined-card">
+                        <div class="holo-overlay"></div>
                         <div class="result-badge">综合解读</div>
                         <h3 class="result-cosmic-name text-shimmer">灵魂全景</h3>
                         <div class="combined-text" id="combined-analysis"></div>

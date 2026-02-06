@@ -434,6 +434,21 @@ class Starfield {
         setTimeout(() => clearInterval(flash), 600);
     }
 
+    setResultsMode() {
+        this.speed = 0.08;
+        this.stars.forEach(star => {
+            if (Math.random() > 0.55) {
+                star.color = '200, 160, 255';
+            } else if (Math.random() > 0.5) {
+                star.color = '160, 180, 255';
+            }
+        });
+        if (this._shootingInterval) {
+            clearInterval(this._shootingInterval);
+        }
+        this._shootingInterval = setInterval(() => this.spawnShootingStar(), 5000);
+    }
+
     reset() {
         this.speed = 0.5;
         this.interactive = false;
@@ -443,6 +458,10 @@ class Starfield {
         this.baziFragments = [];
         this.canvas.style.cursor = 'default';
         this.shootingStars = [];
+        if (this._shootingInterval) {
+            clearInterval(this._shootingInterval);
+        }
         this.initStars();
+        this._shootingInterval = setInterval(() => this.spawnShootingStar(), 1800);
     }
 }
