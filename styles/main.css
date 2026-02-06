@@ -1183,6 +1183,7 @@ body::before {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 2rem 0;
+    align-items: flex-start;
 }
 
 .results-scroll {
