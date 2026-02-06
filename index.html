@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星尘 · 身份 — Stardust Identity</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Outfit:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Starfield Canvas -->
+        <canvas id="starfield"></canvas>
+
+        <!-- Phase 1: Entrance -->
+        <section id="entrance" class="screen active">
+            <div class="content-wrapper">
+                <div class="entrance-glyph">
+                    <svg viewBox="0 0 100 100" class="orbit-ring">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                        <circle cx="50" cy="5" r="2" fill="rgba(200,220,255,0.6)"/>
+                    </svg>
+                </div>
+                <h1 class="hero-title text-shimmer">星尘 · 身份</h1>
+                <p class="hero-subtitle">在浩瀚宇宙中，寻找你独特的频率</p>
+                <div class="cta-container">
+                    <button id="enter-btn" class="glass-btn">
+                        <span class="btn-text">踏入虚空</span>
+                    </button>
+                    <button id="test-enter-btn" class="glass-btn secondary-cta">
+                        <span class="btn-text">探索人格</span>
+                    </button>
+                </div>
+                <div class="archive-link-wrapper">
+                    <button id="archive-btn" class="archive-link">
+                        星辰档案 <span id="archive-count"></span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2: Birth Ritual (Data Entry) -->
+        <section id="ritual" class="screen hidden">
+            <div class="ritual-container">
+                <h2 class="ritual-title text-shimmer">命运编织者</h2>
+                <p class="ritual-subtitle">输入你的降生坐标，让星辰为你指路</p>
+                <div class="ritual-inputs">
+                    <div class="input-group">
+                        <label>诞生日</label>
+                        <input type="date" id="birth-date">
+                    </div>
+                    <div class="input-group">
+                        <label>降临时辰</label>
+                        <select id="birth-hour">
+                            <option value="">-- 选择 --</option>
+                            <option value="0">子时 (23:00-01:00)</option>
+                            <option value="2">丑时 (01:00-03:00)</option>
+                            <option value="4">寅时 (03:00-05:00)</option>
+                            <option value="6">卯时 (05:00-07:00)</option>
+                            <option value="8">辰时 (07:00-09:00)</option>
+                            <option value="10">巳时 (09:00-11:00)</option>
+                            <option value="12">午时 (11:00-13:00)</option>
+                            <option value="14">未时 (13:00-15:00)</option>
+                            <option value="16">申时 (15:00-17:00)</option>
+                            <option value="18">酉时 (17:00-19:00)</option>
+                            <option value="20">戌时 (19:00-21:00)</option>
+                            <option value="22">亥时 (21:00-23:00)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>降临之地</label>
+                        <input type="text" id="birth-city" placeholder="例如：上海">
+                    </div>
+                </div>
+                <button id="summon-btn" class="glass-btn">
+                    <span class="btn-text">召唤过往</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Phase 3: Cosmos (HUD + Animation) -->
+        <section id="cosmos" class="screen hidden">
+            <div class="hud-top">
+                <span class="hud-text">导航系统：已激活</span>
+            </div>
+            <div class="hud-center">
+                <p class="instruction">寻找属于你的星辰...</p>
+            </div>
+        </section>
+
+        <!-- Phase 4: Identity Reveal -->
+        <section id="identity" class="screen hidden">
+            <div class="glass-card fade-in-up" id="identity-card">
+                <!-- Holographic overlay -->
+                <div class="holo-overlay"></div>
+
+                <!-- Element Orb -->
+                <div class="card-header stagger-1">
+                    <div class="element-orb" id="element-orb">
+                        <span class="element-symbol" id="element-symbol">木</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Cosmic Name -->
+                    <h2 id="identity-name" class="identity-name text-shimmer stagger-2">苍龙破晓</h2>
+
+                    <!-- Meta Tags -->
+                    <div class="identity-meta stagger-2">
+                        <span class="meta-tag" id="zodiac-tag">属龙</span>
+                        <span class="meta-divider">·</span>
+                        <span class="meta-tag" id="yinyang-tag">阳木</span>
+                        <span class="meta-divider">·</span>
+                        <span class="meta-tag" id="city-tag">上海</span>
+                    </div>
+
+                    <div class="separator-line stagger-2"></div>
+
+                    <!-- Four Pillars -->
+                    <div class="pillars-grid stagger-3">
+                        <div class="pillar" id="pillar-year">
+                            <div class="pillar-label">年柱</div>
+                            <div class="pillar-chars">
+                                <span class="stem">甲</span>
+                                <span class="branch">子</span>
+                            </div>
+                        </div>
+                        <div class="pillar" id="pillar-month">
+                            <div class="pillar-label">月柱</div>
+                            <div class="pillar-chars">
+                                <span class="stem">丙</span>
+                                <span class="branch">寅</span>
+                            </div>
+                        </div>
+                        <div class="pillar" id="pillar-day">
+                            <div class="pillar-label">日柱</div>
+                            <div class="pillar-chars">
+                                <span class="stem">戊</span>
+                                <span class="branch">辰</span>
+                            </div>
+                        </div>
+                        <div class="pillar" id="pillar-hour">
+                            <div class="pillar-label">时柱</div>
+                            <div class="pillar-chars">
+                                <span class="stem">庚</span>
+                                <span class="branch">午</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Five Elements Chart -->
+                    <div class="elements-chart stagger-3" id="elements-chart">
+                        <div class="chart-title">五行分布</div>
+                        <div class="chart-bars">
+                            <div class="chart-row" data-element="木">
+                                <span class="chart-label">木</span>
+                                <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-wood"></div></div>
+                                <span class="chart-count" id="count-wood">0</span>
+                            </div>
+                            <div class="chart-row" data-element="火">
+                                <span class="chart-label">火</span>
+                                <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-fire"></div></div>
+                                <span class="chart-count" id="count-fire">0</span>
+                            </div>
+                            <div class="chart-row" data-element="土">
+                                <span class="chart-label">土</span>
+                                <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-earth"></div></div>
+                                <span class="chart-count" id="count-earth">0</span>
+                            </div>
+                            <div class="chart-row" data-element="金">
+                                <span class="chart-label">金</span>
+                                <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-metal"></div></div>
+                                <span class="chart-count" id="count-metal">0</span>
+                            </div>
+                            <div class="chart-row" data-element="水">
+                                <span class="chart-label">水</span>
+                                <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-water"></div></div>
+                                <span class="chart-count" id="count-water">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wu Xing Insight -->
+                    <p id="wuxing-insight" class="wuxing-insight stagger-3"></p>
+
+                    <div class="separator-line stagger-3"></div>
+
+                    <!-- Personality -->
+                    <p id="identity-desc" class="identity-desc stagger-4">
+                        你的光芒恒久而坚定。
+                    </p>
+
+                    <!-- Zodiac Trait -->
+                    <p id="zodiac-desc" class="zodiac-trait stagger-4"></p>
+                </div>
+
+                <div class="card-footer stagger-4">
+                    <button id="save-btn" class="text-btn secondary">保存身份卡</button>
+                    <button id="reset-btn" class="text-btn">重返星尘</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase: Test Intro -->
+        <section id="test-intro" class="screen hidden">
+            <div class="ritual-container">
+                <div class="test-icon">
+                    <svg viewBox="0 0 100 100" class="orbit-ring">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                        <circle cx="50" cy="5" r="2" fill="rgba(200,160,255,0.6)"/>
+                        <circle cx="95" cy="50" r="1.5" fill="rgba(200,160,255,0.4)"/>
+                        <circle cx="50" cy="95" r="1.5" fill="rgba(200,160,255,0.3)"/>
+                    </svg>
+                </div>
+                <h2 class="ritual-title text-shimmer">灵魂频率扫描</h2>
+                <p class="ritual-subtitle">50道星际问卷，解码你的人格密码</p>
+                <p class="test-intro-desc">本测试将同时分析你的MBTI人格类型、大五人格特质和九型人格倾向，<br>为你呈现三维度的宇宙人格画像。</p>
+                <button id="start-test-btn" class="glass-btn">
+                    <span class="btn-text">启动扫描</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Phase: Test Questions -->
+        <section id="test-questions" class="screen hidden">
+            <div class="test-container">
+                <div class="test-progress">
+                    <div class="test-progress-track">
+                        <div class="test-progress-bar" id="test-progress-bar"></div>
+                    </div>
+                    <span class="test-progress-text" id="test-progress-text">1 / 50</span>
+                </div>
+                <div class="question-wrapper">
+                    <p class="question-number" id="question-number">Q1</p>
+                    <p class="question-text" id="question-text"></p>
+                </div>
+                <div class="answer-scale" id="answer-scale">
+                    <button class="scale-btn" data-value="1">
+                        <span class="scale-dot"></span>
+                        <span class="scale-label">完全不符</span>
+                    </button>
+                    <button class="scale-btn" data-value="2">
+                        <span class="scale-dot"></span>
+                        <span class="scale-label">较少符合</span>
+                    </button>
+                    <button class="scale-btn" data-value="3">
+                        <span class="scale-dot"></span>
+                        <span class="scale-label">不确定</span>
+                    </button>
+                    <button class="scale-btn" data-value="4">
+                        <span class="scale-dot"></span>
+                        <span class="scale-label">较为符合</span>
+                    </button>
+                    <button class="scale-btn" data-value="5">
+                        <span class="scale-dot"></span>
+                        <span class="scale-label">非常符合</span>
+                    </button>
+                </div>
+                <div class="test-nav">
+                    <button id="test-prev-btn" class="text-btn secondary" style="visibility: hidden;">← 上一题</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase: Test Results -->
+        <section id="test-results" class="screen hidden">
+            <div class="results-scroll">
+                <div class="results-container" id="test-results-card">
+                    <h2 class="results-title text-shimmer">你的宇宙人格</h2>
+                    <p class="results-subtitle">三维度人格画像</p>
+
+                    <!-- MBTI -->
+                    <div class="result-card">
+                        <div class="result-badge">MBTI</div>
+                        <div class="result-type-row">
+                            <span class="result-type" id="mbti-type">INTJ</span>
+                        </div>
+                        <h3 class="result-cosmic-name text-shimmer" id="mbti-cosmic-name">星图织者</h3>
+                        <p class="result-title-sub" id="mbti-title"></p>
+                        <div class="keyword-tags" id="mbti-keywords"></div>
+                        <div class="mbti-dimensions" id="mbti-dimensions"></div>
+                        <div class="result-desc" id="mbti-desc"></div>
+                        <div class="result-extras">
+                            <div class="result-extra-item">
+                                <span class="extra-label">核心力量</span>
+                                <p class="extra-text" id="mbti-strengths"></p>
+                            </div>
+                            <div class="result-extra-item">
+                                <span class="extra-label">成长方向</span>
+                                <p class="extra-text" id="mbti-growth"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Big Five -->
+                    <div class="result-card">
+                        <div class="result-badge">大五人格</div>
+                        <div class="big5-chart" id="big5-chart"></div>
+                        <div class="big5-details" id="big5-details"></div>
+                    </div>
+
+                    <!-- Enneagram -->
+                    <div class="result-card">
+                        <div class="result-badge">九型人格</div>
+                        <div class="result-type-row">
+                            <span class="result-type" id="enneagram-type">Type 5</span>
+                        </div>
+                        <h3 class="result-cosmic-name text-shimmer" id="enneagram-cosmic-name">智慧之眼</h3>
+                        <p class="enneagram-wing" id="enneagram-wing"></p>
+                        <div class="keyword-tags" id="enneagram-keywords"></div>
+                        <div class="result-extras compact">
+                            <div class="result-extra-item">
+                                <span class="extra-label">核心驱动</span>
+                                <p class="extra-text" id="enneagram-core"></p>
+                            </div>
+                            <div class="result-extra-item">
+                                <span class="extra-label">深层恐惧</span>
+                                <p class="extra-text" id="enneagram-fear"></p>
+                            </div>
+                        </div>
+                        <div class="result-desc" id="enneagram-desc"></div>
+                    </div>
+
+                    <!-- Combined Analysis -->
+                    <div class="result-card combined-card">
+                        <div class="result-badge">综合解读</div>
+                        <h3 class="result-cosmic-name text-shimmer">灵魂全景</h3>
+                        <div class="combined-text" id="combined-analysis"></div>
+                    </div>
+
+                    <div class="results-actions">
+                        <button id="save-test-btn" class="text-btn secondary">保存测试卡</button>
+                        <button id="retest-btn" class="text-btn">重新测试</button>
+                        <button id="home-btn" class="text-btn">返回星尘</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archive Overlay -->
+        <div id="archive-overlay" class="overlay hidden">
+            <div class="archive-container">
+                <h2 class="archive-title text-shimmer">星辰档案</h2>
+                <p class="archive-subtitle">你曾探索过的命运轨迹</p>
+                <div class="archive-grid" id="archive-grid"></div>
+                <div class="archive-actions">
+                    <button id="archive-close" class="glass-btn small">
+                        <span class="btn-text">关闭</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="js/bazi.js"></script>
+    <script src="js/stars.js"></script>
+    <script src="js/personality.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

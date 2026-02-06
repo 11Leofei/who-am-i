@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open:*)",
+      "Bash(git --version:*)",
+      "Bash(gh:*)",
+      "Bash(git -C \"/Users/feili/Desktop/who am i\" remote -v)",
+      "Bash(brew:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\n星尘·身份 — Stardust Identity\n\n八字命理 + 宇宙人格测试 Web App\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
