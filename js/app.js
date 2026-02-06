@@ -863,6 +863,8 @@ class App {
 
     initCardTilt(card) {
         if (!window.matchMedia('(hover: hover)').matches) return;
+        if (card._tiltInitialized) return;
+        card._tiltInitialized = true;
 
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();

@@ -563,7 +563,8 @@ body::before {
     z-index: 1;
 }
 
-.glass-card:hover .holo-overlay {
+.glass-card:hover .holo-overlay,
+.result-card:hover .holo-overlay {
     opacity: 1;
 }
 
@@ -1230,9 +1231,9 @@ body::before {
     transition: transform 0.15s ease-out;
 }
 
-.result-card:nth-child(2) { animation-delay: 0.3s; }
-.result-card:nth-child(3) { animation-delay: 0.6s; }
-.result-card:nth-child(4) { animation-delay: 0.9s; }
+.result-card:nth-child(4) { animation-delay: 0.3s; }
+.result-card:nth-child(5) { animation-delay: 0.6s; }
+.result-card:nth-child(6) { animation-delay: 0.9s; }
 
 .result-card::before {
     content: '';
@@ -1776,6 +1777,7 @@ body::before {
     color: rgba(255, 255, 255, 0.6);
     opacity: 0;
     animation: analyzingStepIn 0.6s ease-out forwards;
+    transition: color 0.4s ease-out, text-shadow 0.4s ease-out;
 }
 
 .analyzing-step:nth-child(1) { animation-delay: 0.2s; }
@@ -1783,11 +1785,9 @@ body::before {
 .analyzing-step:nth-child(3) { animation-delay: 1.8s; }
 
 .analyzing-step.done {
-    animation: analyzingStepIn 0.6s ease-out forwards, analyzingStepDone 0.4s ease-out forwards;
+    color: rgba(200, 160, 255, 0.9);
+    text-shadow: 0 0 12px rgba(200, 160, 255, 0.4);
 }
-.analyzing-step.done:nth-child(1) { animation-delay: 0.2s, 1.0s; }
-.analyzing-step.done:nth-child(2) { animation-delay: 1.0s, 1.8s; }
-.analyzing-step.done:nth-child(3) { animation-delay: 1.8s, 2.6s; }
 
 /* ===== Results title entrance ===== */
 .results-title {
@@ -1795,7 +1795,23 @@ body::before {
 }
 
 .results-subtitle {
-    animation: cardMaterialize 0.8s ease-out 0.15s both;
+    animation: subtitleAppear 0.8s ease-out 0.15s both;
+}
+
+@keyframes subtitleAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.92);
+        filter: blur(12px) brightness(1.5);
+    }
+    40% {
+        filter: blur(4px) brightness(1.2);
+    }
+    100% {
+        opacity: 0.35;
+        transform: translateY(0) scale(1);
+        filter: blur(0) brightness(1);
+    }
 }
 
 /* ===== Keyword tag animation ===== */
