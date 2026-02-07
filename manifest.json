@@ -1,0 +1,29 @@
+{
+    "name": "星尘·身份 — Stardust Identity",
+    "short_name": "星尘·身份",
+    "description": "在浩瀚宇宙中，寻找你独特的频率。50道星际问卷，解码MBTI×大五×九型人格。",
+    "start_url": "/who-am-i/",
+    "display": "standalone",
+    "background_color": "#050510",
+    "theme_color": "#050510",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "lang": "zh-CN",
+    "categories": ["entertainment", "lifestyle"]
+}

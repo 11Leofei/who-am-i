@@ -65,11 +65,33 @@ class PersonalityTest {
 
         // ==================== MBTI 16 types ====================
 
+        // ==================== MBTI Theme Colors ====================
+        // Each group: primary glow, secondary glow, aurora RGB triplets, star tint
+        this.mbtiThemes = {
+            'INTJ': { primary: '100, 140, 255', secondary: '180, 200, 255', aurora: [[30, 80, 200], [60, 100, 255], [100, 140, 255]], star: '140, 180, 255' },
+            'INTP': { primary: '100, 140, 255', secondary: '180, 200, 255', aurora: [[30, 80, 200], [60, 100, 255], [100, 140, 255]], star: '140, 180, 255' },
+            'ENTJ': { primary: '180, 120, 255', secondary: '255, 200, 100', aurora: [[120, 60, 220], [180, 100, 255], [220, 180, 100]], star: '200, 160, 255' },
+            'ENTP': { primary: '180, 120, 255', secondary: '255, 200, 100', aurora: [[120, 60, 220], [180, 100, 255], [220, 180, 100]], star: '200, 160, 255' },
+            'INFJ': { primary: '140, 100, 220', secondary: '200, 140, 255', aurora: [[80, 40, 180], [120, 80, 220], [180, 120, 255]], star: '160, 120, 255' },
+            'INFP': { primary: '140, 100, 220', secondary: '200, 140, 255', aurora: [[80, 40, 180], [120, 80, 220], [180, 120, 255]], star: '160, 120, 255' },
+            'ENFJ': { primary: '255, 160, 80', secondary: '255, 220, 120', aurora: [[220, 120, 40], [255, 160, 60], [255, 200, 100]], star: '255, 200, 140' },
+            'ENFP': { primary: '255, 160, 80', secondary: '255, 220, 120', aurora: [[220, 120, 40], [255, 160, 60], [255, 200, 100]], star: '255, 200, 140' },
+            'ISTJ': { primary: '120, 160, 200', secondary: '160, 200, 220', aurora: [[60, 100, 160], [80, 140, 200], [120, 180, 220]], star: '160, 200, 240' },
+            'ISFJ': { primary: '120, 160, 200', secondary: '160, 200, 220', aurora: [[60, 100, 160], [80, 140, 200], [120, 180, 220]], star: '160, 200, 240' },
+            'ESTJ': { primary: '80, 200, 140', secondary: '160, 230, 200', aurora: [[40, 160, 100], [60, 200, 120], [100, 220, 160]], star: '140, 220, 180' },
+            'ESFJ': { primary: '80, 200, 140', secondary: '160, 230, 200', aurora: [[40, 160, 100], [60, 200, 120], [100, 220, 160]], star: '140, 220, 180' },
+            'ISTP': { primary: '160, 160, 180', secondary: '220, 180, 100', aurora: [[100, 100, 140], [140, 130, 160], [200, 170, 100]], star: '180, 180, 200' },
+            'ISFP': { primary: '160, 160, 180', secondary: '220, 180, 100', aurora: [[100, 100, 140], [140, 130, 160], [200, 170, 100]], star: '180, 180, 200' },
+            'ESTP': { primary: '255, 100, 80', secondary: '255, 180, 100', aurora: [[220, 60, 40], [255, 100, 60], [255, 160, 80]], star: '255, 140, 120' },
+            'ESFP': { primary: '255, 100, 80', secondary: '255, 180, 100', aurora: [[220, 60, 40], [255, 100, 60], [255, 160, 80]], star: '255, 140, 120' },
+        };
+
         this.mbtiTypes = {
             'INTJ': {
                 cosmic: '星图织者',
                 title: '宇宙的终极建筑师',
                 keywords: ['远见', '战略', '独立', '理性', '深邃'],
+                celebrities: ['埃隆·马斯克', '尼古拉·特斯拉', '诸葛亮'],
                 desc: '在星际的深处，你如同一座永不休眠的天文台，冷静地计算着每一条可能的航线。当他人还在仰望星空赞叹其美时，你已在脑海中绘制出完整的星图——每一颗恒星的运行轨迹，每一个星系的引力关系，每一条通往未来的最优路径。\n\n你的思维是这个宇宙中最精密的导航系统——独立、深邃、不可动摇。在人群中，你如同暗物质，不可见却影响着一切的运行。你不需要聚光灯，因为真正改变宇宙轨迹的力量从来都在幕后运作。当危机降临，众人陷入混乱时，你是那个已经准备好从Plan A到Plan Z的人。\n\n你的光芒不在于耀眼，而在于恒久。如同北极星——虽非最亮的星辰，却是最可靠的导航。',
                 strengths: '穿透表象直达本质的战略眼光 · 坚不可摧的独立意志 · 将复杂系统化繁为简的天赋',
                 growth: '在追求完美星图的旅途中，也要允许星光偶尔迷路——不完美中，藏着你尚未发现的宇宙奇景。'
@@ -78,6 +100,7 @@ class PersonalityTest {
                 cosmic: '虚空解密者',
                 title: '星际真理的永恒追寻者',
                 keywords: ['思辨', '创新', '好奇', '分析', '独立'],
+                celebrities: ['爱因斯坦', '达尔文', '老子'],
                 desc: '你是宇宙中最不安分的思想者，永远在解构已知的一切，追寻那个更深层的「为什么」。你的大脑如同一台量子计算机，在无数个平行的理论宇宙中同时运算，编织出他人从未想象过的认知之网。\n\n在思维的深空中，你自由穿梭于抽象与逻辑之间。你不满足于任何现成的答案，因为你深知：每一个被接受的真理，都只是通往更深真理的台阶。你的沉默不是空白，而是一个正在高速运转的宇宙大脑正在酝酿下一次认知爆炸。\n\n你是真理的猎人，思想的炼金术士。在你的实验室里，每一个概念都会被拆解、重组、直到露出隐藏在表象之下的纯净内核。',
                 strengths: '无与伦比的逻辑分析力 · 打破范式的创新思维 · 将抽象概念具象化的天赋',
                 growth: '真理不只存在于思维的深空——当你愿意走出观察台，亲手触摸这个世界时，你的理论将获得翅膀。'
@@ -86,6 +109,7 @@ class PersonalityTest {
                 cosmic: '星际指挥官',
                 title: '命运航线的终极掌舵者',
                 keywords: ['领袖', '果断', '远见', '效率', '气魄'],
+                celebrities: ['史蒂夫·乔布斯', '拿破仑', '曹操'],
                 desc: '在星际舰队中，你是天生的最高指挥官。你的目光穿越光年的距离，在他人只看到混沌的地方，你早已规划出通往胜利的完整航线。你的决断力如同引力常数——精确、有力、不容质疑。\n\n你不只是追逐星辰，你指挥它们运行。在你的星系中，效率和目标是至高法则。你天生拥有将一盘散沙凝聚成钢铁洪流的力量——你的魅力在于远见，你的权威在于成果。每一个跟随你的人都知道：这条航线，通往星辰大海。\n\n帝国不是在一夜之间建成的，但你有耐心、有蓝图、有不可动摇的意志，来将脑海中的星际帝国变成现实。',
                 strengths: '天生的战略领袖气质 · 化愿景为现实的执行力 · 在压力下愈发清醒的决断力',
                 growth: '征服宇宙的路上，偶尔放下指挥棒，聆听星辰的低语——你会发现，不是所有的力量都来自掌控。'
@@ -94,6 +118,7 @@ class PersonalityTest {
                 cosmic: '混沌开拓者',
                 title: '可能性的量子漫步者',
                 keywords: ['颠覆', '机智', '辩才', '创造', '探索'],
+                celebrities: ['达·芬奇', '本杰明·富兰克林', '马云'],
                 desc: '你是宇宙中最具颠覆性的存在——在规则的边界上跳舞，在不可能的夹缝中寻找全新的可能。你的思维如同不断分裂的平行宇宙，每一秒都在衍生出令人目眩的新世界。\n\n你挑战权威不是为了破坏，而是因为你比任何人都清楚：旧的星图终将过时，而新的宇宙永远在等待被发现。你的辩才是你的超光速引擎——在思想的交锋中，你总能发现那个改变一切的角度。你是规则的解构者、创意的核聚变反应堆。\n\n在你眼中，「不可能」这三个字不是终点，而是一个还未被正确提问的问题。而你，永远是那个提出正确问题的人。',
                 strengths: '点石成金的创新思维 · 四两拨千斤的辩论天赋 · 在混沌中发现秩序的独特视角',
                 growth: '播下的种子也需要耐心浇灌——当你学会在一片土壤上深耕，你的创造力将从烟花变成太阳。'
@@ -102,6 +127,7 @@ class PersonalityTest {
                 cosmic: '星河预言家',
                 title: '灵魂深处的永恒洞察者',
                 keywords: ['直觉', '理想', '洞察', '深邃', '使命'],
+                celebrities: ['甘地', '屈原', '尼采'],
                 desc: '你是星河中最神秘的存在——目光所及之处，不是物质的表面，而是灵魂深处最隐秘的震颤。你拥有一种近乎超自然的直觉，能在千万人中感知到最微妙的情感涟漪，读懂那些连主人都不曾察觉的心事。\n\n你的内心是一座理想主义的神殿，供奉着你对这个世界最深沉的愿景。你不为名利而行动，你为心中那个更美好宇宙的蓝图而默默耕耘。你是暗夜中最安静的灯塔——不言不语，却引导着无数迷途的灵魂找到方向。\n\n在这个追求表面的宇宙中，你始终在寻找深度。你知道，最珍贵的宝石永远埋藏在最深的矿脉中，而你，就是那个不畏深入的人。',
                 strengths: '穿透灵魂的洞察力 · 为理想全力以赴的坚定意志 · 用文字和行动唤醒他人的感召力',
                 growth: '你为宇宙燃烧的烛火也需要被呵护——允许自己偶尔从深渊中浮出水面，在阳光下休憩。'
@@ -110,6 +136,7 @@ class PersonalityTest {
                 cosmic: '星云梦旅人',
                 title: '内在宇宙的忠诚守护者',
                 keywords: ['理想', '真诚', '想象', '温柔', '独特'],
+                celebrities: ['莎士比亚', '梵高', '三毛'],
                 desc: '在所有星际旅者中，你拥有最瑰丽的内在宇宙。当他人执着于外部世界的喧嚣时，你在灵魂深处建造着一座座无人知晓的花园——那里有不会凋谢的理想，有永远鲜活的信仰，有你为这个世界写下的每一首无声的诗。\n\n你的情感如同极光——绚烂、深邃、不可预测，却美得让人窒息。你的价值观是你在无垠宇宙中最坚实的坐标，你不随波逐流，因为你内心的罗盘永远指向真实和美好。在这个要求你戴上面具的世界中，你选择了最勇敢的事——做自己。\n\n你是梦境的编织者，用想象力为这个冰冷的宇宙增添无数温暖的色彩。你的温柔不是软弱，而是一种只有最深邃的灵魂才能承载的力量。',
                 strengths: '与生俱来的艺术感知力 · 对真实和美好的不妥协 · 用共情力治愈他人的天赋',
                 growth: '内在的花园需要阳光——当你勇敢地将心中的美好分享给世界时，你会发现，被理解的温暖远超你的想象。'
@@ -118,6 +145,7 @@ class PersonalityTest {
                 cosmic: '星辉引路人',
                 title: '灵魂共鸣的终极指挥者',
                 keywords: ['感召', '共情', '引领', '热忱', '奉献'],
+                celebrities: ['马丁·路德·金', '孔子', '奥普拉'],
                 desc: '你天生就是一束照亮他人前路的星辉。你拥有一种罕见的天赋——不只是理解他人，而是能看见他们灵魂中尚未被点亮的星辰，然后用你天生的感召力将那些沉睡的光芒一一唤醒。\n\n你的共情力如同引力场，将人们凝聚在共同的愿景之下。在你身边，沉默者开始发声，犹豫者找到方向，每个人都比平时更加闪耀。你是宇宙中最伟大的催化剂——你的光芒不在于照亮自己，而在于点燃整个星系。\n\n你为他人燃烧的热情不是义务，而是你最本真的存在方式。你相信每个灵魂都值得被看见、被引导、被点亮。',
                 strengths: '唤醒他人潜力的天赋 · 将陌生人凝聚成团队的感召力 · 在混沌中创造意义的能力',
                 growth: '照亮万千星辰的你，也值得被自己的光芒温暖——学会把给予他人的关怀，也留一份给自己。'
@@ -126,6 +154,7 @@ class PersonalityTest {
                 cosmic: '彗星追光者',
                 title: '星际热情的永恒播种者',
                 keywords: ['热情', '创意', '自由', '感染力', '可能性'],
+                celebrities: ['罗宾·威廉姆斯', '李白', '马克·吐温'],
                 desc: '你是宇宙中最绚烂的彗星——以不可遏制的热情划过每一片星空，所到之处都留下闪耀的光痕和灵感的种子。你的想象力是超光速引擎，好奇心是永不枯竭的燃料。\n\n你在无限可能的星海中自由遨游，每到一处都发现他人视而不见的美。你相信每个人心中都有一颗等待被点亮的星辰，而你的使命就是成为那个划亮天际的火焰。你不按轨道运行，因为最美的轨迹永远是即兴绘制的。\n\n在你身边，连最暗淡的星辰都忍不住开始闪耀。你的热情不只是情绪，而是一种能改变周围引力场的存在力量。',
                 strengths: '点燃他人热情的感染力 · 在平凡中发现非凡的创造力 · 连接不同世界的社交天赋',
                 growth: '彗星最美的时刻不只是划过天际——当你学会在一颗星球上扎根时，你的光芒将从短暂变成永恒。'
@@ -134,6 +163,7 @@ class PersonalityTest {
                 cosmic: '恒星守卫者',
                 title: '秩序宇宙的永恒基石',
                 keywords: ['可靠', '责任', '精准', '传统', '坚定'],
+                celebrities: ['乔治·华盛顿', '包拯', '巴菲特'],
                 desc: '在瞬息万变的宇宙中，你是那颗永恒不变的恒星。你的光芒不似超新星般炫目转瞬即逝，却比任何星辰都更加可靠而长久。你以铁一般的责任感和精确度守护着你所珍视的一切——承诺、秩序、传统、信任。\n\n你是混乱中的定海神针，是他人在风暴中最可靠的坐标。你不追求戏剧性的瞬间，因为你深知：真正支撑这个宇宙运行的，是那些看不见的、日复一日的、永恒的法则和承诺。\n\n你的记忆如同星际数据库般精确，每一个细节都被你编码存档。你用恒久的光芒证明了一个真理：真正的伟大，不在于爆发，而在于坚持。',
                 strengths: '坚如磐石的责任与承诺 · 精确到毫秒的执行力 · 在动荡中维持秩序的定力',
                 growth: '恒星也可以偶尔欣赏彗星的美——允许自己在规则之外自由一次，你会发现，意外中也藏着馈赠。'
@@ -142,6 +172,7 @@ class PersonalityTest {
                 cosmic: '星河守望者',
                 title: '温柔而永恒的灵魂守护',
                 keywords: ['守护', '温柔', '细腻', '奉献', '忠诚'],
+                celebrities: ['特蕾莎修女', '白居易', '安妮·海瑟薇'],
                 desc: '你是星河中最温柔的守望者——以恒久的耐心和无声的深情守护着每一个靠近你的灵魂。你的记忆如同星图般精确，每一个重要的日期、每一句无意的话语、每一个微小的喜好，都被你悉心珍藏在心的深处。\n\n你的爱不是烈火般的炽热，而是恒星般的温暖——沉默、持久、无条件。你在他人不曾注意的角落默默编织着关怀的网，确保每一个你珍视的人都不会在宇宙的寒冷中独行。\n\n你的奉献不需要掌声和回报，你的价值不需要他人的认证。在你看似平静的表面之下，蕴含着足以温暖整个星系的力量。你是这个冰冷宇宙中，最珍贵的温度。',
                 strengths: '无微不至的关怀和记忆力 · 默默奉献的坚韧意志 · 在细节中创造温暖的天赋',
                 growth: '守望者也值得被守望——你付出的爱同样值得被偿还，请允许自己成为被照顾的那个人。'
@@ -150,6 +181,7 @@ class PersonalityTest {
                 cosmic: '星际执政官',
                 title: '文明秩序的至高执行者',
                 keywords: ['效率', '秩序', '果断', '务实', '权威'],
+                celebrities: ['撒切尔夫人', '朱元璋', '杰克·韦尔奇'],
                 desc: '你是星际文明中不可或缺的柱石——以高效和秩序维系着整个星系的稳定运转。你的决断力如同物理定律，清晰、有力、放之四海而皆准。你不容忍混乱和低效，因为你深知：没有秩序，再美的星辰也不过是散落的碎片。\n\n你是天生的组织者和管理者。在你的治理之下，一切都井然有序，每颗星辰都各居其位。你用行动证明了领导力不只是口号——而是日复一日的精准执行和不可动摇的标准。\n\n你的权威不来自头衔，而来自你始终如一的可靠性。当整个星系需要一个人站出来做决定时，所有人都会不约而同地看向你。',
                 strengths: '化混乱为秩序的组织天赋 · 言出必行的执行力 · 在压力下保持清晰判断的能力',
                 growth: '秩序是你的力量，但有时最美的星云恰恰诞生于混沌——给自己留一些规则之外的呼吸空间。'
@@ -158,6 +190,7 @@ class PersonalityTest {
                 cosmic: '星辰守护者',
                 title: '星际间最温暖的连接者',
                 keywords: ['关怀', '和谐', '慷慨', '忠诚', '温暖'],
+                celebrities: ['泰勒·斯威夫特', '关羽', '休·杰克曼'],
                 desc: '你是星辰间最温暖的连接者——用真诚和关怀编织着人与人之间最柔韧的纽带。你的社交天赋如同万有引力，自然、温柔、无处不在。在你身边，没有人是孤独的星辰，每个灵魂都被你的温暖所触及。\n\n你天生懂得如何创造归属感，如何让每一个走进你星系的人都感受到「这里是家」。你用记住他人的生日、在意他人的感受、照顾他人的需求来表达着你对这个世界最朴素也最深沉的爱。\n\n你不需要成为最耀眼的恒星。你的价值在于——因为你的存在，整个星系变得更加温暖、更加紧密、更加像一个家。',
                 strengths: '创造归属感和社群温暖的天赋 · 敏锐感知他人需求的共情力 · 维系人际和谐的社交智慧',
                 growth: '守护星辰的你也需要被守护——你的感受和需求同样重要，请不要总把自己排在最后。'
@@ -166,6 +199,7 @@ class PersonalityTest {
                 cosmic: '星际工匠',
                 title: '万物拆解与重组的大师',
                 keywords: ['冷静', '精准', '务实', '独立', '灵巧'],
+                celebrities: ['李小龙', '迈克尔·乔丹', '宫本武藏'],
                 desc: '你是宇宙中最冷静的解构者——用敏锐的双手和清醒的头脑拆解一切复杂的系统，然后用更优雅的方式将它们重组。你的思维直接而高效，如同激光切割——精准、快速、毫无多余的动作。\n\n你不需要蓝图和说明书，因为你天生就能通过触摸和观察理解事物的运作原理。在危机时刻，你是最冷静的存在——当他人还在恐慌时，你已经定位了问题的根源，手起刀落，干净利落。\n\n你用行动说话，用结果证明一切。在你的世界里，理论只有在被实践验证后才有意义。你是手艺人中的哲学家——用双手理解世界，用作品表达智慧。',
                 strengths: '危机中的冷静分析和即时反应 · 理解复杂系统运作的直觉 · 用最少资源解决问题的效率',
                 growth: '工匠的双手也可以学习拥抱——当你愿意用语言表达内心时，你会发现，连接不只是齿轮的咬合。'
@@ -174,6 +208,7 @@ class PersonalityTest {
                 cosmic: '星尘画师',
                 title: '宇宙的感官诗人',
                 keywords: ['审美', '感性', '自由', '温柔', '真实'],
+                celebrities: ['莫奈', '周杰伦', '王维'],
                 desc: '你是用星尘作画的艺术家——在沉默中感受和创造着这个宇宙最动人的色彩。你的五感如同最精密的光谱仪，能捕捉到他人忽略的每一抹微妙的美——晨光中的金色尘埃，雨后空气中的湿润气息，音乐中那个转瞬即逝的完美和弦。\n\n你活在当下的每一刻，不是因为你看不到未来，而是因为你比任何人都懂得：此刻的光影，转瞬即逝。你用你独特的方式为这个世界增添美——可能是一幅画、一首歌、一个温暖的举动，或仅仅是你安静存在的方式。\n\n你的温柔不是软弱，而是一种只有最勇敢的灵魂才能承载的深沉情感。在追求速度的宇宙中，你选择了深度。',
                 strengths: '捕捉转瞬之美的感知力 · 忠于自我的勇气 · 用美和行动默默感化他人的力量',
                 growth: '你内心的画作值得被更多人看见——分享你的美，不是炫耀，而是你能给这个世界最好的礼物。'
@@ -182,6 +217,7 @@ class PersonalityTest {
                 cosmic: '超新星猎手',
                 title: '极限体验的永恒征服者',
                 keywords: ['行动', '冒险', '敏锐', '魅力', '果敢'],
+                celebrities: ['丘吉尔', '项羽', '麦当娜'],
                 desc: '你是超新星般的存在——爆发力惊人，在行动中释放无限能量。你活在心跳加速的此刻，用敏锐的感官和闪电般的反应征服每一个挑战。冒险不是你的选择，而是你的本能。\n\n你天生就是为了在宇宙中最危险、最刺激的边界上起舞而生。当他人还在计算风险、权衡利弊时，你已经纵身跃入了星际的漩涡——并且总是能完美着陆。你的魅力如同超新星的光芒——强烈、直接、让人无法忽视。\n\n你用行动定义存在，用结果回应质疑。在你的字典里，「活着」和「全力以赴地活着」是同义词。',
                 strengths: '闪电般的临场反应力 · 化危机为机遇的冒险天赋 · 用行动感染他人的领袖魅力',
                 growth: '超新星的爆发之后是什么？当你学会在静止中积蓄力量时，你的下一次爆发将照亮整个星系。'
@@ -190,9 +226,111 @@ class PersonalityTest {
                 cosmic: '极光舞者',
                 title: '生命盛宴的耀眼主角',
                 keywords: ['活力', '魅力', '当下', '热情', '快乐'],
+                celebrities: ['玛丽莲·梦露', '成龙', '猫王'],
                 desc: '你是极光般的存在——绚烂、灵动、变幻莫测，让每一个目睹你的人都无法移开目光。你的热情如同恒星的核聚变，源源不断地释放着快乐和能量，感染着你触及的每一颗星辰。\n\n你不需要排练，因为你天生就是这个宇宙最耀眼的表演者。你的笑容、你的行动、你的存在本身就是一场流动的盛宴。你相信生命是一场盛大的庆典，而你的使命就是确保每个人都不会错过这场烟火。\n\n在你身边，连最暗淡的星辰都忍不住开始闪耀。你用最纯粹的方式诠释了一个真理：活着本身，就是最大的奇迹，值得用每一秒来庆祝。',
                 strengths: '将快乐传递给所有人的天赋 · 活在当下的极致感受力 · 用真诚打动人心的社交魅力',
                 growth: '舞台之外的你同样精彩——在聚光灯熄灭后，独处中的你，也值得被深深地爱。'
+            }
+        };
+
+        // ==================== Cognitive Functions ====================
+        // Function stack: [Dominant, Auxiliary, Tertiary, Inferior]
+        this.cognitiveFunctions = {
+            'INTJ': ['Ni', 'Te', 'Fi', 'Se'],
+            'INTP': ['Ti', 'Ne', 'Si', 'Fe'],
+            'ENTJ': ['Te', 'Ni', 'Se', 'Fi'],
+            'ENTP': ['Ne', 'Ti', 'Fe', 'Si'],
+            'INFJ': ['Ni', 'Fe', 'Ti', 'Se'],
+            'INFP': ['Fi', 'Ne', 'Si', 'Te'],
+            'ENFJ': ['Fe', 'Ni', 'Se', 'Ti'],
+            'ENFP': ['Ne', 'Fi', 'Te', 'Si'],
+            'ISTJ': ['Si', 'Te', 'Fi', 'Ne'],
+            'ISFJ': ['Si', 'Fe', 'Ti', 'Ne'],
+            'ESTJ': ['Te', 'Si', 'Ne', 'Fi'],
+            'ESFJ': ['Fe', 'Si', 'Ne', 'Ti'],
+            'ISTP': ['Ti', 'Se', 'Ni', 'Fe'],
+            'ISFP': ['Fi', 'Se', 'Ni', 'Te'],
+            'ESTP': ['Se', 'Ti', 'Fe', 'Ni'],
+            'ESFP': ['Se', 'Fi', 'Te', 'Ni'],
+        };
+
+        this.functionDescriptions = {
+            'Ni': { name: '内向直觉', short: '洞悉本质', desc: '穿透表象看到深层模式与未来走向，你的直觉是最强大的导航。' },
+            'Ne': { name: '外向直觉', short: '发散联想', desc: '在万物间发现隐藏的连接，不断衍生新的可能性和创意。' },
+            'Si': { name: '内向感觉', short: '经验印记', desc: '精确储存过往经验的细节，通过比对记忆来理解当下。' },
+            'Se': { name: '外向感觉', short: '即时感知', desc: '敏锐捕捉当下环境的每一个细节，在行动中找到最佳反应。' },
+            'Ti': { name: '内向思维', short: '逻辑解构', desc: '在内心构建精密的逻辑框架，追求对原理的深度理解。' },
+            'Te': { name: '外向思维', short: '系统执行', desc: '以效率和结果为导向，善于组织资源、推动执行。' },
+            'Fi': { name: '内向情感', short: '价值罗盘', desc: '拥有坚定的内在价值观和真实性追求，忠于自我的信念。' },
+            'Fe': { name: '外向情感', short: '情感共振', desc: '天然感知群体的情绪氛围，善于创造和谐、连接他人。' }
+        };
+
+        this.functionRoles = ['主导功能', '辅助功能', '第三功能', '劣势功能'];
+
+        // ==================== Enneagram Life Area Insights ====================
+        this.enneagramLifeInsights = {
+            1: {
+                relationship: '你在关系中重视正直和公平，对伴侣和朋友都有较高的期望。当你学会放下"应该"的标准，关系中会多出许多自在和温暖。',
+                work: '你是天生的品质守护者，追求卓越和精确。在任何需要严谨和责任心的领域，你都能成为最可靠的支柱。',
+                stress: '当现实偏离"正确"的标准时，内在的批评声音会不断放大。过度的自我要求是你最隐蔽的压力源。',
+                integration: 7,
+                growthTip: '允许自己体验纯粹的快乐和放松——完美不是幸福的前提。'
+            },
+            2: {
+                relationship: '你天生懂得付出和关怀，是关系中最温暖的存在。但请留意是否在用"给予"来换取"被需要"的感觉。',
+                work: '你在需要协作和人际连接的环境中如鱼得水，天生的洞察力让你成为团队中不可或缺的粘合剂。',
+                stress: '当你的付出没有被看见或回应时，疲惫和委屈会悄然积累。你的压力往往来自忽略了自己的需求。',
+                integration: 4,
+                growthTip: '学会关注自己的真实感受和需求——照顾好自己，才能持续地温暖他人。'
+            },
+            3: {
+                relationship: '你在关系中展现出最好的一面，善于营造积极向上的氛围。挑战在于卸下成就者的面具，让他人看到真实的你。',
+                work: '你是职场中的行动派，目标明确、效率极高。你天生懂得如何展现价值、赢得认可，是项目推进的最强引擎。',
+                stress: '当你感觉自己"不够好"或成就受挫时，焦虑会迅速升温。你的压力往往与自我价值的证明绑定在一起。',
+                integration: 6,
+                growthTip: '尝试在"做"之外找到存在的价值——你的价值不等于你的成就。'
+            },
+            4: {
+                relationship: '你渴望深度的灵魂连接，对表面的社交缺乏耐心。你在关系中追求真实和独特，愿意与伴侣一起探索情感的深海。',
+                work: '你在创意性和需要个人表达的工作中最能绽放。你的独特视角和情感深度是无法被替代的竞争力。',
+                stress: '当你觉得不被理解或失去独特性时，会陷入情绪的漩涡。你的敏感是天赋，但也需要学会不被情绪淹没。',
+                integration: 1,
+                growthTip: '用行动和纪律为你的情感找到出口——把感受转化为创作，而非沉溺其中。'
+            },
+            5: {
+                relationship: '你珍视关系中的独立空间，倾向于用思考而非情感来处理亲密。当你学会适度敞开，会发现连接并不会耗尽你的能量。',
+                work: '你是深度研究和独立思考的大师。在需要专业知识和分析能力的领域，你的价值不可估量。',
+                stress: '信息和精力的"不够用"是你的核心焦虑。当你感觉被外界过度索取时，会本能地退缩到内心的堡垒。',
+                integration: 8,
+                growthTip: '走出思维的舒适区，用行动和身体去感受世界——知识加上体验，才是真正的智慧。'
+            },
+            6: {
+                relationship: '你是关系中最忠诚的伙伴，一旦建立信任就会全力守护。但内心的不安全感有时会让你过度质疑和试探。',
+                work: '你是团队中最可靠的风险评估者和问题预防者，善于在他人忽视的角落发现潜在隐患。',
+                stress: '不确定性是你最大的压力源。当无法预测结果时，你的焦虑系统会全面启动，陷入反复推演的循环。',
+                integration: 9,
+                growthTip: '练习信任——信任自己的判断力，信任生活的善意。不是所有的不确定性都是危险。'
+            },
+            7: {
+                relationship: '你为关系带来欢乐和活力，是最有趣的伴侣。挑战在于当关系进入深水区时，你是否愿意留下来面对不舒适的情绪。',
+                work: '你在充满变化和创新的环境中最能发光。你的创意激发力和乐观精神让你成为团队中最受欢迎的点子制造机。',
+                stress: '被束缚和面对痛苦是你最想逃避的事。你的压力策略往往是"转移注意力"——用新刺激来掩盖内在的不安。',
+                integration: 5,
+                growthTip: '学会在一件事上深入停留——深度的满足远比广度的刺激更持久。'
+            },
+            8: {
+                relationship: '你在关系中展现出保护者的力量，愿意为重要的人撑起一片天。学会展示脆弱不是示弱，而是邀请对方进入你的内心。',
+                work: '你是天生的决策者和领导者，在需要魄力和果断的场景中无可替代。你的气场能让一盘散沙迅速凝聚成战斗力量。',
+                stress: '失去掌控感和被他人操控是你的核心恐惧。当你感觉不被尊重时，力量会瞬间转化为攻击性的自我保护。',
+                integration: 2,
+                growthTip: '真正的力量不只是保护自己——当你学会用温柔去连接，你的影响力会变得更加深远。'
+            },
+            9: {
+                relationship: '你是关系中最好的倾听者，善于创造和谐舒适的氛围。但要注意不要为了维持和平而隐藏了自己真实的需求和意见。',
+                work: '你是团队冲突的天然调解者，善于看到各方立场的价值。在需要耐心和包容的环境中，你的稳定性是无价的。',
+                stress: '被迫选边站和面对冲突是你最大的压力源。你的应对方式通常是"麻痹"——用惯性和拖延来回避不舒服的决定。',
+                integration: 3,
+                growthTip: '你的声音和需求同样重要——为自己站出来不是制造冲突，而是在创造更真实的和谐。'
             }
         };
 
@@ -345,12 +483,50 @@ class PersonalityTest {
             tf: { pos: 'T 思考', neg: 'F 情感' },
             jp: { pos: 'J 判断', neg: 'P 感知' }
         };
+
+        // Quick mode: 15 精选题，每个MBTI维度3-4题，覆盖核心Big5和九型
+        // 选取原则：每题权重高、覆盖面广
+        this.quickQuestionIndices = [
+            0,   // ei+ex (聚会精力充沛)
+            10,  // ei-ex (独处)
+            1,   // sn-o (直觉vs事实)
+            8,   // sn-o (探索新体验)
+            2,   // tf-a (逻辑优先)
+            7,   // tf-a (感同身受)
+            3,   // jp+c (提前计划)
+            22,  // jp-o (灵活应变)
+            4,   // n (焦虑)
+            15,  // n- (内心平静)
+            5,   // ei+e8 (领导者)
+            12,  // e3 (追求成就)
+            27,  // tf-a+e2 (牺牲时间帮人)
+            34,  // tf-a (优先考虑人的影响)
+            40,  // n-e8 (正面迎击挑战)
+        ];
+
+        // 阶段揭晓文案（快速模式每5题，深度模式每10题）
+        this.milestoneMessages = {
+            quick: [
+                { at: 5, text: '你的能量方向正在浮现…', dim: 'E/I' },
+                { at: 10, text: '思维与感知模式逐渐清晰…', dim: 'S/N · T/F' },
+                { at: 15, text: '灵魂频率即将锁定…', dim: '最终解码' },
+            ],
+            deep: [
+                { at: 10, text: '外向指数正在浮现…', dim: 'E/I 维度' },
+                { at: 20, text: '感知模式逐渐清晰…', dim: 'S/N 维度' },
+                { at: 30, text: '决策风格正在显形…', dim: 'T/F 维度' },
+                { at: 40, text: '生活方式渐露端倪…', dim: 'J/P 维度' },
+                { at: 50, text: '灵魂频率即将锁定…', dim: '最终解码' },
+            ]
+        };
     }
 
     /**
-     * Calculate all results from answers array (1-5 values, 50 items)
+     * Calculate all results from answers array
+     * @param {number[]} answers - 1-5 values
+     * @param {number[]|null} questionIndices - if provided, maps answers[i] to questions[questionIndices[i]]
      */
-    calculateResults(answers) {
+    calculateResults(answers, questionIndices = null) {
         const mbtiScores = { ei: 0, sn: 0, tf: 0, jp: 0 };
         const big5Scores = { o: 0, c: 0, ex: 0, a: 0, n: 0 };
         const enneagramScores = { e1: 0, e2: 0, e3: 0, e4: 0, e5: 0, e6: 0, e7: 0, e8: 0, e9: 0 };
@@ -358,11 +534,9 @@ class PersonalityTest {
         const mbtiMax = { ei: 0, sn: 0, tf: 0, jp: 0 };
         const big5Max = { o: 0, c: 0, ex: 0, a: 0, n: 0 };
 
-        this.questions.forEach((q, i) => {
-            const answer = answers[i];
+        const processQuestion = (q, answer) => {
             if (answer == null) return;
             const centered = answer - 3;
-
             Object.entries(q.w).forEach(([key, weight]) => {
                 if (key in mbtiScores) {
                     mbtiScores[key] += centered * weight;
@@ -374,7 +548,19 @@ class PersonalityTest {
                     enneagramScores[key] += answer * weight;
                 }
             });
-        });
+        };
+
+        if (questionIndices) {
+            // Quick mode: answers[i] corresponds to questions[questionIndices[i]]
+            questionIndices.forEach((qIdx, i) => {
+                processQuestion(this.questions[qIdx], answers[i]);
+            });
+        } else {
+            // Full mode: answers[i] corresponds to questions[i]
+            this.questions.forEach((q, i) => {
+                processQuestion(q, answers[i]);
+            });
+        }
 
         const mbtiLetters = [
             mbtiScores.ei >= 0 ? 'E' : 'I',
@@ -500,5 +686,426 @@ class PersonalityTest {
         text += `这就是你——一个无法被任何单一标签定义的宇宙存在。你的复杂性不是矛盾，而是丰富；你的独特不是偏差，而是这个宇宙中最珍贵的变量。`;
 
         return text;
+    }
+
+    // ==================== LIFE AREA ANALYSIS ====================
+
+    generateLifeAreaAnalysis(results) {
+        const mbti = results.mbti;
+        const b5 = results.big5;
+        const enn = results.enneagram;
+        const type = mbti.type;
+        const dims = mbti.dimensions;
+        const pcts = b5.percentages;
+        const funcs = this.cognitiveFunctions[type];
+        const ennInsight = this.enneagramLifeInsights[enn.type];
+
+        return {
+            positioning: this._genPositioning(mbti, enn),
+            cognitiveStyle: this._genCognitiveStyle(funcs, pcts),
+            relationships: this._genRelationships(type, pcts, ennInsight),
+            workEnergy: this._genWorkEnergy(type, pcts, ennInsight),
+            stressEmotions: this._genStressEmotions(pcts, ennInsight),
+            growthMap: this._genGrowthMap(funcs, pcts, ennInsight, enn)
+        };
+    }
+
+    _genPositioning(mbti, enn) {
+        return `${mbti.cosmic}（${mbti.type}）与${enn.cosmic}（${enn.name}）的交汇——你是一个以「${enn.core}」为深层驱动的${mbti.title}。`;
+    }
+
+    _genCognitiveStyle(funcs, pcts) {
+        const dom = this.functionDescriptions[funcs[0]];
+        const aux = this.functionDescriptions[funcs[1]];
+        const tert = this.functionDescriptions[funcs[2]];
+
+        let text = `§认知引擎§\n你的主导认知功能是「${dom.name}」——${dom.desc}在它的引导下，辅助功能「${aux.name}」为你提供平衡——${aux.desc}`;
+        text += '\n\n';
+
+        text += `你的第三功能「${tert.name}」在放松和压力时交替浮现，为你的认知增添了额外维度。`;
+        text += '\n\n';
+
+        // Openness dimension
+        text += '§思维倾向§\n';
+        if (pcts.o >= 65) {
+            text += '你对新知识和新体验有着极强的渴望，思维活跃而开放，善于在不同领域间建立创造性的连接。';
+        } else if (pcts.o <= 35) {
+            text += '你更倾向于在熟悉的领域深耕，比起追逐新奇，你更看重深度和确定性。这种专注让你在专业领域建立起难以撼动的优势。';
+        } else {
+            text += '你在探索未知和深耕已知之间保持着灵活的切换——既不排斥新事物，也不忽视经验的价值。';
+        }
+
+        // Learning style based on S/N + openness
+        text += '\n\n§学习方式§\n';
+        const isN = funcs[0].includes('N') || funcs[1].includes('N');
+        const isS = funcs[0].includes('S') || funcs[1].includes('S');
+        if (isN && pcts.o >= 50) {
+            text += '你的学习方式偏向概念驱动——先理解"为什么"和整体框架，再关注具体细节。你善于在不同知识领域间发现意外的连接。';
+        } else if (isS && pcts.o < 50) {
+            text += '你的学习方式偏向经验驱动——通过实践、案例和循序渐进的步骤来掌握新知。你擅长将理论落地为可操作的方法。';
+        } else if (isN) {
+            text += '你的学习兼具理论深度和实践关注——既能理解抽象概念，也愿意在具体场景中验证想法。';
+        } else {
+            text += '你的学习强调亲身体验和实际应用——动手尝试比纯粹的理论阅读更能帮助你消化新知识。';
+        }
+
+        return text;
+    }
+
+    _genRelationships(type, pcts, ennInsight) {
+        let text = '§连接方式§\n';
+
+        // Connection style: E/I + Extraversion
+        if (type[0] === 'E' && pcts.ex >= 55) {
+            text += '你在社交中获得能量，天然地成为人际关系中的主动连接者。你的热情和开放让人容易亲近，在群体中你往往是气氛的催化剂。';
+        } else if (type[0] === 'I' && pcts.ex <= 45) {
+            text += '你更珍视少而精的深度关系，比起广泛社交，一对一的真诚对话更能让你感到满足。你的交友圈虽小，但每一段关系都经得起时间考验。';
+        } else {
+            text += '你在社交和独处之间保持着个人节奏——需要连接时你能自如地融入人群，需要空间时你也能坦然地退回内心。';
+        }
+
+        text += '\n\n§共情风格§\n';
+
+        // Empathy style: T/F + Agreeableness
+        if (type[2] === 'F' && pcts.a >= 55) {
+            text += '你天生的共情力让你在关系中扮演情感支持者的角色。你能敏锐地觉察他人的情绪变化，用温暖的回应让对方感到被理解和珍视。';
+        } else if (type[2] === 'T' && pcts.a <= 45) {
+            text += '在关系中，你更倾向于以理性和直接的方式交流。你的坦诚有时会被误读为冷淡，但了解你的人知道，这恰恰是你最真实的关怀方式。';
+        } else {
+            text += '你在理性和感性之间保持着独特的平衡——既能用逻辑帮他人厘清困境，也能在需要时提供情感上的温暖支持。';
+        }
+
+        // Conflict resolution style: T/F + J/P
+        text += '\n\n§冲突应对§\n';
+        if (type[2] === 'T' && type[3] === 'J') {
+            text += '面对冲突，你倾向于直面问题、就事论事，追求明确的解决方案。你不喜欢拖延和模糊，宁可短暂的不舒适也要把事情说清楚。';
+        } else if (type[2] === 'F' && type[3] === 'J') {
+            text += '面对冲突，你会优先考虑对关系的影响，努力寻找让所有人都能接受的方案。你擅长在坚持原则和维护和谐之间找到平衡点。';
+        } else if (type[2] === 'T' && type[3] === 'P') {
+            text += '面对冲突，你保持理性冷静的分析态度，但不急于下定论。你更倾向于退一步观察全局，等待更多信息后再做判断。';
+        } else {
+            text += '面对冲突，你的第一反应是理解各方感受，然后给所有人空间去消化情绪。你更相信时间和真诚的对话能化解大多数矛盾。';
+        }
+
+        text += '\n\n§九型关系洞察§\n' + ennInsight.relationship;
+
+        return text;
+    }
+
+    _genWorkEnergy(type, pcts, ennInsight) {
+        let text = '§工作节奏§\n';
+
+        // Work structure: J/P + Conscientiousness
+        if (type[3] === 'J' && pcts.c >= 55) {
+            text += '你是天生的计划执行者——清晰的目标、有序的步骤、可控的进度是你工作的基石。你的自律和可靠性让你在任何团队中都是定心丸。';
+        } else if (type[3] === 'P' && pcts.c <= 45) {
+            text += '你在灵活和变化中找到最佳工作状态。截止日期和固定流程会让你感到窒息，而自由度和即兴空间才是你创造力的温床。';
+        } else {
+            text += '你能在结构化和灵活性之间自如切换——有计划时能严格执行，需要应变时也不会手足无措。';
+        }
+
+        text += '\n\n§能量来源§\n';
+
+        // Energy source: E/I
+        if (type[0] === 'E') {
+            text += '协作和交流是你的能量源泉。头脑风暴、团队讨论、社交场合都能激活你的最佳状态。长时间独自工作可能会让你感到能量下降。';
+        } else {
+            text += '深度独立思考是你的核心工作模式。你需要不被打扰的专注时间来产出最高质量的成果。频繁的会议和社交会消耗你的能量储备。';
+        }
+
+        // Team role: based on MBTI temperament
+        text += '\n\n§团队角色§\n';
+        const isNT = type[1] === 'N' && type[2] === 'T';
+        const isNF = type[1] === 'N' && type[2] === 'F';
+        const isSJ = type[1] === 'S' && type[3] === 'J';
+        if (isNT) {
+            text += '在团队中，你是战略架构师的角色——擅长看到系统的全局、设计解决方案、推动创新。你的价值在于把复杂问题拆解为清晰的路径。';
+        } else if (isNF) {
+            text += '在团队中，你是愿景催化者的角色——擅长激发团队热情、促进成长、寻找深层意义。你的价值在于把「事」变成「人」愿意全力以赴的「使命」。';
+        } else if (isSJ) {
+            text += '在团队中，你是稳定运营者的角色——擅长维护流程、确保质量、落地执行。你的价值在于把好的想法变成可靠、可重复的现实成果。';
+        } else {
+            text += '在团队中，你是灵活问题解决者的角色——擅长即时响应、适应变化、在实践中找到最佳方案。你的价值在于当计划遇到现实，你总能找到出路。';
+        }
+
+        text += '\n\n§九型工作洞察§\n' + ennInsight.work;
+
+        return text;
+    }
+
+    _genStressEmotions(pcts, ennInsight) {
+        let text = '§情绪模式§\n';
+
+        // Emotional pattern: Big5 Neuroticism
+        if (pcts.n >= 65) {
+            text += '你的情绪感知系统极其灵敏——这意味着你能体验到极深的喜悦和共鸣，但也更容易被焦虑和忧虑所触动。这种敏感既赋予你对生命的深度体验，也需要你有意识地管理情绪能量。';
+        } else if (pcts.n <= 35) {
+            text += '你拥有令人羡慕的情绪稳定性——在他人被情绪风暴席卷时，你依然能保持清醒的判断力。这种内在的平静不是冷漠，而是你天生的心理韧性。';
+        } else {
+            text += '你的情绪弹性处于健康的中间地带——有足够的敏感去体验生命的丰富层次，又有足够的韧性不被波动所吞没。';
+        }
+
+        text += '\n\n§压力触发§\n' + ennInsight.stress;
+
+        // Coping strategy suggestion based on multiple dimensions
+        text += '\n\n§疗愈方式§\n';
+        if (pcts.ex >= 55 && pcts.n >= 50) {
+            text += '适合你的减压方式：与信任的朋友倾诉、参加社交活动转换心情、通过运动释放积压的情绪能量。你在连接中获得疗愈。';
+        } else if (pcts.ex < 45 && pcts.n >= 50) {
+            text += '适合你的减压方式：独处中的深度放松——写日记、冥想、散步、阅读。给自己不被打扰的时间和空间来整理内心。';
+        } else if (pcts.o >= 55 && pcts.n < 50) {
+            text += '你的情绪管理已经相当成熟。保持探索和创造的习惯——它们不仅是你的爱好，也是你天然的情绪调节器。';
+        } else {
+            text += '你天然具备稳定的情绪基底。在少数压力来袭时，回归日常节奏和熟悉的环境就是你最好的恢复策略。';
+        }
+
+        return text;
+    }
+
+    _genGrowthMap(funcs, pcts, ennInsight, enn) {
+        const inferior = this.functionDescriptions[funcs[3]];
+        const integration = ennInsight.integration;
+        const integrationName = this.enneagramTypes[integration].name;
+        const integrationCosmic = this.enneagramTypes[integration].cosmic;
+
+        let overview = `§成长空间§\n你的劣势功能「${inferior.name}」是你最大的成长空间——有意识地锻炼这个维度，能带来突破性的人格整合。`;
+        overview += `\n\n§进化方向§\n在九型的成长方向上，向${integration}号「${integrationCosmic}·${integrationName}」整合是你的进化路径——${ennInsight.growthTip}`;
+
+        // Cognitive growth: specific exercises for inferior function
+        let cognitive = `发展「${inferior.name}·${inferior.short}」：${inferior.desc}`;
+        const infCode = funcs[3];
+        const exercises = {
+            'Ni': '练习：每天花5分钟安静地想象一件事的长期走向，不急于行动，先让直觉浮现。',
+            'Ne': '练习：每周尝试一种全新的事物——新的路线、新的食物、新的话题，打破思维惯性。',
+            'Si': '练习：建立一个小的日常仪式（如晨间日记），通过重复和回顾来培养对经验的觉察。',
+            'Se': '练习：每天有意识地感受五感——注意食物的味道、空气的温度、脚步的触感，活在当下这一刻。',
+            'Ti': '练习：遇到问题时，先独自分析"为什么"再寻求他人意见，锻炼独立逻辑思考的肌肉。',
+            'Te': '练习：给自己设定一个小目标和截止日期，体验"完成"本身带来的满足感。',
+            'Fi': '练习：每天问自己"我现在真正想要什么？"，不考虑他人期望，只听自己内心的声音。',
+            'Fe': '练习：主动关心一个人的感受——不是解决问题，只是真诚地问"你还好吗？"并倾听。'
+        };
+        cognitive += '\n' + (exercises[infCode] || '');
+
+        // Big5 development suggestion
+        const sortedB5 = Object.entries(pcts).sort((a, b) => Math.abs(b[1] - 50) - Math.abs(a[1] - 50));
+        const most = sortedB5[0];
+        const extremeDim = this.big5Dimensions[most[0]];
+        let actions;
+        if (most[1] > 75) {
+            actions = `你在${extremeDim.name}上的得分非常突出。试着在保持优势的同时，偶尔体验对立面的视角——平衡会带来新的力量。`;
+        } else if (most[1] < 25) {
+            actions = `你在${extremeDim.name}上有很大的提升空间。尝试一些小的突破——每一步都在拓展你的舒适区。`;
+        } else {
+            actions = '你的各项人格维度相对均衡。把精力放在发挥核心优势上，让你的独特性成为你最大的竞争力。';
+        }
+
+        return { overview, cognitive, actions };
+    }
+
+    // ==================== DUAL MODE COMPATIBILITY ====================
+
+    generateCompatibility(resultsA, resultsB) {
+        const a = resultsA, b = resultsB;
+
+        // --- MBTI dimension similarity (40% weight) ---
+        const mbtiDims = ['ei', 'sn', 'tf', 'jp'];
+        let mbtiDist = 0;
+        mbtiDims.forEach(dim => {
+            const diff = a.mbti.dimensions[dim] - b.mbti.dimensions[dim];
+            mbtiDist += diff * diff;
+        });
+        // Max distance: sqrt(4 * 90^2) ≈ 180
+        const mbtiSimilarity = 1 - Math.sqrt(mbtiDist) / 180;
+
+        // --- Big Five similarity (30% weight) ---
+        const b5Dims = ['o', 'c', 'ex', 'a', 'n'];
+        let b5TotalDiff = 0;
+        const b5Compare = {};
+        b5Dims.forEach(dim => {
+            const diff = Math.abs(a.big5.percentages[dim] - b.big5.percentages[dim]);
+            b5TotalDiff += diff;
+            b5Compare[dim] = {
+                a: a.big5.percentages[dim],
+                b: b.big5.percentages[dim],
+                diff,
+                name: this.big5Dimensions[dim].name
+            };
+        });
+        // Max total diff: 5 * 90 = 450
+        const b5Similarity = 1 - b5TotalDiff / 450;
+
+        // --- Enneagram dynamics (20% weight) ---
+        const ennA = a.enneagram.type, ennB = b.enneagram.type;
+        let ennScore;
+        let ennRelation;
+        if (ennA === ennB) {
+            ennScore = 0.9;
+            ennRelation = '镜像共鸣';
+        } else if (Math.abs(ennA - ennB) === 1 || (ennA === 1 && ennB === 9) || (ennA === 9 && ennB === 1)) {
+            ennScore = 0.85;
+            ennRelation = '相邻互补';
+        } else {
+            // Complementary pairs: 1-7, 2-4, 3-6, 5-8, etc.
+            const complementPairs = [[1,7],[2,4],[3,6],[5,8],[4,9],[1,2],[5,7],[3,9],[6,8]];
+            const isComplement = complementPairs.some(([x, y]) =>
+                (ennA === x && ennB === y) || (ennA === y && ennB === x));
+            if (isComplement) {
+                ennScore = 0.8;
+                ennRelation = '能量互补';
+            } else {
+                ennScore = 0.6 + Math.random() * 0.15;
+                ennRelation = '引力交汇';
+            }
+        }
+
+        // --- Keyword overlap (10% weight) ---
+        const kwA = new Set([...(a.mbti.keywords || []), ...(a.enneagram.keywords || [])]);
+        const kwB = new Set([...(b.mbti.keywords || []), ...(b.enneagram.keywords || [])]);
+        let overlap = 0;
+        kwA.forEach(k => { if (kwB.has(k)) overlap++; });
+        const kwSimilarity = kwA.size + kwB.size > 0 ? (overlap * 2) / (kwA.size + kwB.size) : 0.5;
+
+        // --- Weighted total ---
+        const rawScore = mbtiSimilarity * 0.4 + b5Similarity * 0.3 + ennScore * 0.2 + kwSimilarity * 0.1;
+        // Map to 35-98 range (never too low, never 100)
+        const score = Math.round(35 + rawScore * 63);
+
+        // --- Match level ---
+        let level, levelDesc;
+        if (score >= 90) { level = '星际灵魂伴侣'; levelDesc = '你们的灵魂频率近乎完美共振——在无尽的宇宙中，这种契合万中无一。'; }
+        else if (score >= 75) { level = '星云共振体'; levelDesc = '你们的能量场高度和谐，彼此靠近时能激发出最闪耀的星光。'; }
+        else if (score >= 60) { level = '平行宇宙旅伴'; levelDesc = '你们在不同的轨道上运行，却总能在关键时刻交汇——这是宇宙最美妙的设计。'; }
+        else if (score >= 45) { level = '互补能量场'; levelDesc = '你们的差异不是距离，而是引力——正是这些不同让你们能互相补全彼此的宇宙拼图。'; }
+        else { level = '异极磁场'; levelDesc = '你们像宇宙的两极，截然不同却互相吸引——正是最大的差异造就最意想不到的火花。'; }
+
+        // --- Narrative ---
+        const sameLetters = a.mbti.type.split('').filter((c, i) => c === b.mbti.type[i]).length;
+        const narrative = this._generateMatchNarrative(a, b, score, sameLetters, ennRelation, b5Compare);
+
+        return {
+            score,
+            level,
+            levelDesc,
+            mbtiMatch: {
+                typeA: a.mbti.type,
+                typeB: b.mbti.type,
+                cosmicA: a.mbti.cosmic,
+                cosmicB: b.mbti.cosmic,
+                sameLetters,
+                dimsA: a.mbti.dimensions,
+                dimsB: b.mbti.dimensions
+            },
+            big5Compare: b5Compare,
+            ennDynamics: {
+                typeA: a.enneagram.type,
+                typeB: b.enneagram.type,
+                cosmicA: a.enneagram.cosmic,
+                cosmicB: b.enneagram.cosmic,
+                nameA: a.enneagram.name,
+                nameB: b.enneagram.name,
+                relation: ennRelation
+            },
+            narrative
+        };
+    }
+
+    _generateMatchNarrative(a, b, score, sameLetters, ennRelation, b5Compare) {
+        let text = '';
+
+        // Opening
+        if (sameLetters >= 3) {
+            text += `你们拥有惊人的灵魂相似度——在MBTI的四个维度中，有${sameLetters}个完全一致。${a.mbti.cosmic}与${b.mbti.cosmic}，如同夜空中的双子星，彼此映照。\n\n`;
+        } else if (sameLetters >= 2) {
+            text += `${a.mbti.cosmic}与${b.mbti.cosmic}的相遇，是宇宙中一种精妙的平衡——你们在${sameLetters}个核心维度上共鸣，又在差异中找到了互补的引力。\n\n`;
+        } else {
+            text += `${a.mbti.cosmic}与${b.mbti.cosmic}——两个截然不同的宇宙存在，却因差异而产生了最强烈的引力场。你们的不同不是冲突，而是拓展彼此视野的望远镜。\n\n`;
+        }
+
+        // Big Five most similar and most different
+        const b5Sorted = Object.entries(b5Compare).sort((x, y) => x[1].diff - y[1].diff);
+        const mostSimilar = b5Sorted[0][1];
+        const mostDifferent = b5Sorted[4][1];
+
+        text += `在人格的深层频谱上，你们在「${mostSimilar.name}」维度的共振最为强烈——这意味着你们对这个世界有着相似的感知方式。`;
+        if (mostDifferent.diff > 30) {
+            text += `而在「${mostDifferent.name}」维度上，你们展现出独特的互补性，这种差异正是你们能互相学习和成长的空间。\n\n`;
+        } else {
+            text += `你们在各个维度上的接近程度令人惊叹。\n\n`;
+        }
+
+        // Enneagram
+        text += `在九型人格的深渊中，${a.enneagram.cosmic}与${b.enneagram.cosmic}形成了「${ennRelation}」的关系——`;
+        if (ennRelation === '镜像共鸣') {
+            text += `你们共享相同的核心驱动力，能在最深的层面上理解彼此。\n\n`;
+        } else if (ennRelation === '相邻互补') {
+            text += `你们的灵魂在光谱上紧紧相邻，既懂得对方的语言，又能带来新的视角。\n\n`;
+        } else {
+            text += `不同的核心驱动力让你们的关系充满了探索的可能性。\n\n`;
+        }
+
+        // Closing
+        text += `你们的灵魂共振指数为 ${score}——在这个浩瀚的宇宙中，每一次相遇都不是偶然。珍惜这份独特的连接，因为它正是星尘赠予你们的礼物。`;
+
+        return text;
+    }
+
+    // ==================== REMOTE MATCH ENCODING ====================
+
+    /**
+     * Encode test results + name into a compact URL-safe string.
+     * Format: name|INTJ|ei,sn,tf,jp|o,c,ex,a,n|ennType,wing
+     * Then base64 encoded.
+     */
+    encodeResultsForShare(results, name) {
+        const d = results.mbti.dimensions;
+        const b = results.big5.percentages;
+        const parts = [
+            name || '神秘人',
+            results.mbti.type,
+            [d.ei, d.sn, d.tf, d.jp].join(','),
+            [b.o, b.c, b.ex, b.a, b.n].join(','),
+            results.enneagram.type + ',' + results.enneagram.wing
+        ];
+        return btoa(encodeURIComponent(parts.join('|')));
+    }
+
+    /**
+     * Decode a shared string back into a results-like object
+     * that generateCompatibility can use.
+     */
+    decodeSharedResults(encoded) {
+        try {
+            const raw = decodeURIComponent(atob(encoded));
+            const [name, mbtiType, mbtiDimsStr, big5Str, ennStr] = raw.split('|');
+            const [ei, sn, tf, jp] = mbtiDimsStr.split(',').map(Number);
+            const [o, c, ex, a, n] = big5Str.split(',').map(Number);
+            const [ennType, ennWing] = ennStr.split(',').map(Number);
+
+            // Reconstruct full results object from compact data
+            return {
+                name,
+                results: {
+                    mbti: {
+                        type: mbtiType,
+                        ...this.mbtiTypes[mbtiType],
+                        dimensions: { ei, sn, tf, jp },
+                        scores: {} // not needed for compatibility
+                    },
+                    big5: {
+                        percentages: { o, c, ex, a, n },
+                        dimensions: this.big5Dimensions
+                    },
+                    enneagram: {
+                        type: ennType,
+                        wing: ennWing,
+                        ...this.enneagramTypes[ennType],
+                        scores: {}
+                    }
+                }
+            };
+        } catch (e) {
+            console.error('Failed to decode shared results:', e);
+            return null;
+        }
     }
 }

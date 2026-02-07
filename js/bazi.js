@@ -83,20 +83,45 @@ class BaziCalculator {
             '水': { generates: '木', overcomes: '火', generatedBy: '金', overcomedBy: '土' }
         };
 
-        // Zodiac trait summaries
+        // Zodiac trait summaries (expanded with detailed descriptions)
         this.zodiacTraits = {
-            '鼠': '机敏灵巧，洞察先机',
-            '牛': '勤恳踏实，坚韧不拔',
-            '虎': '勇猛无畏，王者之气',
-            '兔': '温雅从容，心思细腻',
-            '龙': '气吞山河，志存高远',
-            '蛇': '深沉睿智，洞幽察微',
-            '马': '奔放自由，热情如火',
-            '羊': '温良恭俭，艺术天赋',
-            '猴': '聪慧多变，机智过人',
-            '鸡': '精明干练，一丝不苟',
-            '狗': '忠诚正直，侠义心肠',
-            '猪': '宽厚豁达，福泽深厚'
+            '鼠': '机敏灵巧，洞察先机。鼠年生人天性聪颖敏捷，善于在复杂局势中捕捉稍纵即逝的机遇，直觉过人，适应力极强，能在逆境中灵活求变，化险为夷。',
+            '牛': '勤恳踏实，坚韧不拔。牛年生人性情稳重厚实，做事脚踏实地，从不走捷径。拥有超乎常人的耐力和毅力，一旦认定目标便坚定不移，终成大器。',
+            '虎': '勇猛无畏，王者之气。虎年生人天生霸气外露，敢于挑战权威和未知。行事果决、魄力十足，具有强大的感召力和领导力，在人群中自然而然成为核心。',
+            '兔': '温雅从容，心思细腻。兔年生人气质优雅从容，待人温和有礼，善于洞察人心微妙之处。天赋审美能力卓越，内心丰富而敏感，重视和谐与美好。',
+            '龙': '气吞山河，志存高远。龙年生人气场恢弘壮阔，胸怀远大理想，敢于追逐常人不敢想的梦。精力充沛、才华横溢，命中自带贵气，注定不凡。',
+            '蛇': '深沉睿智，洞幽察微。蛇年生人外冷内热，思虑缜密深远，善于洞察事物本质。拥有敏锐的第六感和过人的分析力，外表从容内心丰富，智慧非凡。',
+            '马': '奔放自由，热情如火。马年生人性格热烈奔放，崇尚自由与独立，浑身散发着勃勃生机。行动力极强、富有冒险精神，渴望广阔天地与无限可能。',
+            '羊': '温良恭俭，艺术天赋。羊年生人心地善良温润，待人宽厚谦和，拥有与生俱来的艺术感知力。想象力丰富，感受力细腻，擅长用创造力装点生活。',
+            '猴': '聪慧多变，机智过人。猴年生人才思敏捷、灵活多变，擅长在复杂环境中游刃有余。天生的创新者和问题解决者，幽默风趣，社交能力出众。',
+            '鸡': '精明干练，一丝不苟。鸡年生人做事精准高效，注重细节，追求完美。观察力敏锐、条理分明，有强烈的责任感和上进心，勤勉不懈终有成就。',
+            '狗': '忠诚正直，侠义心肠。狗年生人重情重义、光明磊落，对朋友和家人忠诚不渝。内心有着坚定的道德准则和强烈的正义感，是最值得信赖的伙伴。',
+            '猪': '宽厚豁达，福泽深厚。猪年生人心胸宽广、乐天知命，待人真诚热忱，不计较得失。天生带有福气和好运，善于享受生活之美，人缘极佳。'
+        };
+
+        // Branch → Five Element mapping for zodiac
+        this.zodiacElements = {
+            '鼠': '水', '牛': '土', '虎': '木', '兔': '木',
+            '龙': '土', '蛇': '火', '马': '火', '羊': '土',
+            '猴': '金', '鸡': '金', '狗': '土', '猪': '水'
+        };
+
+        // Five element relationships
+        this.elementRelations = {
+            same: '比和',
+            generates: '相生',
+            generatedBy: '相生',
+            overcomes: '相克',
+            overcomedBy: '相克'
+        };
+
+        // Complementary advice for weak elements
+        this.complementAdvice = {
+            '木': { color: '绿色、青色', direction: '东方', activity: '亲近自然、园艺种植、晨间散步', season: '春季' },
+            '火': { color: '红色、紫色', direction: '南方', activity: '阳光运动、社交聚会、艺术创作', season: '夏季' },
+            '土': { color: '黄色、棕色', direction: '中央', activity: '冥想静坐、陶艺手作、登山远足', season: '四季之交' },
+            '金': { color: '白色、金色', direction: '西方', activity: '音乐欣赏、精密手工、呼吸练习', season: '秋季' },
+            '水': { color: '黑色、深蓝', direction: '北方', activity: '游泳潜水、阅读思考、夜间冥想', season: '冬季' }
         };
     }
 
@@ -180,6 +205,8 @@ class BaziCalculator {
 
         result.elementCounts = this.analyzeElements(result);
         result.wuxingInsight = this.getWuxingInsight(mainElement, result.elementCounts);
+        result.stemZodiacSynthesis = this.getStemZodiacSynthesis(dayMaster, yearPillar.zodiac);
+        result.complementaryAdvice = this.getComplementaryAdvice(mainElement, result.elementCounts);
 
         return result;
     }
@@ -231,6 +258,48 @@ class BaziCalculator {
         }
 
         return `${dominant}气偏旺，${weakest}气稍弱，以${weakest}补之可得平衡圆满。`;
+    }
+
+    // Day Stem × Zodiac synthesis
+    getStemZodiacSynthesis(stem, zodiac) {
+        const stemElement = this.stemElements[stem];
+        const zodiacElement = this.zodiacElements[zodiac];
+        const rel = this.wuxingCycle[stemElement];
+
+        let relation, desc;
+        if (stemElement === zodiacElement) {
+            relation = '比和';
+            desc = `日主${stemElement}与生肖${zodiac}同属${stemElement}行，气场共振，内外合一。你的外在表现与内在本质高度统一，性格鲜明而纯粹，${stemElement}的能量在你身上被加倍放大，使你成为这一属性最纯正的代表。`;
+        } else if (rel.generates === zodiacElement) {
+            relation = '我生';
+            desc = `日主${stemElement}生生肖${zodiacElement}，你天生具有付出和创造的本能。${stemElement}的根基滋养着${zodiacElement}的外在表达，让你在给予中找到生命的意义。你的能量向外流动，慷慨而不吝，是天生的创造者和给予者。`;
+        } else if (rel.generatedBy === zodiacElement) {
+            relation = '生我';
+            desc = `生肖${zodiacElement}源源不断地滋养日主${stemElement}，你如同有活水之源的古木，根基深厚、底蕴充足。外部环境和与生俱来的特质为你的核心能量提供源源不断的支持，让你在任何处境中都能保持充盈。`;
+        } else if (rel.overcomes === zodiacElement) {
+            relation = '我克';
+            desc = `日主${stemElement}克制生肖${zodiacElement}，你拥有强大的自我掌控力和塑造环境的能力。你不随波逐流，而是以坚定的意志改造周围的一切。这份力量让你在逆境中依然能开辟自己的道路。`;
+        } else {
+            relation = '克我';
+            desc = `生肖${zodiacElement}挑战日主${stemElement}，外部的压力反而铸就了你非凡的韧性。你在磨砺中成长，在压力下绽放。这种内在的张力赋予你独特的深度和不屈不挠的生命力。`;
+        }
+
+        return { relation, desc };
+    }
+
+    // Complementary advice based on weakest element
+    getComplementaryAdvice(_mainElement, counts) {
+        const sorted = Object.entries(counts).sort((a, b) => a[1] - b[1]);
+        const weakest = sorted[0][0];
+        const advice = this.complementAdvice[weakest];
+        return {
+            weakElement: weakest,
+            color: advice.color,
+            direction: advice.direction,
+            activity: advice.activity,
+            season: advice.season,
+            text: `你的五行中${weakest}气偏弱，可通过${advice.color}调和气场，宜朝${advice.direction}方位发展，适合${advice.activity}。${advice.season}是你补充能量的最佳时节。`
+        };
     }
 
     // Generate prophetic descent text fragments

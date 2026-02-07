@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" style="overscroll-behavior: none;">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>星尘 · 身份 — Stardust Identity</title>
+
+    <!-- OG Meta Tags for Social Sharing -->
+    <meta property="og:title" content="星尘·身份 — 探索你的宇宙人格">
+    <meta property="og:description" content="50道星际问卷，解码MBTI×大五×九型人格，在浩瀚宇宙中寻找你独特的频率。">
+    <meta property="og:image" content="https://11leofei.github.io/who-am-i/assets/og-card.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://11leofei.github.io/who-am-i/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="星尘·身份 — 探索你的宇宙人格">
+    <meta name="twitter:description" content="50道星际问卷，解码MBTI×大五×九型人格。">
+    <meta name="twitter:image" content="https://11leofei.github.io/who-am-i/assets/og-card.png">
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#050510">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,8 +39,18 @@
         <!-- Starfield Canvas -->
         <canvas id="starfield"></canvas>
 
+        <!-- Celebration Particles Canvas -->
+        <canvas id="celebration-canvas"></canvas>
+
+        <!-- Splash Screen -->
+        <div id="splash">
+            <div class="splash-star"></div>
+            <h1 class="splash-title">星尘 · 身份</h1>
+            <div class="splash-line"></div>
+        </div>
+
         <!-- Phase 1: Entrance -->
-        <section id="entrance" class="screen active">
+        <section id="entrance" class="screen active" role="region" aria-label="首页">
             <div class="content-wrapper">
                 <div class="entrance-glyph">
                     <svg viewBox="0 0 100 100" class="orbit-ring">
@@ -32,15 +61,18 @@
                 <h1 class="hero-title text-shimmer">星尘 · 身份</h1>
                 <p class="hero-subtitle">在浩瀚宇宙中，寻找你独特的频率</p>
                 <div class="cta-container">
-                    <button id="enter-btn" class="glass-btn">
+                    <button id="enter-btn" class="glass-btn" aria-label="踏入虚空，开始八字分析">
                         <span class="btn-text">踏入虚空</span>
                     </button>
-                    <button id="test-enter-btn" class="glass-btn secondary-cta">
+                    <button id="test-enter-btn" class="glass-btn secondary-cta" aria-label="探索人格，开始人格测试">
                         <span class="btn-text">探索人格</span>
+                    </button>
+                    <button id="dual-enter-btn" class="glass-btn secondary-cta" aria-label="双人灵魂共振测试">
+                        <span class="btn-text">灵魂共振</span>
                     </button>
                 </div>
                 <div class="archive-link-wrapper">
-                    <button id="archive-btn" class="archive-link">
+                    <button id="archive-btn" class="archive-link" aria-label="查看星辰档案">
                         星辰档案 <span id="archive-count"></span>
                     </button>
                 </div>
@@ -48,17 +80,17 @@
         </section>
 
         <!-- Phase 2: Birth Ritual (Data Entry) -->
-        <section id="ritual" class="screen hidden">
+        <section id="ritual" class="screen hidden" role="region" aria-label="出生信息输入">
             <div class="ritual-container">
                 <h2 class="ritual-title text-shimmer">命运编织者</h2>
                 <p class="ritual-subtitle">输入你的降生坐标，让星辰为你指路</p>
                 <div class="ritual-inputs">
                     <div class="input-group">
-                        <label>诞生日</label>
+                        <label for="birth-date">诞生日</label>
                         <input type="date" id="birth-date">
                     </div>
                     <div class="input-group">
-                        <label>降临时辰</label>
+                        <label for="birth-hour">降临时辰</label>
                         <select id="birth-hour">
                             <option value="">-- 选择 --</option>
                             <option value="0">子时 (23:00-01:00)</option>
@@ -76,18 +108,18 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <label>降临之地</label>
+                        <label for="birth-city">降临之地</label>
                         <input type="text" id="birth-city" placeholder="例如：上海">
                     </div>
                 </div>
-                <button id="summon-btn" class="glass-btn">
+                <button id="summon-btn" class="glass-btn" aria-label="召唤过往，开始计算">
                     <span class="btn-text">召唤过往</span>
                 </button>
             </div>
         </section>
 
         <!-- Phase 3: Cosmos (HUD + Animation) -->
-        <section id="cosmos" class="screen hidden">
+        <section id="cosmos" class="screen hidden" role="region" aria-label="宇宙动画">
             <div class="hud-top">
                 <span class="hud-text">导航系统：已激活</span>
             </div>
@@ -97,7 +129,8 @@
         </section>
 
         <!-- Phase 4: Identity Reveal -->
-        <section id="identity" class="screen hidden">
+        <section id="identity" class="screen hidden" role="region" aria-label="八字身份卡">
+            <div class="identity-scroll">
             <div class="glass-card fade-in-up" id="identity-card">
                 <!-- Holographic overlay -->
                 <div class="holo-overlay"></div>
@@ -200,17 +233,206 @@
 
                     <!-- Zodiac Trait -->
                     <p id="zodiac-desc" class="zodiac-trait stagger-4"></p>
+
+                    <!-- Stem-Zodiac Synthesis (Phase 6) -->
+                    <div class="separator-line stagger-4"></div>
+                    <div class="synthesis-section stagger-4">
+                        <div class="synthesis-header">
+                            <span class="synthesis-badge" id="synthesis-badge">比和</span>
+                            <span class="synthesis-label">干支融合</span>
+                        </div>
+                        <p id="synthesis-desc" class="synthesis-desc"></p>
+                    </div>
+
+                    <!-- Complementary Advice (Phase 6) -->
+                    <div class="complement-section stagger-4">
+                        <div class="complement-header">调和之气</div>
+                        <div class="complement-tags" id="complement-tags"></div>
+                        <p id="complement-text" class="complement-text"></p>
+                    </div>
                 </div>
 
                 <div class="card-footer stagger-4">
-                    <button id="save-btn" class="text-btn secondary">保存身份卡</button>
-                    <button id="reset-btn" class="text-btn">重返星尘</button>
+                    <button id="save-btn" class="text-btn secondary" aria-label="保存身份卡图片">保存身份卡</button>
+                    <button id="share-identity-btn" class="text-btn secondary" aria-label="分享身份卡">分享</button>
+                    <button id="reset-btn" class="text-btn" aria-label="返回首页">重返星尘</button>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- Dual Mode: Intro -->
+        <section id="dual-intro" class="screen hidden" role="region" aria-label="双人模式介绍">
+            <div class="ritual-container">
+                <div class="dual-icon">
+                    <svg viewBox="0 0 120 100" width="120" height="100">
+                        <circle cx="40" cy="50" r="30" fill="none" stroke="rgba(200,160,255,0.15)" stroke-width="0.8"/>
+                        <circle cx="80" cy="50" r="30" fill="none" stroke="rgba(140,180,255,0.15)" stroke-width="0.8"/>
+                        <circle cx="40" cy="50" r="3" fill="rgba(200,160,255,0.6)"/>
+                        <circle cx="80" cy="50" r="3" fill="rgba(140,180,255,0.6)"/>
+                    </svg>
+                </div>
+                <h2 class="ritual-title text-shimmer">灵魂共振测试</h2>
+                <p class="ritual-subtitle">两位旅者将依次接受灵魂频率扫描</p>
+                <p class="test-intro-desc">每人15道问题，测试完成后揭晓你们的宇宙契合度。</p>
+                <div class="dual-name-inputs">
+                    <div class="input-group">
+                        <label for="dual-name-1">旅者一号</label>
+                        <input type="text" id="dual-name-1" placeholder="输入昵称" maxlength="8">
+                    </div>
+                    <div class="dual-name-divider">✦</div>
+                    <div class="input-group">
+                        <label for="dual-name-2">旅者二号</label>
+                        <input type="text" id="dual-name-2" placeholder="输入昵称" maxlength="8">
+                    </div>
+                </div>
+                <button id="start-dual-btn" class="glass-btn" aria-label="开始灵魂共振测试">
+                    <span class="btn-text">开始共振</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Dual Mode: Handoff -->
+        <section id="dual-handoff" class="screen hidden" role="region" aria-label="交接设备">
+            <div class="ritual-container">
+                <div class="handoff-check">✓</div>
+                <h2 class="ritual-title" id="handoff-title">旅者一号的频率已锁定</h2>
+                <p class="ritual-subtitle" id="handoff-subtitle">请将设备交给旅者二号</p>
+                <div class="handoff-pulse"></div>
+                <button id="handoff-ready-btn" class="glass-btn" aria-label="准备好了">
+                    <span class="btn-text">准备好了</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Dual Mode: Results -->
+        <section id="dual-results" class="screen hidden" role="region" aria-label="匹配结果">
+            <div class="results-scroll">
+                <div class="results-container" id="dual-results-content">
+                    <h2 class="results-title text-shimmer">灵魂共振报告</h2>
+
+                    <!-- Resonance Score -->
+                    <div class="resonance-hero">
+                        <div class="resonance-glow"></div>
+                        <div class="resonance-score" id="resonance-score">0</div>
+                        <div class="resonance-label">共振指数</div>
+                        <div class="resonance-level" id="resonance-level">星云共振体</div>
+                        <p class="resonance-level-desc" id="resonance-level-desc"></p>
+                    </div>
+
+                    <!-- MBTI Comparison Card -->
+                    <div class="result-card match-card">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">MBTI 对比</div>
+                        <div class="match-vs">
+                            <div class="match-person">
+                                <span class="match-person-name" id="match-name-a"></span>
+                                <span class="match-person-type" id="match-type-a">INTJ</span>
+                                <span class="match-person-cosmic" id="match-cosmic-a">星图织者</span>
+                            </div>
+                            <div class="match-connector">
+                                <span class="match-same" id="match-same-letters">2/4</span>
+                            </div>
+                            <div class="match-person">
+                                <span class="match-person-name" id="match-name-b"></span>
+                                <span class="match-person-type" id="match-type-b">ENFP</span>
+                                <span class="match-person-cosmic" id="match-cosmic-b">光辉使者</span>
+                            </div>
+                        </div>
+
+                        <!-- Dimension comparison bars -->
+                        <div class="dual-dims" id="dual-dims"></div>
+                    </div>
+
+                    <!-- Big Five Overlay Radar -->
+                    <div class="result-card match-card">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">大五人格对比</div>
+                        <div class="dual-radar-legend">
+                            <span class="legend-a" id="legend-name-a">旅者一</span>
+                            <span class="legend-b" id="legend-name-b">旅者二</span>
+                        </div>
+                        <div id="dual-big5-chart" class="dual-big5-chart"></div>
+                    </div>
+
+                    <!-- Enneagram Dynamics -->
+                    <div class="result-card match-card">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">九型人格关系</div>
+                        <div class="match-vs compact">
+                            <div class="match-person">
+                                <span class="match-person-type" id="enn-type-a">Type 5</span>
+                                <span class="match-person-cosmic" id="enn-cosmic-a">智慧之眼</span>
+                            </div>
+                            <div class="match-connector">
+                                <span class="enn-relation" id="enn-relation">能量互补</span>
+                            </div>
+                            <div class="match-person">
+                                <span class="match-person-type" id="enn-type-b">Type 2</span>
+                                <span class="match-person-cosmic" id="enn-cosmic-b">守护天使</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Narrative -->
+                    <div class="result-card match-card combined-card">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">共振解读</div>
+                        <div class="combined-text" id="dual-narrative"></div>
+                    </div>
+
+                    <!-- AI Status (Dual) -->
+                    <div id="ai-status-dual" class="ai-status hidden">
+                        <div class="ai-loading-indicator">
+                            <span class="ai-loading-dot"></span>
+                            <span class="ai-loading-text">AI 解读生成中</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Unlock (Dual) -->
+                    <button id="ai-unlock-btn-dual" class="ai-unlock-btn hidden" aria-label="解锁 AI 深度解读">
+                        <span class="ai-unlock-icon">✦</span>
+                        <span class="ai-unlock-text">解锁 AI 深度解读</span>
+                    </button>
+
+                    <div class="results-actions">
+                        <button id="save-dual-btn" class="text-btn secondary" aria-label="保存匹配卡">保存匹配卡</button>
+                        <button id="share-dual-btn" class="text-btn secondary" aria-label="分享匹配结果">分享</button>
+                        <button id="dual-retest-btn" class="text-btn" aria-label="重新测试">再测一次</button>
+                        <button id="dual-home-btn" class="text-btn" aria-label="返回首页">返回星尘</button>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- Remote Match Intro (shown when opening a shared link) -->
+        <section id="remote-match-intro" class="screen hidden" role="region" aria-label="远程匹配邀请">
+            <div class="ritual-container">
+                <div class="dual-icon">
+                    <svg viewBox="0 0 120 100" width="120" height="100">
+                        <circle cx="40" cy="50" r="30" fill="none" stroke="rgba(200,160,255,0.15)" stroke-width="0.8"/>
+                        <circle cx="80" cy="50" r="30" fill="none" stroke="rgba(140,180,255,0.15)" stroke-width="0.8"/>
+                        <circle cx="40" cy="50" r="3" fill="rgba(200,160,255,0.6)"/>
+                        <circle cx="80" cy="50" r="3" fill="rgba(140,180,255,0.6)"/>
+                    </svg>
+                </div>
+                <h2 class="ritual-title text-shimmer">灵魂共振邀请</h2>
+                <p class="ritual-subtitle" id="remote-invite-text">有人邀请你进行灵魂共振测试</p>
+                <p class="test-intro-desc">完成15道题目后，立刻揭晓你们的宇宙契合度。</p>
+                <div class="dual-name-inputs" style="justify-content:center;">
+                    <div class="input-group">
+                        <label for="remote-my-name">你的昵称</label>
+                        <input type="text" id="remote-my-name" placeholder="输入昵称" maxlength="8">
+                    </div>
+                </div>
+                <button id="start-remote-match-btn" class="glass-btn" aria-label="开始灵魂共振">
+                    <span class="btn-text">接受共振</span>
+                </button>
+            </div>
+        </section>
+
         <!-- Phase: Test Intro -->
-        <section id="test-intro" class="screen hidden">
+        <section id="test-intro" class="screen hidden" role="region" aria-label="人格测试介绍">
             <div class="ritual-container">
                 <div class="test-icon">
                     <svg viewBox="0 0 100 100" class="orbit-ring">
@@ -221,57 +443,72 @@
                     </svg>
                 </div>
                 <h2 class="ritual-title text-shimmer">灵魂频率扫描</h2>
-                <p class="ritual-subtitle">50道星际问卷，解码你的人格密码</p>
-                <p class="test-intro-desc">本测试将同时分析你的MBTI人格类型、大五人格特质和九型人格倾向，<br>为你呈现三维度的宇宙人格画像。</p>
-                <button id="start-test-btn" class="glass-btn">
+                <p class="ritual-subtitle">解码你的人格密码</p>
+                <p class="test-intro-desc">同时分析 MBTI、大五人格、九型人格，<br>呈现三维度宇宙人格画像。</p>
+
+                <!-- Mode Selector -->
+                <div class="mode-selector" id="mode-selector">
+                    <button class="mode-option active" data-mode="quick" id="mode-quick">
+                        <span class="mode-icon">⚡</span>
+                        <span class="mode-name">闪电模式</span>
+                        <span class="mode-desc">15题 · 3分钟</span>
+                    </button>
+                    <button class="mode-option" data-mode="deep" id="mode-deep">
+                        <span class="mode-icon">🔮</span>
+                        <span class="mode-name">深度模式</span>
+                        <span class="mode-desc">50题 · 10分钟</span>
+                    </button>
+                </div>
+
+                <button id="start-test-btn" class="glass-btn" aria-label="启动扫描，开始测试">
                     <span class="btn-text">启动扫描</span>
                 </button>
             </div>
         </section>
 
         <!-- Phase: Test Questions -->
-        <section id="test-questions" class="screen hidden">
+        <section id="test-questions" class="screen hidden" role="region" aria-label="测试问题">
             <div class="test-container">
-                <div class="test-progress">
+                <div class="test-progress" role="progressbar" aria-valuemin="0" aria-valuemax="50" aria-valuenow="1" id="test-progress-region">
                     <div class="test-progress-track">
                         <div class="test-progress-bar" id="test-progress-bar"></div>
                     </div>
                     <span class="test-progress-text" id="test-progress-text">1 / 50</span>
                 </div>
-                <div class="question-wrapper">
+                <div class="question-wrapper" id="question-wrapper">
                     <p class="question-number" id="question-number">Q1</p>
                     <p class="question-text" id="question-text"></p>
                 </div>
                 <div class="answer-scale" id="answer-scale">
-                    <button class="scale-btn" data-value="1">
+                    <button class="scale-btn" data-value="1" aria-label="1分 完全不符">
                         <span class="scale-dot"></span>
                         <span class="scale-label">完全不符</span>
                     </button>
-                    <button class="scale-btn" data-value="2">
+                    <button class="scale-btn" data-value="2" aria-label="2分 较少符合">
                         <span class="scale-dot"></span>
                         <span class="scale-label">较少符合</span>
                     </button>
-                    <button class="scale-btn" data-value="3">
+                    <button class="scale-btn" data-value="3" aria-label="3分 不确定">
                         <span class="scale-dot"></span>
                         <span class="scale-label">不确定</span>
                     </button>
-                    <button class="scale-btn" data-value="4">
+                    <button class="scale-btn" data-value="4" aria-label="4分 较为符合">
                         <span class="scale-dot"></span>
                         <span class="scale-label">较为符合</span>
                     </button>
-                    <button class="scale-btn" data-value="5">
+                    <button class="scale-btn" data-value="5" aria-label="5分 非常符合">
                         <span class="scale-dot"></span>
                         <span class="scale-label">非常符合</span>
                     </button>
                 </div>
                 <div class="test-nav">
-                    <button id="test-prev-btn" class="text-btn secondary" style="visibility: hidden;">← 上一题</button>
+                    <button id="test-prev-btn" class="text-btn secondary" style="visibility: hidden;" aria-label="返回上一题">← 上一题</button>
                 </div>
             </div>
         </section>
 
         <!-- Phase: Test Analyzing Interlude -->
-        <section id="test-analyzing" class="screen hidden">
+        <section id="test-analyzing" class="screen hidden" role="region" aria-label="分析中">
             <div class="analyzing-container">
                 <div class="analyzing-orb">
                     <svg class="analyzing-ring" viewBox="0 0 120 120">
@@ -290,79 +527,158 @@
         </section>
 
         <!-- Phase: Test Results -->
-        <section id="test-results" class="screen hidden">
+        <section id="test-results" class="screen hidden" role="region" aria-label="测试结果">
             <div class="results-scroll">
                 <div class="results-container" id="test-results-card">
                     <h2 class="results-title text-shimmer">你的宇宙人格</h2>
-                    <p class="results-subtitle">三维度人格画像</p>
+                    <p class="results-subtitle">深度灵魂画像</p>
 
-                    <!-- MBTI -->
-                    <div class="result-card">
+                    <!-- Soul Constellation -->
+                    <div class="constellation-container" id="constellation-container">
+                        <canvas id="constellation-canvas"></canvas>
+                    </div>
+
+                    <!-- Card 1: Core Portrait -->
+                    <div class="result-card" id="card-core">
                         <div class="holo-overlay"></div>
-                        <div class="result-badge">MBTI</div>
+                        <div class="result-badge">核心画像</div>
                         <div class="result-type-row">
                             <span class="result-type" id="mbti-type">INTJ</span>
+                            <span class="enn-badge" id="enn-badge">5w6</span>
                         </div>
                         <h3 class="result-cosmic-name text-shimmer" id="mbti-cosmic-name">星图织者</h3>
                         <p class="result-title-sub" id="mbti-title"></p>
-                        <div class="keyword-tags" id="mbti-keywords"></div>
+                        <p class="result-enn-sub" id="enn-subtitle"></p>
+                        <div class="keyword-tags" id="core-keywords"></div>
+                        <div class="mbti-celebrities" id="mbti-celebrities"></div>
                         <div class="mbti-dimensions" id="mbti-dimensions"></div>
-                        <div class="result-desc" id="mbti-desc"></div>
-                        <div class="result-extras">
-                            <div class="result-extra-item">
-                                <span class="extra-label">核心力量</span>
-                                <p class="extra-text" id="mbti-strengths"></p>
-                            </div>
-                            <div class="result-extra-item">
-                                <span class="extra-label">成长方向</span>
-                                <p class="extra-text" id="mbti-growth"></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Big Five -->
-                    <div class="result-card">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">大五人格</div>
-                        <div class="big5-chart" id="big5-chart"></div>
-                        <div class="big5-details" id="big5-details"></div>
-                    </div>
-
-                    <!-- Enneagram -->
-                    <div class="result-card">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">九型人格</div>
-                        <div class="result-type-row">
-                            <span class="result-type" id="enneagram-type">Type 5</span>
-                        </div>
-                        <h3 class="result-cosmic-name text-shimmer" id="enneagram-cosmic-name">智慧之眼</h3>
-                        <p class="enneagram-wing" id="enneagram-wing"></p>
-                        <div class="keyword-tags" id="enneagram-keywords"></div>
+                        <div class="result-desc" id="core-desc"></div>
                         <div class="result-extras compact">
                             <div class="result-extra-item">
-                                <span class="extra-label">核心驱动</span>
-                                <p class="extra-text" id="enneagram-core"></p>
+                                <span class="extra-label">核心力量</span>
+                                <p class="extra-text" id="core-strengths"></p>
+                            </div>
+                            <div class="result-extra-item">
+                                <span class="extra-label">核心驱力</span>
+                                <p class="extra-text" id="core-drive"></p>
                             </div>
                             <div class="result-extra-item">
                                 <span class="extra-label">深层恐惧</span>
-                                <p class="extra-text" id="enneagram-fear"></p>
+                                <p class="extra-text" id="core-fear"></p>
                             </div>
                         </div>
-                        <div class="result-desc" id="enneagram-desc"></div>
                     </div>
 
-                    <!-- Combined Analysis -->
-                    <div class="result-card combined-card">
+                    <!-- Card 2: Cognitive Style -->
+                    <div class="result-card" id="card-cognitive">
                         <div class="holo-overlay"></div>
-                        <div class="result-badge">综合解读</div>
-                        <h3 class="result-cosmic-name text-shimmer">灵魂全景</h3>
-                        <div class="combined-text" id="combined-analysis"></div>
+                        <div class="result-badge">认知风格</div>
+                        <div class="cognitive-fn-arcs" id="cognitive-fn-arcs"></div>
+                        <div class="cognitive-fn-stack" id="cognitive-functions"></div>
+                        <div class="result-desc" id="cognitive-desc"></div>
+                    </div>
+
+                    <!-- Card 3: Relationships -->
+                    <div class="result-card" id="card-relationships">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">关系模式</div>
+                        <div class="social-quadrant" id="social-quadrant"></div>
+                        <div class="result-desc" id="relationships-desc"></div>
+                    </div>
+
+                    <!-- Card 4: Work & Energy -->
+                    <div class="result-card" id="card-work">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">工作与能量</div>
+                        <div class="energy-spectrums" id="energy-spectrums"></div>
+                        <div class="result-desc" id="work-desc"></div>
+                    </div>
+
+                    <!-- Card 5: Stress & Emotions -->
+                    <div class="result-card" id="card-stress">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">压力与情绪</div>
+                        <div class="big5-chart" id="big5-chart"></div>
+                        <div class="big5-dims" id="big5-dims"></div>
+                        <div class="result-desc" id="stress-desc"></div>
+                    </div>
+
+                    <!-- Card 6: Growth Map -->
+                    <div class="result-card" id="card-growth">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">成长地图</div>
+                        <div class="enn-path" id="enn-path"></div>
+                        <div class="result-desc" id="growth-desc"></div>
+                        <div class="result-extras">
+                            <div class="result-extra-item">
+                                <span class="extra-label">认知发展</span>
+                                <p class="extra-text" id="growth-cognitive"></p>
+                            </div>
+                            <div class="result-extra-item">
+                                <span class="extra-label">行动建议</span>
+                                <p class="extra-text" id="growth-actions"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Deep Insight (hidden until AI runs) -->
+                    <div class="result-card ai-insight-card hidden" id="card-ai-insight">
+                        <div class="holo-overlay"></div>
+                        <div class="result-badge">AI 深度洞察</div>
+                        <div class="result-desc" id="ai-insight-text"></div>
+                    </div>
+
+                    <!-- AI Status -->
+                    <div id="ai-status" class="ai-status hidden">
+                        <div class="ai-loading-indicator">
+                            <span class="ai-loading-dot"></span>
+                            <span class="ai-loading-text">AI 解读生成中</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Unlock (shown when no API key) -->
+                    <button id="ai-unlock-btn" class="ai-unlock-btn hidden" aria-label="解锁 AI 深度解读">
+                        <span class="ai-unlock-icon">✦</span>
+                        <span class="ai-unlock-text">解锁 AI 深度解读</span>
+                    </button>
+
+                    <!-- Accuracy Feedback -->
+                    <div class="accuracy-feedback" id="accuracy-feedback">
+                        <p class="accuracy-label">这个结果像你吗？</p>
+                        <div class="accuracy-stars" id="accuracy-stars">
+                            <button class="accuracy-star" data-value="1" aria-label="1星">☆</button>
+                            <button class="accuracy-star" data-value="2" aria-label="2星">☆</button>
+                            <button class="accuracy-star" data-value="3" aria-label="3星">☆</button>
+                            <button class="accuracy-star" data-value="4" aria-label="4星">☆</button>
+                            <button class="accuracy-star" data-value="5" aria-label="5星">☆</button>
+                        </div>
+                        <p class="accuracy-hint" id="accuracy-hint"></p>
                     </div>
 
                     <div class="results-actions">
-                        <button id="save-test-btn" class="text-btn secondary">保存测试卡</button>
-                        <button id="retest-btn" class="text-btn">重新测试</button>
-                        <button id="home-btn" class="text-btn">返回星尘</button>
+                        <button id="save-test-btn" class="text-btn secondary" aria-label="保存测试卡图片">保存测试卡</button>
+                        <button id="save-wallpaper-btn" class="text-btn secondary" aria-label="生成星空壁纸">生成壁纸</button>
+                        <button id="share-test-btn" class="text-btn secondary" aria-label="分享测试结果">分享</button>
+                        <button id="invite-match-btn" class="text-btn secondary" aria-label="邀请好友匹配">邀请匹配</button>
+                        <button id="retest-btn" class="text-btn" aria-label="重新测试">重新测试</button>
+                        <button id="home-btn" class="text-btn" aria-label="返回首页">返回星尘</button>
+                    </div>
+
+                    <!-- AI Chat Panel -->
+                    <div id="ai-chat" class="ai-chat collapsed">
+                        <button id="ai-chat-toggle" class="ai-chat-toggle" aria-label="展开问问星尘">
+                            <span class="ai-chat-toggle-icon">✦</span>
+                            <span class="ai-chat-toggle-text">问问星尘</span>
+                        </button>
+                        <div class="ai-chat-body">
+                            <div class="ai-chat-messages" id="ai-chat-messages"></div>
+                            <div class="ai-chat-input-row">
+                                <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="关于你的人格，想了解什么？" maxlength="200" />
+                                <button id="ai-chat-send" class="ai-chat-send" aria-label="发送">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -373,12 +689,116 @@
             <div class="archive-container">
                 <h2 class="archive-title text-shimmer">星辰档案</h2>
                 <p class="archive-subtitle">你曾探索过的命运轨迹</p>
+                <div class="archive-tabs">
+                    <button class="archive-tab active" data-tab="bazi">命格档案</button>
+                    <button class="archive-tab" data-tab="test">人格档案</button>
+                </div>
                 <div class="archive-grid" id="archive-grid"></div>
+                <div class="archive-grid hidden" id="test-archive-grid"></div>
                 <div class="archive-actions">
-                    <button id="archive-close" class="glass-btn small">
+                    <button id="archive-close" class="glass-btn small" aria-label="关闭星辰档案">
                         <span class="btn-text">关闭</span>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Share Panel (hidden by default) -->
+        <div id="share-panel" class="share-panel hidden">
+            <div class="share-panel-inner">
+                <button class="share-option" id="share-copy-link" aria-label="复制链接">
+                    <span class="share-icon">🔗</span>
+                    <span class="share-label">复制链接</span>
+                </button>
+                <button class="share-option" id="share-copy-text" aria-label="复制结果文案">
+                    <span class="share-icon">📋</span>
+                    <span class="share-label">复制结果</span>
+                </button>
+                <button class="share-panel-close" id="share-panel-close" aria-label="关闭分享面板">&times;</button>
+            </div>
+        </div>
+
+        <!-- Milestone Overlay -->
+        <div id="milestone-overlay" class="milestone-overlay hidden">
+            <div class="milestone-inner">
+                <div class="milestone-glow"></div>
+                <p class="milestone-dim" id="milestone-dim"></p>
+                <p class="milestone-text" id="milestone-text"></p>
+                <div class="milestone-progress-ring">
+                    <svg viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(200,160,255,0.8)" stroke-width="2.5"
+                            stroke-dasharray="220" stroke-dashoffset="220" id="milestone-ring-progress"
+                            style="transition: stroke-dashoffset 0.8s ease-out;"/>
+                    </svg>
+                    <span class="milestone-count" id="milestone-count"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast hidden" role="alert" aria-live="polite"></div>
+
+        <!-- Audio Mute Button -->
+        <button id="mute-btn" class="mute-btn" aria-label="切换静音">
+            <span class="mute-icon" id="mute-icon">🔊</span>
+        </button>
+
+        <!-- AI Settings Button -->
+        <button id="ai-settings-btn" class="ai-settings-btn" aria-label="AI 设置">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+        </button>
+
+        <!-- AI Key Modal -->
+        <div id="ai-key-modal" class="ai-modal hidden">
+            <div class="ai-modal-backdrop"></div>
+            <div class="ai-modal-content">
+                <h3 class="ai-modal-title">AI 深度解读</h3>
+                <p class="ai-modal-desc">输入 Gemini API Key 解锁 AI 个性化分析</p>
+                <div class="ai-modal-input-wrap">
+                    <input type="password" id="ai-key-input" class="ai-modal-input" placeholder="粘贴你的 Gemini API Key" autocomplete="off">
+                </div>
+                <p class="ai-modal-hint">API Key 仅保存在你的浏览器本地，不会上传到任何服务器。</p>
+                <div class="ai-modal-actions">
+                    <button id="ai-key-save" class="glass-btn small">
+                        <span class="btn-text">保存</span>
+                    </button>
+                    <button id="ai-key-clear" class="text-btn secondary">清除 Key</button>
+                    <button id="ai-key-cancel" class="text-btn">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Share Card Template (9:16, 1080x1920) -->
+    <div id="share-card-container" style="position:fixed;left:-9999px;top:0;z-index:-1;">
+        <div id="share-card" class="share-card">
+            <div class="share-card-bg"></div>
+            <div class="share-card-stars"></div>
+            <div class="share-card-content">
+                <div class="share-card-header">
+                    <span class="share-card-logo">✦ 星尘·身份</span>
+                </div>
+                <div class="share-card-hero">
+                    <div class="share-card-type" id="share-card-type">INTJ</div>
+                    <div class="share-card-cosmic" id="share-card-cosmic">星图织者</div>
+                    <div class="share-card-subtitle" id="share-card-subtitle"></div>
+                </div>
+                <div class="share-card-divider"></div>
+                <div class="share-card-dimensions" id="share-card-dims"></div>
+                <div class="share-card-divider"></div>
+                <div class="share-card-secondary">
+                    <div class="share-card-tag" id="share-card-big5"></div>
+                    <div class="share-card-tag" id="share-card-enn"></div>
+                </div>
+                <div class="share-card-keywords" id="share-card-keywords"></div>
+                <div class="share-card-ai-insight" id="share-card-ai-insight"></div>
+            </div>
+            <div class="share-card-footer">
+                <span class="share-card-cta">探索你的宇宙人格</span>
+                <span class="share-card-url">stardust-identity</span>
             </div>
         </div>
     </div>
@@ -387,7 +807,16 @@
     <script src="js/bazi.js"></script>
     <script src="js/stars.js"></script>
     <script src="js/personality.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/ai.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
 </body>
 
 </html>
