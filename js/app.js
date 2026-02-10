@@ -42,10 +42,125 @@ const ELEMENT_IDS = {
 const ARCHIVE_KEY = 'stardust_archive';
 const TEST_ARCHIVE_KEY = 'stardust_test_archive';
 
+// ==================== 三系统交叉洞察引擎 ====================
+
+const CROSS_ELEMENT_FUNCTION = {
+    '木': { functions: ['Ni', 'Ne'], desc: '木之生发与直觉洞察共振，你的灵魂如春芽探索未见之境' },
+    '火': { functions: ['Fe', 'Se'], desc: '火之热情与感知表达共振，你的生命如烈焰照亮当下瞬间' },
+    '土': { functions: ['Si', 'Te'], desc: '土之稳固与经验秩序共振，你的根基如大地承载实在之物' },
+    '金': { functions: ['Ti', 'Te'], desc: '金之锋锐与逻辑结构共振，你的心智如利刃剖析本质规律' },
+    '水': { functions: ['Ni', 'Fi'], desc: '水之深邃与内在感受共振，你的灵魂如深渊映照隐秘真相' }
+};
+
+const CROSS_PATTERN_ENN = {
+    '正官格': { types: [1, 3], desc: '正官之序与{T}之{R}互为表里，命运与人格共筑秩序之塔' },
+    '偏财格': { types: [3, 7], desc: '偏财之机与{T}之{R}相互激发，天命与性格共舞于机遇之海' },
+    '正财格': { types: [6, 2], desc: '正财之稳与{T}之{R}同频共振，宿命与心性共守恒久之道' },
+    '食神格': { types: [9, 7], desc: '食神之悦与{T}之{R}彼此滋养，星命与人性共享宁和之境' },
+    '伤官格': { types: [4, 8], desc: '伤官之锋与{T}之{R}相互淬炼，命格与个性共铸独立之魂' },
+    '正印格': { types: [5, 9], desc: '正印之智与{T}之{R}交相辉映，天赋与性情共入深思之境' },
+    '偏印格': { types: [4, 5], desc: '偏印之奇与{T}之{R}互为镜像，命盘与心灵共探非常之道' },
+    '七杀格': { types: [8, 3], desc: '七杀之力与{T}之{R}同源共振，宿命与意志共筑权力之峰' },
+    '比肩格': { types: [2, 8], desc: '比肩之独与{T}之{R}互相呼应，命局与性格共铸自主之路' },
+    '劫财格': { types: [2, 8], desc: '劫财之争与{T}之{R}彼此强化，星盘与人格共入竞逐之局' },
+    '从格': { types: [9, 6], desc: '从格之顺与{T}之{R}暗合天机，命势与心性共入随缘之流' }
+};
+
+const CROSS_ENN_TRAITS = {
+    1: '完美主义', 2: '助人情怀', 3: '成就驱动', 4: '独特表达',
+    5: '求知探索', 6: '忠诚谨慎', 7: '乐观追寻', 8: '力量掌控', 9: '和平调停'
+};
+
+const CROSS_MBTI_DOMINANT = {
+    'INTJ': 'Ni', 'INFJ': 'Ni', 'ENTJ': 'Te', 'ENFJ': 'Fe',
+    'INTP': 'Ti', 'INFP': 'Fi', 'ENTP': 'Ne', 'ENFP': 'Ne',
+    'ISTJ': 'Si', 'ISFJ': 'Si', 'ESTJ': 'Te', 'ESFJ': 'Fe',
+    'ISTP': 'Ti', 'ISFP': 'Fi', 'ESTP': 'Se', 'ESFP': 'Se'
+};
+
+const CROSS_FUNC_NAMES = {
+    Ni: '内倾直觉', Ne: '外倾直觉', Fe: '外倾情感', Se: '外倾感知',
+    Si: '内倾感知', Te: '外倾思考', Ti: '内倾思考', Fi: '内倾情感'
+};
+
+const CROSS_TRIGRAM_ELEM = {
+    '乾': '金', '兑': '金', '离': '火', '震': '木',
+    '巽': '木', '坎': '水', '艮': '土', '坤': '土'
+};
+
+function generateCrossSystemInsights(bazi, testResults, iching) {
+    const r = { baziInsight: '', personalityInsight: '', ichingInsight: '' };
+
+    // === 命盘 tab ===
+    if (bazi && testResults) {
+        const parts = [];
+        const elData = CROSS_ELEMENT_FUNCTION[bazi.mainElement];
+        const domFunc = CROSS_MBTI_DOMINANT[testResults.mbti?.type];
+        if (elData && domFunc && elData.functions.includes(domFunc)) {
+            parts.push(elData.desc);
+        }
+        if (bazi.pattern?.name && testResults.enneagram?.type) {
+            const pd = CROSS_PATTERN_ENN[bazi.pattern.name];
+            const et = testResults.enneagram.type;
+            if (pd && pd.types.includes(et)) {
+                parts.push(pd.desc.replace('{T}', et + '号').replace('{R}', CROSS_ENN_TRAITS[et]));
+            }
+        }
+        if (iching?.primary && bazi.mainElement) {
+            const ue = CROSS_TRIGRAM_ELEM[iching.primary.upper];
+            const le = CROSS_TRIGRAM_ELEM[iching.primary.lower];
+            if (ue === bazi.mainElement || le === bazi.mainElement) {
+                parts.push(`${iching.primary.name}卦与你的${bazi.mainElement}行日主遥相呼应，天象与命盘在此刻交汇共鸣`);
+            }
+        }
+        r.baziInsight = parts.length > 0 ? parts.slice(0, 2).join('。') + '。' : '你的命盘五行流转，与人格星图形成独特的生命底色。';
+    }
+
+    // === 人格 tab ===
+    if (testResults && bazi) {
+        const parts = [];
+        const domFunc = CROSS_MBTI_DOMINANT[testResults.mbti?.type];
+        const elData = CROSS_ELEMENT_FUNCTION[bazi.mainElement];
+        if (domFunc && elData && elData.functions.includes(domFunc)) {
+            parts.push(`你的${CROSS_FUNC_NAMES[domFunc]}与命中${bazi.mainElement}行交织，认知方式与天赋本源形成双螺旋共振`);
+        }
+        if (iching?.primary?.nature && testResults.mbti?.cosmic) {
+            parts.push(`卦象之「${iching.primary.nature}」与${testResults.mbti.cosmic}的能量交汇，古老智慧映射你的现代人格`);
+        }
+        r.personalityInsight = parts.length > 0 ? parts.slice(0, 2).join('。') + '。' : '你的人格星图独立闪耀，等待与命理卦象的三维交汇。';
+    }
+
+    // === 卦象 tab ===
+    if (iching?.primary) {
+        const parts = [];
+        if (bazi?.mainElement) {
+            const ue = CROSS_TRIGRAM_ELEM[iching.primary.upper];
+            const le = CROSS_TRIGRAM_ELEM[iching.primary.lower];
+            const elems = [ue, le].filter(Boolean);
+            if (elems.includes(bazi.mainElement)) {
+                parts.push(`${iching.primary.name}卦携${[...new Set(elems)].join('、')}之气，与你命盘${bazi.mainElement}行主星遥相呼应，古今时空在此折叠`);
+            }
+        }
+        if (testResults?.mbti) {
+            const nature = iching.primary.nature;
+            const ei = testResults.mbti.type?.[0];
+            if ((/刚|壮|动/.test(nature)) && ei === 'E') {
+                parts.push(`卦象「${nature}」之质与你${testResults.mbti.cosmic}的外向能量同频，人格特质在易象中找到镜像`);
+            } else if ((/柔|顺|止|静/.test(nature)) && ei === 'I') {
+                parts.push(`卦象「${nature}」之意与你${testResults.mbti.cosmic}的内敛气质共鸣，人格特质在易象中找到镜像`);
+            }
+        }
+        r.ichingInsight = parts.length > 0 ? parts.slice(0, 2).join('。') + '。' : `${iching.primary.name}卦静候时机，等待与你的命盘人格形成三元共振场域。`;
+    }
+
+    return r;
+}
+
 class App {
     constructor() {
         this.starfield = new Starfield('starfield');
         this.baziCalc = new BaziCalculator();
+        this.iching = new IChing();
         this.personalityTest = new PersonalityTest();
         this.audio = new CosmicAudio();
         this.ai = new CosmicAI();
@@ -55,6 +170,7 @@ class App {
         this._audioInitialized = false;
         this._currentShareContext = null; // 'identity' or 'test'
         this._lastTestResults = null;
+        this._lastIChingResult = null;
 
         // Dual mode
         this.dualMode = false;
@@ -110,7 +226,6 @@ class App {
             // Analyzing interlude
             testAnalyzingSection: document.getElementById('test-analyzing'),
             // Personality test
-            testEnterBtn: document.getElementById('test-enter-btn'),
             startTestBtn: document.getElementById('start-test-btn'),
             testIntroSection: document.getElementById('test-intro'),
             testQuestionsSection: document.getElementById('test-questions'),
@@ -151,6 +266,10 @@ class App {
             growthActions: document.getElementById('growth-actions'),
             aiInsightCard: document.getElementById('card-ai-insight'),
             aiInsightText: document.getElementById('ai-insight-text'),
+            primaryTabs: document.getElementById('primary-tabs'),
+            resultTabs: document.getElementById('result-tabs'),
+            tabPanels: document.getElementById('tab-panels'),
+            tabAI: document.getElementById('tab-ai'),
             testResultsCard: document.getElementById('test-results-card'),
             // Sharing
             shareIdentityBtn: document.getElementById('share-identity-btn'),
@@ -246,7 +365,7 @@ class App {
         document.addEventListener('touchstart', initAudioOnce, { once: true });
 
         this.ui.enterBtn.addEventListener('click', () => { this.audio.playClick(); this.enterRitual(); });
-        this.ui.summonBtn.addEventListener('click', () => { this.audio.playClick(); this.enterCosmos(); });
+        this.ui.summonBtn.addEventListener('click', () => { this.audio.playClick(); this.enterTestIntroFromRitual(); });
         this.ui.saveBtn.addEventListener('click', () => this.saveIdentityCard());
         this.ui.resetBtn.addEventListener('click', () => { this.audio.playClick(); this.reset(); });
         this.ui.archiveBtn.addEventListener('click', () => this.showArchive());
@@ -281,6 +400,8 @@ class App {
             }
         });
 
+        this._compareMode = false;
+        this._compareSelected = [];
         this.ui.testArchiveGrid.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.archive-item-delete');
             if (deleteBtn) {
@@ -289,15 +410,33 @@ class App {
                 return;
             }
             const item = e.target.closest('.archive-item');
-            if (item) {
-                const archive = this.loadTestArchive();
-                const found = archive.find(a => a.id === parseInt(item.dataset.id, 10));
-                if (found) this.viewTestArchiveItem(found);
+            if (!item) return;
+            if (this._compareMode) {
+                this.toggleCompareSelect(item);
+                return;
             }
+            const archive = this.loadTestArchive();
+            const found = archive.find(a => a.id === parseInt(item.dataset.id, 10));
+            if (found) this.viewTestArchiveItem(found);
         });
 
+        // Compare mode toggle
+        const compareToggle = document.getElementById('archive-compare-toggle');
+        if (compareToggle) {
+            compareToggle.addEventListener('click', () => {
+                this.audio.playClick();
+                this.toggleCompareMode();
+            });
+        }
+        const compareGoBtn = document.getElementById('compare-go-btn');
+        if (compareGoBtn) {
+            compareGoBtn.addEventListener('click', () => {
+                this.audio.playClick();
+                this.showComparison();
+            });
+        }
+
         // Personality test listeners
-        this.ui.testEnterBtn.addEventListener('click', () => { this.audio.playClick(); this.enterTestIntro(); });
         this.ui.startTestBtn.addEventListener('click', () => { this.audio.playClick(); this.startTest(); });
         this.ui.testPrevBtn.addEventListener('click', () => { this.audio.playClick(); this.prevQuestion(); });
         this.ui.saveTestBtn.addEventListener('click', () => this.saveTestCard());
@@ -383,6 +522,53 @@ class App {
             });
         }
 
+        // Primary tab switching (L1: 命盘/人格/卦象/AI)
+        this._primaryTabNames = ['bazi', 'personality', 'iching', 'ai'];
+        this._currentPrimaryTab = 0;
+        this.ui.primaryTabs.addEventListener('click', (e) => {
+            const tab = e.target.closest('.primary-tab');
+            if (!tab) return;
+            this.audio.playClick();
+            this.switchPrimaryTab(tab.dataset.ptab);
+        });
+
+        // Secondary tab switching (L2: 认知/关系/工作/压力/成长 within personality)
+        this._tabNames = ['cognitive', 'relationships', 'work', 'stress', 'growth'];
+        this._currentTab = 0;
+        this.ui.resultTabs.addEventListener('click', (e) => {
+            const tab = e.target.closest('.result-tab');
+            if (!tab) return;
+            this.audio.playClick();
+            this.switchResultTab(tab.dataset.tab);
+        });
+
+        // Swipe gesture on primary panels
+        let touchStartX = 0, touchStartY = 0, swiping = false;
+        const resultsContainer = document.getElementById('test-results-card');
+        resultsContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            swiping = true;
+        }, { passive: true });
+        resultsContainer.addEventListener('touchend', (e) => {
+            if (!swiping) return;
+            swiping = false;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                const visibleTabs = this._primaryTabNames.filter(name => {
+                    if (name === 'ai') return !this.ui.tabAI.classList.contains('hidden');
+                    return true;
+                });
+                const currentIdx = visibleTabs.indexOf(this._primaryTabNames[this._currentPrimaryTab]);
+                if (dx < 0 && currentIdx < visibleTabs.length - 1) {
+                    this.switchPrimaryTab(visibleTabs[currentIdx + 1]);
+                } else if (dx > 0 && currentIdx > 0) {
+                    this.switchPrimaryTab(visibleTabs[currentIdx - 1]);
+                }
+            }
+        }, { passive: true });
+
         // Dual mode listeners
         if (this.ui.dualEnterBtn) {
             this.ui.dualEnterBtn.addEventListener('click', () => { this.audio.playClick(); this.enterDualIntro(); });
@@ -460,6 +646,32 @@ class App {
             });
         }
 
+        // I Ching quick-ask buttons
+        const quickAsks = document.getElementById('iching-quick-asks');
+        if (quickAsks) {
+            quickAsks.addEventListener('click', (e) => {
+                const btn = e.target.closest('.quick-ask-btn');
+                if (!btn) return;
+                this.audio.playClick();
+                if (!this.ai.hasKey) {
+                    this.showToast('请先在设置中配置 AI Key');
+                    return;
+                }
+                const questions = {
+                    'changing': '请详细解读我卦象中变爻的含义，对我当前有什么启示？',
+                    'relation': '本卦与变卦之间的关系是什么？这个变化趋势意味着什么？',
+                    'advice': '基于我的卦象，当前阶段我该如何行动？需要注意什么？'
+                };
+                const chatPanel = document.getElementById('ai-chat');
+                if (chatPanel.classList.contains('collapsed')) {
+                    chatPanel.classList.remove('collapsed');
+                }
+                this.ui.aiChatInput.value = questions[btn.dataset.ask] || '';
+                chatPanel.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                setTimeout(() => this.sendAIChatMessage(), 200);
+            });
+        }
+
         // Keyboard shortcuts (Phase 7)
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
     }
@@ -517,7 +729,7 @@ class App {
         await this.transitionScreens(this.ui.entranceSection, this.ui.ritualSection, 'exit-zoom');
     }
 
-    async enterCosmos() {
+    async enterTestIntroFromRitual() {
         const dateStr = document.getElementById('birth-date').value;
         const city = document.getElementById('birth-city').value;
         const hourStr = document.getElementById('birth-hour').value;
@@ -537,34 +749,15 @@ class App {
         const bazi = this.baziCalc.calculate(y, m, d, hour);
         this.currentBazi = bazi;
 
-        const fragments = this.baziCalc.generateFragments(bazi);
-
         this.applyElementTheme(bazi.theme);
 
-        // Fade out ritual
-        await this.transitionScreens(this.ui.ritualSection, this.ui.cosmosSection, 'exit-up');
+        // Go directly to test intro (skip cosmos animation for unified flow)
+        await this.transitionScreens(this.ui.ritualSection, this.ui.testIntroSection, 'exit-up');
+    }
 
-        // Phase 1: Warp
-        this.starfield.warpSpeed();
-        this.audio.playWarp();
-        document.body.classList.add('rgb-shift');
-
-        await wait(2000);
-
-        document.body.classList.remove('rgb-shift');
-        this.starfield.steadySpeed();
-
-        // Phase 2: Morph
-        const mockPositions = this.generateMockStarPositions();
-        this.starfield.morphToRealSky(mockPositions);
-
-        await wait(3000);
-
-        // Phase 3: Descent
-        this.starfield.startPropheticDescent(fragments);
-
-        await wait(8000);
-        this.completeDescentAndReveal(bazi);
+    // Legacy enterCosmos kept for archive view
+    async enterCosmos() {
+        // noop — kept for compatibility
     }
 
     applyElementTheme(theme) {
@@ -897,6 +1090,17 @@ class App {
 
     hideArchive() {
         this.ui.archiveOverlay.classList.add('hidden');
+        // Reset compare mode
+        if (this._compareMode) {
+            this._compareMode = false;
+            this._compareSelected = [];
+            const bar = document.getElementById('archive-compare-bar');
+            const panel = document.getElementById('archive-compare-panel');
+            const toggle = document.getElementById('archive-compare-toggle');
+            if (bar) bar.classList.add('hidden');
+            if (panel) panel.classList.add('hidden');
+            if (toggle) toggle.textContent = '对比模式';
+        }
     }
 
     renderArchiveGrid() {
@@ -959,7 +1163,7 @@ class App {
         const archive = this.loadTestArchive();
         const key = `${results.mbti.type}_${results.enneagram.type}w${results.enneagram.wing}_${this.testMode}`;
 
-        archive.unshift({
+        const entry = {
             key,
             id: Date.now(),
             timestamp: new Date().toISOString(),
@@ -971,7 +1175,12 @@ class App {
             enneagramCosmic: results.enneagram.cosmic,
             big5Top: this._getTopBig5(results.big5),
             results: results
-        });
+        };
+
+        if (this.currentBazi) entry.bazi = this.currentBazi;
+        if (this._lastIChingResult) entry.iching = this._lastIChingResult;
+
+        archive.unshift(entry);
 
         if (archive.length > 20) archive.length = 20;
         localStorage.setItem(TEST_ARCHIVE_KEY, JSON.stringify(archive));
@@ -1020,38 +1229,216 @@ class App {
 
     }
 
+    // ==================== ARCHIVE COMPARISON ====================
+
+    toggleCompareMode() {
+        this._compareMode = !this._compareMode;
+        this._compareSelected = [];
+        const bar = document.getElementById('archive-compare-bar');
+        const panel = document.getElementById('archive-compare-panel');
+        const toggle = document.getElementById('archive-compare-toggle');
+
+        if (this._compareMode) {
+            // Must be on test tab
+            const testTab = document.querySelector('.archive-tab[data-tab="test"]');
+            if (testTab && !testTab.classList.contains('active')) {
+                testTab.click();
+            }
+            bar.classList.remove('hidden');
+            panel.classList.add('hidden');
+            toggle.textContent = '退出对比';
+            // Add compare-mode class to items
+            this.ui.testArchiveGrid.querySelectorAll('.archive-item').forEach(el => {
+                el.classList.add('compare-mode');
+                el.classList.remove('compare-selected');
+            });
+        } else {
+            bar.classList.add('hidden');
+            panel.classList.add('hidden');
+            toggle.textContent = '对比模式';
+            this.ui.testArchiveGrid.querySelectorAll('.archive-item').forEach(el => {
+                el.classList.remove('compare-mode', 'compare-selected');
+            });
+        }
+        this.updateCompareCount();
+    }
+
+    toggleCompareSelect(itemEl) {
+        const id = parseInt(itemEl.dataset.id, 10);
+        const idx = this._compareSelected.indexOf(id);
+        if (idx >= 0) {
+            this._compareSelected.splice(idx, 1);
+            itemEl.classList.remove('compare-selected');
+        } else if (this._compareSelected.length < 2) {
+            this._compareSelected.push(id);
+            itemEl.classList.add('compare-selected');
+        }
+        this.updateCompareCount();
+    }
+
+    updateCompareCount() {
+        const countEl = document.getElementById('compare-count');
+        const goBtn = document.getElementById('compare-go-btn');
+        if (countEl) countEl.textContent = `已选 ${this._compareSelected.length}/2`;
+        if (goBtn) goBtn.disabled = this._compareSelected.length !== 2;
+    }
+
+    showComparison() {
+        const archive = this.loadTestArchive();
+        const a = archive.find(x => x.id === this._compareSelected[0]);
+        const b = archive.find(x => x.id === this._compareSelected[1]);
+        if (!a || !b) return;
+
+        const panel = document.getElementById('archive-compare-panel');
+        const fmtDate = (ts) => {
+            const d = new Date(ts);
+            return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+        };
+
+        // MBTI dimensions
+        const mbtiDims = ['E/I', 'S/N', 'T/F', 'J/P'];
+        const dimKeys = [
+            { key: 'EI', left: 'E', right: 'I' },
+            { key: 'SN', left: 'S', right: 'N' },
+            { key: 'TF', left: 'T', right: 'F' },
+            { key: 'JP', left: 'J', right: 'P' }
+        ];
+
+        let dimsHtml = '';
+        dimKeys.forEach((dim, i) => {
+            const aVal = a.results.mbti.dimensions?.[dim.key] ?? 50;
+            const bVal = b.results.mbti.dimensions?.[dim.key] ?? 50;
+            dimsHtml += `<div class="compare-dim-row">
+                <div class="compare-dim-label">${mbtiDims[i]}</div>
+                <div class="compare-dim-bars">
+                    <div class="compare-bar-track"><div class="compare-bar-a" style="width:${aVal}%"></div></div>
+                    <div class="compare-bar-track"><div class="compare-bar-b" style="width:${bVal}%"></div></div>
+                </div>
+            </div>`;
+        });
+
+        // Big5 dimensions
+        const b5Labels = { o: '开放', c: '尽责', ex: '外向', a: '宜人', n: '情绪' };
+        let b5Html = '';
+        if (a.results.big5?.percentages && b.results.big5?.percentages) {
+            Object.entries(b5Labels).forEach(([key, label]) => {
+                const aV = Math.round((a.results.big5.percentages[key] || 0) * 100);
+                const bV = Math.round((b.results.big5.percentages[key] || 0) * 100);
+                b5Html += `<div class="compare-dim-row">
+                    <div class="compare-dim-label">${label}</div>
+                    <div class="compare-dim-bars">
+                        <div class="compare-bar-track"><div class="compare-bar-a" style="width:${aV}%"></div></div>
+                        <div class="compare-bar-track"><div class="compare-bar-b" style="width:${bV}%"></div></div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // Hexagram names
+        let hexHtml = '';
+        if (a.iching?.primary || b.iching?.primary) {
+            const aHex = a.iching?.primary?.name || '—';
+            const bHex = b.iching?.primary?.name || '—';
+            hexHtml = `<div class="compare-section-label">卦象</div>
+                <div class="compare-hex-row">
+                    <div class="compare-hex-item"><div class="compare-hex-name">${escapeHTML(aHex)}卦</div></div>
+                    <div class="compare-vs">✦</div>
+                    <div class="compare-hex-item"><div class="compare-hex-name">${escapeHTML(bHex)}卦</div></div>
+                </div>`;
+        }
+
+        panel.innerHTML = `
+            <div class="compare-header">人格轨迹对比</div>
+            <div class="compare-legend">
+                <div class="compare-legend-item"><span class="compare-legend-dot-a"></span>${fmtDate(a.timestamp)}</div>
+                <div class="compare-legend-item"><span class="compare-legend-dot-b"></span>${fmtDate(b.timestamp)}</div>
+            </div>
+            <div class="compare-row">
+                <div class="compare-side">
+                    <div class="compare-type">${escapeHTML(a.mbtiType)}</div>
+                    <div class="compare-cosmic">${escapeHTML(a.mbtiCosmic)}</div>
+                </div>
+                <div class="compare-vs">VS</div>
+                <div class="compare-side">
+                    <div class="compare-type">${escapeHTML(b.mbtiType)}</div>
+                    <div class="compare-cosmic">${escapeHTML(b.mbtiCosmic)}</div>
+                </div>
+            </div>
+            <div class="compare-section-label">MBTI 维度</div>
+            ${dimsHtml}
+            ${b5Html ? `<div class="compare-section-label">大五人格</div>${b5Html}` : ''}
+            <div class="compare-section-label">九型人格</div>
+            <div class="compare-enn-row">
+                <div class="compare-enn-item">
+                    <div class="compare-enn-num">Type ${a.enneagramType}</div>
+                    <div class="compare-enn-label">${escapeHTML(a.enneagramCosmic)}</div>
+                </div>
+                <div class="compare-vs">✦</div>
+                <div class="compare-enn-item">
+                    <div class="compare-enn-num">Type ${b.enneagramType}</div>
+                    <div class="compare-enn-label">${escapeHTML(b.enneagramCosmic)}</div>
+                </div>
+            </div>
+            ${hexHtml}
+        `;
+        panel.classList.remove('hidden');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
     viewTestArchiveItem(item) {
         this.hideArchive();
         this._lastTestResults = item.results;
         this.testMode = item.testMode;
 
+        // Restore bazi if saved
+        if (item.bazi) {
+            this.currentBazi = item.bazi;
+            this.populateBaziResults(item.bazi);
+        }
+
+        // Restore iching if saved
+        if (item.iching) {
+            this._lastIChingResult = item.iching;
+            this.populateIChingResults(item.iching);
+        }
+
         this.populateTestResults(item.results);
         this.renderConstellation(item.results);
 
         // Show results directly
-        const sections = [this.ui.entranceSection, this.ui.ritualSection, this.ui.cosmosSection, this.ui.identitySection, this.ui.testIntroSection, this.ui.testQuestionsSection];
+        const sections = [this.ui.entranceSection, this.ui.ritualSection, this.ui.identitySection, this.ui.testIntroSection, this.ui.testQuestionsSection];
         sections.forEach(s => { s.classList.remove('active'); s.classList.add('hidden'); });
 
-        // Show all cards immediately (no progressive reveal for archived)
-        const resultCards = document.querySelectorAll('#test-results-card .result-card:not(.ai-insight-card)');
-        resultCards.forEach(card => {
-            card.classList.remove('reveal-hidden');
-            card.classList.add('reveal-show');
-        });
+        // Show hero card immediately
+        const heroCard = document.getElementById('card-core');
+        heroCard.classList.remove('reveal-hidden');
+        heroCard.classList.add('reveal-show');
+
+        // Show tabs immediately
+        this._radarAnimated = false;
+        this.ui.primaryTabs.classList.add('show');
+        this.switchPrimaryTab('personality');
+        this.ui.resultTabs.classList.add('show');
+        this.switchResultTab('cognitive');
 
         this.ui.testResultsSection.classList.remove('hidden');
         void this.ui.testResultsSection.offsetWidth;
         this.ui.testResultsSection.classList.add('active');
 
-        // Animate dimensions & radar
+        // Animate dimensions
         this.ui.mbtiDimensions.querySelectorAll('.mbti-dim-fill').forEach(el => {
             el.style.width = el.dataset.target + '%';
         });
         this.ui.mbtiDimensions.querySelectorAll('[data-counter]').forEach(el => {
             this.animateCounter(el, parseInt(el.dataset.counter, 10));
         });
-        setTimeout(() => this.animateRadar(), 200);
 
+        // Animate bazi element bars
+        if (item.bazi) {
+            this.populateElementChartResult(item.bazi.elementCounts);
+        }
+
+        this.populateCrossInsights();
         this.initResultCardEffects();
         this.applyMBTITheme(item.results.mbti.type);
 
@@ -1064,7 +1451,7 @@ class App {
     // ==================== PERSONALITY TEST ====================
 
     async enterTestIntro() {
-        await this.transitionScreens(this.ui.entranceSection, this.ui.testIntroSection, 'exit-zoom');
+        // No longer used directly — entrance now goes to ritual first
     }
 
     get testTotal() {
@@ -1232,6 +1619,11 @@ class App {
         const results = this.personalityTest.calculateResults(this.testAnswers, questionIndices);
         this._lastTestResults = results;
 
+        // Cast I Ching hexagram (deterministic from bazi + test results)
+        if (this.currentBazi) {
+            this._lastIChingResult = this.iching.castHexagram(this.currentBazi, results);
+        }
+
         // Hide questions
         this.ui.testQuestionsSection.classList.remove('active');
         this.ui.testQuestionsSection.classList.add('exit-left');
@@ -1239,27 +1631,37 @@ class App {
         this.ui.testQuestionsSection.classList.add('hidden');
         this.ui.testQuestionsSection.classList.remove('exit-left');
 
-        // Show analyzing interlude
+        // Show unified analyzing interlude (3 steps)
         this.showAnalyzingPhase();
         this.starfield.warpSpeed();
         this.audio.playWarp();
-        await wait(3500);
+        await wait(4000);
         this.starfield.steadySpeed();
         await wait(400);
         this.hideAnalyzingPhase();
         await wait(400);
 
-        // Populate results (hidden initially for progressive reveal)
+        // Populate all results: bazi + personality + iching
         this.populateTestResults(results);
-
-        // Render soul constellation
+        if (this.currentBazi) {
+            this.populateBaziResults(this.currentBazi);
+        }
+        if (this._lastIChingResult) {
+            this.populateIChingResults(this._lastIChingResult);
+        }
         this.renderConstellation(results);
 
-        // Hide all result cards initially (exclude AI card which starts hidden)
-        const resultCards = document.querySelectorAll('#test-results-card .result-card:not(.ai-insight-card)');
-        resultCards.forEach(card => {
-            card.classList.add('reveal-hidden');
-        });
+        // Hide hero card for reveal animation
+        const heroCard = document.getElementById('card-core');
+        heroCard.classList.add('reveal-hidden');
+
+        // Hide secondary tabs initially
+        this.ui.resultTabs.classList.remove('show');
+        this._radarAnimated = false;
+
+        // Reset to bazi primary tab, cognitive secondary tab
+        this.switchPrimaryTab('bazi');
+        this.switchResultTab('cognitive');
 
         this.ui.testResultsSection.classList.remove('hidden');
         void this.ui.testResultsSection.offsetWidth;
@@ -1267,44 +1669,45 @@ class App {
 
         // Starfield results mode + theme
         this.applyMBTITheme(results.mbti.type);
+        if (this.currentBazi) {
+            this.applyNebulaColor(this.currentBazi.mainElement);
+        }
 
-        // Progressive reveal: show cards one by one
+        // Celebration
         this.audio.playReveal();
         await wait(300);
         this.spawnCelebration();
         this.audio.playCelebration();
 
-        // Reveal MBTI card
-        const cards = Array.from(resultCards);
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        for (let i = 0; i < cards.length; i++) {
-            await wait(i === 0 ? 200 : 600);
-            // Shooting star effect before reveal
-            cards[i].classList.add('revealing');
-            await wait(400);
-            cards[i].classList.remove('revealing');
-            cards[i].classList.remove('reveal-hidden');
-            cards[i].classList.add('reveal-show');
-            // Auto-scroll to newly revealed card
-            if (!prefersReducedMotion) {
-                cards[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            if (i === 0) {
-                // Animate MBTI dimensions after Core Portrait card reveals
-                setTimeout(() => {
-                    this.ui.mbtiDimensions.querySelectorAll('.mbti-dim-fill').forEach(el => {
-                        el.style.width = el.dataset.target + '%';
-                    });
-                    this.ui.mbtiDimensions.querySelectorAll('[data-counter]').forEach(el => {
-                        this.animateCounter(el, parseInt(el.dataset.counter, 10));
-                    });
-                }, 100);
-            }
-            if (i === 4) {
-                // Animate radar after Stress & Emotions card reveals
-                setTimeout(() => this.animateRadar(), 200);
-            }
-        }
+        await wait(200);
+        heroCard.classList.add('revealing');
+        await wait(400);
+        heroCard.classList.remove('revealing');
+        heroCard.classList.remove('reveal-hidden');
+        heroCard.classList.add('reveal-show');
+
+        // Animate MBTI dimensions
+        setTimeout(() => {
+            this.ui.mbtiDimensions.querySelectorAll('.mbti-dim-fill').forEach(el => {
+                el.style.width = el.dataset.target + '%';
+            });
+            this.ui.mbtiDimensions.querySelectorAll('[data-counter]').forEach(el => {
+                this.animateCounter(el, parseInt(el.dataset.counter, 10));
+            });
+        }, 100);
+
+        // Show secondary tabs after hero settles
+        await wait(600);
+        this.ui.resultTabs.classList.add('show');
+
+        // Show primary tabs
+        this.ui.primaryTabs.classList.add('show');
+
+        // Animate bazi element bars
+        this.populateElementChartResult(this.currentBazi?.elementCounts);
+
+        // Cross-system insights
+        this.populateCrossInsights();
 
         // 3D tilt + holo on result cards
         this.initResultCardEffects();
@@ -1465,9 +1868,351 @@ class App {
         this.ui.growthCognitive.textContent = gm.cognitive;
         this.ui.growthActions.textContent = gm.actions;
 
-        // Reset AI insight card
-        this.ui.aiInsightCard.classList.add('hidden');
+        // Reset AI primary tab
+        this.ui.tabAI.classList.add('hidden');
         this.ui.aiInsightText.innerHTML = '';
+    }
+
+    // ==================== BAZI RESULTS POPULATION ====================
+
+    populateBaziResults(bazi) {
+        // Hero card
+        document.getElementById('element-symbol-result').textContent = bazi.mainElement;
+        document.getElementById('bazi-result-name').textContent = bazi.cosmicName;
+        document.getElementById('bazi-result-zodiac').textContent = `属${bazi.year.zodiac}`;
+        document.getElementById('bazi-result-yinyang').textContent = `${bazi.yinYang}${bazi.mainElement}`;
+
+        // Pattern badge
+        if (bazi.pattern) {
+            document.getElementById('bazi-result-pattern-badge').textContent = bazi.pattern.name;
+        }
+
+        // Enhanced pillars with hidden stems + ten gods
+        const pillarsEl = document.getElementById('bazi-pillars-enhanced');
+        const pillarNames = ['年柱', '月柱', '日柱', '时柱'];
+        const pillarKeys = ['year', 'month', 'day', 'hour'];
+
+        pillarsEl.innerHTML = pillarKeys.map((key, i) => {
+            const pillar = bazi[key];
+            const hidden = bazi.hiddenStems[key];
+            const tenGod = key === 'day' ? '日主' : (bazi.tenGods[key + 'Stem'] || '');
+            const hiddenGods = bazi.tenGods.hidden[key] || [];
+
+            return `
+                <div class="bazi-pillar-enhanced">
+                    <div class="bazi-pillar-label">${pillarNames[i]}</div>
+                    ${tenGod ? `<div class="bazi-tengod-tag">${escapeHTML(tenGod)}</div>` : '<div class="bazi-tengod-tag dim">日主</div>'}
+                    <div class="bazi-pillar-stem">${escapeHTML(pillar.stem)}</div>
+                    <div class="bazi-pillar-branch">${escapeHTML(pillar.branch)}</div>
+                    <div class="bazi-hidden-stems">
+                        ${hidden.map((s, j) => {
+                            const god = hiddenGods[j] ? hiddenGods[j].god : '';
+                            return `<span class="bazi-hidden-stem" title="${escapeHTML(god)}">${escapeHTML(s)}</span>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Day master strength
+        const dms = bazi.dayMasterStrength;
+        document.getElementById('day-master-strength').innerHTML = `
+            <div class="dms-header">
+                <span class="dms-label">日主</span>
+                <span class="dms-element">${escapeHTML(bazi.dayMaster)}${escapeHTML(bazi.mainElement)}</span>
+                <span class="dms-strength dms-${dms.strength === '偏强' ? 'strong' : dms.strength === '偏弱' ? 'weak' : 'neutral'}">${escapeHTML(dms.strength)}</span>
+            </div>
+            <p class="dms-analysis">${escapeHTML(dms.analysis)}</p>
+        `;
+
+        // Pattern section
+        document.getElementById('pattern-section').innerHTML = `
+            <div class="pattern-badge-large">${escapeHTML(bazi.pattern.name)}</div>
+            <p class="pattern-desc">${escapeHTML(bazi.pattern.desc)}</p>
+        `;
+
+        // Five elements (result version)
+        document.getElementById('wuxing-insight-result').textContent = bazi.wuxingInsight;
+
+        // Complementary advice
+        if (bazi.complementaryAdvice) {
+            const adv = bazi.complementaryAdvice;
+            document.getElementById('complement-tags-result').innerHTML = [
+                `宜补 ${adv.weakElement}`,
+                adv.color,
+                adv.direction,
+                adv.season
+            ].map(t => `<span class="complement-tag">${escapeHTML(t)}</span>`).join('');
+            document.getElementById('complement-text-result').textContent = adv.text;
+        }
+    }
+
+    populateElementChartResult(counts) {
+        if (!counts) return;
+        const ids = {
+            '木': { bar: 'bar-wood-r', count: 'count-wood-r' },
+            '火': { bar: 'bar-fire-r', count: 'count-fire-r' },
+            '土': { bar: 'bar-earth-r', count: 'count-earth-r' },
+            '金': { bar: 'bar-metal-r', count: 'count-metal-r' },
+            '水': { bar: 'bar-water-r', count: 'count-water-r' }
+        };
+        const max = Math.max(...Object.values(counts), 1);
+
+        // Reset bars first
+        Object.entries(ids).forEach(([, v]) => {
+            const el = document.getElementById(v.bar);
+            if (el) el.style.width = '0%';
+        });
+
+        // Animate bars after a delay
+        setTimeout(() => {
+            Object.entries(counts).forEach(([element, count]) => {
+                const v = ids[element];
+                if (!v) return;
+                const pct = (count / max) * 100;
+                const barEl = document.getElementById(v.bar);
+                const countEl = document.getElementById(v.count);
+                if (barEl) barEl.style.width = pct + '%';
+                if (countEl) countEl.textContent = count;
+            });
+        }, 300);
+    }
+
+    // ==================== ICHING RESULTS POPULATION ====================
+
+    populateIChingResults(result) {
+        // Primary hexagram display (6 lines)
+        const displayEl = document.getElementById('hexagram-display');
+        displayEl.innerHTML = this.renderHexagramLines(result.primaryLines, result.changingLines);
+
+        document.getElementById('hexagram-name').textContent =
+            `${result.primary.name}卦（第${result.primary.num}卦）`;
+        document.getElementById('hexagram-nature').textContent = result.primary.nature;
+        document.getElementById('hexagram-judgement').textContent = `卦辞：${result.primary.judgement}`;
+        document.getElementById('hexagram-image').textContent = result.primary.image;
+
+        // Stagger reveal animation: bottom (初爻) → top (上爻)
+        const hexLines = displayEl.querySelectorAll('.hex-line');
+        const linesContainer = displayEl.querySelector('.hexagram-lines');
+        if (linesContainer) linesContainer.classList.add('animating');
+        const lineArr = Array.from(hexLines).reverse(); // DOM top→bottom reversed = 初→上
+        lineArr.forEach((line, i) => {
+            setTimeout(() => {
+                line.classList.add('revealed');
+                this.audio.playYaoReveal(i);
+                if (line.classList.contains('changing')) {
+                    this.audio.playChangingYao();
+                }
+            }, 200 + i * 280);
+        });
+
+        // Click-to-expand yao detail (event delegation)
+        displayEl.addEventListener('click', (e) => {
+            const line = e.target.closest('.hex-line');
+            if (!line) return;
+            const yaoIdx = parseInt(line.dataset.yao);
+            const detail = displayEl.querySelector(`[data-yao-detail="${yaoIdx}"]`);
+            if (!detail) return;
+            if (detail.classList.contains('expanded')) {
+                detail.classList.remove('expanded');
+            } else {
+                displayEl.querySelectorAll('.hex-line-detail.expanded').forEach(d => d.classList.remove('expanded'));
+                if (!detail.innerHTML) {
+                    const lt = this.iching.getLineText(result.primary.num, yaoIdx);
+                    detail.innerHTML = `<div class="hex-line-detail-classical">${escapeHTML(lt.text)}</div>
+                        <div class="hex-line-detail-text">${escapeHTML(lt.interpretation)}</div>`;
+                }
+                detail.classList.add('expanded');
+                this.audio.playClick();
+            }
+        });
+
+        // Transformed hexagram
+        const transCard = document.getElementById('card-iching-transformed');
+        if (result.transformed && result.changingLines.length > 0) {
+            transCard.classList.remove('hidden');
+
+            const transformedLines = [...result.primaryLines];
+            result.changingLines.forEach(i => {
+                transformedLines[i] = transformedLines[i] === 1 ? 0 : 1;
+            });
+
+            document.getElementById('hexagram-mini-primary').innerHTML =
+                this.renderHexagramLinesMini(result.primaryLines);
+            document.getElementById('hexagram-mini-transformed').innerHTML =
+                this.renderHexagramLinesMini(transformedLines);
+
+            document.getElementById('hexagram-trans-name').textContent =
+                `${result.transformed.name}卦（第${result.transformed.num}卦）`;
+            document.getElementById('hexagram-trans-nature').textContent = result.transformed.nature;
+        } else {
+            transCard.classList.add('hidden');
+        }
+
+        // Changing line texts (爻辞)
+        const linesCard = document.getElementById('card-iching-lines');
+        const linesList = document.getElementById('yao-lines-list');
+        if (result.changingLines.length > 0) {
+            const lineData = this.iching.getChangingLineTexts(result.primary.num, result.changingLines);
+            linesList.innerHTML = lineData.map(ld => `
+                <div class="yao-line-item">
+                    <div class="yao-line-position">${escapeHTML(ld.position)}</div>
+                    <div class="yao-line-classical">${escapeHTML(ld.text)}</div>
+                    <div class="yao-line-interpretation">${escapeHTML(ld.interpretation)}</div>
+                </div>
+            `).join('');
+            linesCard.classList.remove('hidden');
+        } else {
+            linesCard.classList.add('hidden');
+        }
+
+        // Interpretation
+        document.getElementById('iching-interpretation').innerHTML =
+            safeParagraphs(result.interpretation);
+
+        // Cosmic advice
+        document.getElementById('iching-cosmic-advice').textContent = result.cosmicAdvice;
+
+        // Apply I Ching theme color based on upper trigram element
+        this.applyIChingTheme(result);
+    }
+
+    populateCrossInsights() {
+        const insights = generateCrossSystemInsights(this.currentBazi, this._lastTestResults, this._lastIChingResult);
+        const baziEl = document.getElementById('bazi-cross-text');
+        const persEl = document.getElementById('personality-cross-text');
+        const ichEl = document.getElementById('iching-cross-text');
+        if (baziEl) baziEl.textContent = insights.baziInsight;
+        if (persEl) persEl.textContent = insights.personalityInsight;
+        if (ichEl) ichEl.textContent = insights.ichingInsight;
+    }
+
+    renderHexagramLines(lines, changingLines = []) {
+        // Render 6 lines from bottom (index 0) to top (index 5)
+        let html = '<div class="hexagram-lines">';
+        for (let i = 5; i >= 0; i--) {
+            const isYang = lines[i] === 1;
+            const isChanging = changingLines.includes(i);
+            const changingClass = isChanging ? ' changing' : '';
+            const yaoLabel = this.iching.yaoNames[i];
+
+            if (isYang) {
+                html += `<div class="hex-line yang${changingClass}" data-yao="${i}" title="${yaoLabel}">
+                    <div class="hex-line-solid"></div>
+                    ${isChanging ? '<span class="hex-changing-mark">○</span>' : ''}
+                </div>`;
+            } else {
+                html += `<div class="hex-line yin${changingClass}" data-yao="${i}" title="${yaoLabel}">
+                    <div class="hex-line-broken"><span></span><span></span></div>
+                    ${isChanging ? '<span class="hex-changing-mark">×</span>' : ''}
+                </div>`;
+            }
+            // Expandable detail panel per yao
+            html += `<div class="hex-line-detail" data-yao-detail="${i}"></div>`;
+        }
+        html += '</div>';
+        return html;
+    }
+
+    renderHexagramLinesMini(lines) {
+        let html = '<div class="hexagram-lines-mini">';
+        for (let i = 5; i >= 0; i--) {
+            if (lines[i] === 1) {
+                html += '<div class="hex-line-mini yang"><div class="hex-line-solid-mini"></div></div>';
+            } else {
+                html += '<div class="hex-line-mini yin"><div class="hex-line-broken-mini"><span></span><span></span></div></div>';
+            }
+        }
+        html += '</div>';
+        return html;
+    }
+
+    // ==================== PRIMARY TAB NAVIGATION ====================
+
+    switchPrimaryTab(tabName) {
+        const prevIdx = this._currentPrimaryTab;
+        const newIdx = this._primaryTabNames.indexOf(tabName);
+        const direction = newIdx > prevIdx ? 'slide-right' : 'slide-left';
+        this._currentPrimaryTab = newIdx;
+
+        // Update primary tab buttons
+        this.ui.primaryTabs.querySelectorAll('.primary-tab').forEach(t => {
+            const isActive = t.dataset.ptab === tabName;
+            t.classList.toggle('active', isActive);
+            t.setAttribute('aria-selected', isActive);
+        });
+
+        // Update primary panels with slide direction
+        document.querySelectorAll('.primary-panel').forEach(p => {
+            p.classList.remove('active', 'slide-left', 'slide-right');
+            if (p.dataset.ppanel === tabName) {
+                p.classList.add('active', direction);
+            }
+        });
+
+        // Show/hide secondary tabs based on which primary tab is active
+        if (tabName === 'personality') {
+            this.ui.resultTabs.classList.add('show');
+        } else {
+            this.ui.resultTabs.classList.remove('show');
+        }
+
+        // Trigger radar animation when stress panel is shown
+        if (tabName === 'personality' && this._tabNames[this._currentTab] === 'stress' && !this._radarAnimated) {
+            this._radarAnimated = true;
+            setTimeout(() => this.animateRadar(), 200);
+        }
+
+        // Scroll active tab into view
+        const activeTab = this.ui.primaryTabs.querySelector('.primary-tab.active');
+        if (activeTab) {
+            activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+
+    applyIChingTheme(result) {
+        const trigramEl = { '乾': 'metal', '兑': 'metal', '离': 'fire', '震': 'wood', '巽': 'wood', '坎': 'water', '艮': 'earth', '坤': 'earth' };
+        const elem = trigramEl[result.primary.upper] || 'metal';
+        const panel = document.querySelector('[data-ppanel="iching"]');
+        if (panel) {
+            panel.className = panel.className.replace(/iching-theme-\w+/g, '').trim();
+            panel.classList.add(`iching-theme-${elem}`);
+        }
+    }
+
+    // ==================== SECONDARY TAB NAVIGATION ====================
+
+    switchResultTab(tabName) {
+        this._currentTab = this._tabNames.indexOf(tabName);
+
+        // Update tab buttons
+        this.ui.resultTabs.querySelectorAll('.result-tab').forEach(t => {
+            const isActive = t.dataset.tab === tabName;
+            t.classList.toggle('active', isActive);
+            t.setAttribute('aria-selected', isActive);
+        });
+
+        // Update panels
+        this.ui.tabPanels.querySelectorAll('.tab-panel').forEach(p => {
+            p.classList.toggle('active', p.dataset.panel === tabName);
+        });
+
+        // Trigger radar animation when stress tab is first shown
+        if (tabName === 'stress' && !this._radarAnimated) {
+            this._radarAnimated = true;
+            setTimeout(() => this.animateRadar(), 200);
+        }
+
+        // Scroll tab bar to keep active tab visible
+        const activeTab = this.ui.resultTabs.querySelector('.result-tab.active');
+        if (activeTab) {
+            activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+
+    // Legacy populateCard for identity section (still used by archive)
+    populateCardLegacy(bazi) {
+        this.populateCard(bazi);
     }
 
     // ==================== VISUAL EFFECTS ====================
@@ -2183,6 +2928,7 @@ class App {
         this.ui.aiStatusDual.classList.add('hidden');
         this.ui.aiUnlockBtn.classList.add('hidden');
         this.ui.aiUnlockBtnDual.classList.add('hidden');
+        this.ui.tabAI.classList.add('hidden');
         // Remove AI card loading dots
         document.querySelectorAll('.ai-card-loading').forEach(el => el.remove());
         // Remove AI big5 text blocks
@@ -2198,12 +2944,14 @@ class App {
         this.remoteMode = false;
         this.remoteInviterData = null;
         this._transitioning = false;
+        this._lastIChingResult = null;
+        this.currentBazi = null;
         this.resetMBTITheme();
         this.resetAIState();
         this._runningScores = { ei: 0, sn: 0, tf: 0, jp: 0 };
         this._runningCounts = { ei: 0, sn: 0, tf: 0, jp: 0 };
         // Hide whichever section is visible
-        const sections = [this.ui.testIntroSection, this.ui.testQuestionsSection, this.ui.testResultsSection, this.ui.testAnalyzingSection, this.ui.dualIntroSection, this.ui.dualHandoffSection, this.ui.dualResultsSection, this.ui.remoteMatchIntroSection];
+        const sections = [this.ui.ritualSection, this.ui.testIntroSection, this.ui.testQuestionsSection, this.ui.testResultsSection, this.ui.testAnalyzingSection, this.ui.identitySection, this.ui.dualIntroSection, this.ui.dualHandoffSection, this.ui.dualResultsSection, this.ui.remoteMatchIntroSection];
         sections.forEach(s => {
             s.classList.remove('active');
             s.classList.add('hidden');
@@ -2266,14 +3014,16 @@ class App {
         if (!this.ai.hasKey || !this._lastTestResults || this._aiRunning) return;
         this._aiRunning = true;
 
-        // Show loading, hide unlock
+        // Show AI primary tab, switch to it, show loading
+        this.ui.tabAI.classList.remove('hidden');
+        this.switchPrimaryTab('ai');
         this.ui.aiStatus.classList.remove('hidden');
         this.ui.aiUnlockBtn.classList.add('hidden');
 
         try {
             let fullText = '';
             let lastTickTime = 0;
-            await this.ai.enhancePersonalityResults(this._lastTestResults, (chunk) => {
+            await this.ai.enhancePersonalityResults(this._lastTestResults, this.currentBazi, this._lastIChingResult, (chunk) => {
                 fullText = chunk;
                 this.applyAIPersonalityResults(fullText, false);
                 const now = Date.now();
@@ -2296,19 +3046,8 @@ class App {
     }
 
     applyAIPersonalityResults(text, isFinal) {
-        // Show AI insight card and stream content into it
-        this.ui.aiInsightCard.classList.remove('hidden');
-        this.ui.aiInsightCard.classList.add('reveal-show');
         this.ui.aiInsightText.innerHTML = safeParagraphs(text);
         this.ui.aiInsightText.classList.add('ai-text-enter');
-
-        if (isFinal) {
-            // Scroll AI card into view
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (!prefersReducedMotion) {
-                this.ui.aiInsightCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
     }
 
     async triggerAIDual() {
@@ -2389,7 +3128,7 @@ class App {
         if (this._chatHistory.length === 0) {
             this._chatHistory.push({
                 role: 'system',
-                content: this.ai.buildChatSystemPrompt(this._lastTestResults)
+                content: this.ai.buildChatSystemPrompt(this._lastTestResults, this.currentBazi, this._lastIChingResult)
             });
         }
         this._chatHistory.push({ role: 'user', content: text });
@@ -2570,6 +3309,18 @@ class App {
         const kws = r.mbti.keywords || [];
         document.getElementById('share-card-keywords').innerHTML =
             kws.map(k => `<span class="share-kw">${k}</span>`).join('');
+
+        // I Ching hexagram summary
+        const ichingTag = document.getElementById('share-card-iching');
+        if (ichingTag && this._lastIChingResult) {
+            const ic = this._lastIChingResult;
+            let ichingText = `卦象 · ${ic.primary.name}`;
+            if (ic.transformed) ichingText += ` → ${ic.transformed.name}`;
+            ichingTag.textContent = ichingText;
+            ichingTag.style.display = 'block';
+        } else if (ichingTag) {
+            ichingTag.style.display = 'none';
+        }
 
         // AI insight excerpt (from AI deep insight card)
         const aiInsight = document.getElementById('share-card-ai-insight');

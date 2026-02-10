@@ -346,6 +346,66 @@ class CosmicAudio {
         });
     }
 
+    // ==================== I CHING SOUNDS ====================
+
+    playCoinToss() {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        // Metallic clink — coin striking surface
+        const osc = this.ctx.createOscillator();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(4000, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 3000;
+        filter.Q.value = 5;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(now);
+        osc.stop(now + 0.25);
+    }
+
+    playYaoReveal(index) {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        // Guqin-like pluck, pentatonic ascending 初爻→上爻
+        const notes = [196, 220, 261.63, 293.66, 329.63, 392];
+        const freq = notes[index] || 261.63;
+        const osc = this.ctx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start(now);
+        osc.stop(now + 0.9);
+    }
+
+    playChangingYao() {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        // Ethereal bell — two harmonics
+        [523.25, 1046.5].forEach((freq, i) => {
+            const osc = this.ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(i === 0 ? 0.05 : 0.02, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+            osc.connect(gain);
+            gain.connect(this.masterGain);
+            osc.start(now);
+            osc.stop(now + 1.3);
+        });
+    }
+
     // ==================== ANSWER CONFIRMATION ====================
 
     playAnswer(questionIndex) {

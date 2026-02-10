@@ -44,8 +44,18 @@
 
         <!-- Splash Screen -->
         <div id="splash">
-            <div class="splash-star"></div>
-            <h1 class="splash-title">星尘 · 身份</h1>
+            <div class="splash-nucleus"></div>
+            <div class="splash-ring"></div>
+            <div class="splash-ring"></div>
+            <div class="splash-ring"></div>
+            <div class="splash-title-wrap">
+                <span class="splash-char" style="--ci:0">星</span>
+                <span class="splash-char" style="--ci:1">尘</span>
+                <span class="splash-char splash-dot" style="--ci:2">·</span>
+                <span class="splash-char" style="--ci:3">身</span>
+                <span class="splash-char" style="--ci:4">份</span>
+            </div>
+            <p class="splash-tagline">探索宇宙深处的你</p>
             <div class="splash-line"></div>
         </div>
 
@@ -61,11 +71,8 @@
                 <h1 class="hero-title text-shimmer">星尘 · 身份</h1>
                 <p class="hero-subtitle">在浩瀚宇宙中，寻找你独特的频率</p>
                 <div class="cta-container">
-                    <button id="enter-btn" class="glass-btn" aria-label="踏入虚空，开始八字分析">
-                        <span class="btn-text">踏入虚空</span>
-                    </button>
-                    <button id="test-enter-btn" class="glass-btn secondary-cta" aria-label="探索人格，开始人格测试">
-                        <span class="btn-text">探索人格</span>
+                    <button id="enter-btn" class="glass-btn" aria-label="开始探索，输入生日并测试">
+                        <span class="btn-text">开始探索</span>
                     </button>
                     <button id="dual-enter-btn" class="glass-btn secondary-cta" aria-label="双人灵魂共振测试">
                         <span class="btn-text">灵魂共振</span>
@@ -507,8 +514,8 @@
             </div>
         </section>
 
-        <!-- Phase: Test Analyzing Interlude -->
-        <section id="test-analyzing" class="screen hidden" role="region" aria-label="分析中">
+        <!-- Phase: Unified Analyzing Interlude -->
+        <section id="test-analyzing" class="screen hidden" role="region" aria-label="统一分析中">
             <div class="analyzing-container">
                 <div class="analyzing-orb">
                     <svg class="analyzing-ring" viewBox="0 0 120 120">
@@ -519,120 +526,300 @@
                     <div class="analyzing-core"></div>
                 </div>
                 <div class="analyzing-steps">
-                    <p class="analyzing-step">解码MBTI频率...</p>
-                    <p class="analyzing-step">扫描大五人格光谱...</p>
-                    <p class="analyzing-step">锁定九型人格坐标...</p>
+                    <p class="analyzing-step">解读命盘...</p>
+                    <p class="analyzing-step">解析人格频率...</p>
+                    <p class="analyzing-step">启动周易占卜...</p>
                 </div>
             </div>
         </section>
 
-        <!-- Phase: Test Results -->
-        <section id="test-results" class="screen hidden" role="region" aria-label="测试结果">
+        <!-- Phase: Unified Results -->
+        <section id="test-results" class="screen hidden" role="region" aria-label="统一结果">
             <div class="results-scroll">
                 <div class="results-container" id="test-results-card">
-                    <h2 class="results-title text-shimmer">你的宇宙人格</h2>
-                    <p class="results-subtitle">深度灵魂画像</p>
+                    <h2 class="results-title text-shimmer">宇宙全景观测</h2>
+                    <p class="results-subtitle">过去 · 现在 · 未来</p>
 
                     <!-- Soul Constellation -->
                     <div class="constellation-container" id="constellation-container">
                         <canvas id="constellation-canvas"></canvas>
                     </div>
 
-                    <!-- Card 1: Core Portrait -->
-                    <div class="result-card" id="card-core">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">核心画像</div>
-                        <div class="result-type-row">
-                            <span class="result-type" id="mbti-type">INTJ</span>
-                            <span class="enn-badge" id="enn-badge">5w6</span>
-                        </div>
-                        <h3 class="result-cosmic-name text-shimmer" id="mbti-cosmic-name">星图织者</h3>
-                        <p class="result-title-sub" id="mbti-title"></p>
-                        <p class="result-enn-sub" id="enn-subtitle"></p>
-                        <div class="keyword-tags" id="core-keywords"></div>
-                        <div class="mbti-celebrities" id="mbti-celebrities"></div>
-                        <div class="mbti-dimensions" id="mbti-dimensions"></div>
-                        <div class="result-desc" id="core-desc"></div>
-                        <div class="result-extras compact">
-                            <div class="result-extra-item">
-                                <span class="extra-label">核心力量</span>
-                                <p class="extra-text" id="core-strengths"></p>
-                            </div>
-                            <div class="result-extra-item">
-                                <span class="extra-label">核心驱力</span>
-                                <p class="extra-text" id="core-drive"></p>
-                            </div>
-                            <div class="result-extra-item">
-                                <span class="extra-label">深层恐惧</span>
-                                <p class="extra-text" id="core-fear"></p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Primary Tabs (L1): 命盘 / 人格 / 卦象 / AI -->
+                    <nav class="primary-tabs" id="primary-tabs" role="tablist">
+                        <button class="primary-tab active" data-ptab="bazi" role="tab" aria-selected="true">命盘</button>
+                        <button class="primary-tab" data-ptab="personality" role="tab" aria-selected="false">人格</button>
+                        <button class="primary-tab" data-ptab="iching" role="tab" aria-selected="false">卦象</button>
+                        <button class="primary-tab tab-ai hidden" data-ptab="ai" role="tab" aria-selected="false" id="tab-ai">✦ AI</button>
+                    </nav>
 
-                    <!-- Card 2: Cognitive Style -->
-                    <div class="result-card" id="card-cognitive">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">认知风格</div>
-                        <div class="cognitive-fn-arcs" id="cognitive-fn-arcs"></div>
-                        <div class="cognitive-fn-stack" id="cognitive-functions"></div>
-                        <div class="result-desc" id="cognitive-desc"></div>
-                    </div>
-
-                    <!-- Card 3: Relationships -->
-                    <div class="result-card" id="card-relationships">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">关系模式</div>
-                        <div class="social-quadrant" id="social-quadrant"></div>
-                        <div class="result-desc" id="relationships-desc"></div>
-                    </div>
-
-                    <!-- Card 4: Work & Energy -->
-                    <div class="result-card" id="card-work">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">工作与能量</div>
-                        <div class="energy-spectrums" id="energy-spectrums"></div>
-                        <div class="result-desc" id="work-desc"></div>
-                    </div>
-
-                    <!-- Card 5: Stress & Emotions -->
-                    <div class="result-card" id="card-stress">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">压力与情绪</div>
-                        <div class="big5-chart" id="big5-chart"></div>
-                        <div class="big5-dims" id="big5-dims"></div>
-                        <div class="result-desc" id="stress-desc"></div>
-                    </div>
-
-                    <!-- Card 6: Growth Map -->
-                    <div class="result-card" id="card-growth">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">成长地图</div>
-                        <div class="enn-path" id="enn-path"></div>
-                        <div class="result-desc" id="growth-desc"></div>
-                        <div class="result-extras">
-                            <div class="result-extra-item">
-                                <span class="extra-label">认知发展</span>
-                                <p class="extra-text" id="growth-cognitive"></p>
-                            </div>
-                            <div class="result-extra-item">
-                                <span class="extra-label">行动建议</span>
-                                <p class="extra-text" id="growth-actions"></p>
+                    <!-- Primary Panel: 命盘 (Bazi) -->
+                    <div class="primary-panel active" data-ppanel="bazi">
+                        <!-- Bazi Hero Card -->
+                        <div class="result-card" id="card-bazi-hero">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">宇宙身份证</div>
+                            <div class="bazi-hero-header">
+                                <div class="element-orb-small" id="element-orb-result">
+                                    <span class="element-symbol-small" id="element-symbol-result">木</span>
+                                </div>
+                                <div class="bazi-hero-info">
+                                    <h3 class="bazi-hero-name text-shimmer" id="bazi-result-name">苍龙破晓</h3>
+                                    <div class="bazi-hero-meta">
+                                        <span class="meta-tag" id="bazi-result-zodiac">属龙</span>
+                                        <span class="meta-divider">·</span>
+                                        <span class="meta-tag" id="bazi-result-yinyang">阳木</span>
+                                        <span class="meta-divider">·</span>
+                                        <span class="meta-tag" id="bazi-result-pattern-badge"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Four Pillars with Hidden Stems + Ten Gods -->
+                        <div class="result-card" id="card-bazi-pillars">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">四柱详览</div>
+                            <div class="bazi-pillars-enhanced" id="bazi-pillars-enhanced">
+                                <!-- Dynamically populated -->
+                            </div>
+                            <!-- Day Master Strength -->
+                            <div class="day-master-strength" id="day-master-strength">
+                                <!-- Dynamically populated -->
+                            </div>
+                            <!-- Pattern Badge -->
+                            <div class="pattern-section" id="pattern-section">
+                                <!-- Dynamically populated -->
+                            </div>
+                        </div>
+
+                        <!-- Five Elements + Advice -->
+                        <div class="result-card" id="card-bazi-elements">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">五行气象</div>
+                            <div class="elements-chart" id="elements-chart-result">
+                                <div class="chart-bars">
+                                    <div class="chart-row" data-element="木">
+                                        <span class="chart-label">木</span>
+                                        <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-wood-r"></div></div>
+                                        <span class="chart-count" id="count-wood-r">0</span>
+                                    </div>
+                                    <div class="chart-row" data-element="火">
+                                        <span class="chart-label">火</span>
+                                        <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-fire-r"></div></div>
+                                        <span class="chart-count" id="count-fire-r">0</span>
+                                    </div>
+                                    <div class="chart-row" data-element="土">
+                                        <span class="chart-label">土</span>
+                                        <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-earth-r"></div></div>
+                                        <span class="chart-count" id="count-earth-r">0</span>
+                                    </div>
+                                    <div class="chart-row" data-element="金">
+                                        <span class="chart-label">金</span>
+                                        <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-metal-r"></div></div>
+                                        <span class="chart-count" id="count-metal-r">0</span>
+                                    </div>
+                                    <div class="chart-row" data-element="水">
+                                        <span class="chart-label">水</span>
+                                        <div class="chart-bar-track"><div class="chart-bar-fill" id="bar-water-r"></div></div>
+                                        <span class="chart-count" id="count-water-r">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="wuxing-insight-result" class="wuxing-insight"></p>
+                            <div class="complement-section">
+                                <div class="complement-header">调和之气</div>
+                                <div class="complement-tags" id="complement-tags-result"></div>
+                                <p id="complement-text-result" class="complement-text"></p>
+                            </div>
+                        </div>
+
+                        <!-- Cross-system: 命盘×人格 -->
+                        <div class="result-card cross-insight-card" id="card-bazi-cross">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">三维交汇</div>
+                            <p class="cross-insight-text" id="bazi-cross-text"></p>
+                        </div>
                     </div>
 
-                    <!-- AI Deep Insight (hidden until AI runs) -->
-                    <div class="result-card ai-insight-card hidden" id="card-ai-insight">
-                        <div class="holo-overlay"></div>
-                        <div class="result-badge">AI 深度洞察</div>
-                        <div class="result-desc" id="ai-insight-text"></div>
+                    <!-- Primary Panel: 人格 (Personality) -->
+                    <div class="primary-panel" data-ppanel="personality">
+                        <!-- Core Portrait Card -->
+                        <div class="result-card" id="card-core">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">核心画像</div>
+                            <div class="result-type-row">
+                                <span class="result-type" id="mbti-type">INTJ</span>
+                                <span class="enn-badge" id="enn-badge">5w6</span>
+                            </div>
+                            <h3 class="result-cosmic-name text-shimmer" id="mbti-cosmic-name">星图织者</h3>
+                            <p class="result-title-sub" id="mbti-title"></p>
+                            <p class="result-enn-sub" id="enn-subtitle"></p>
+                            <div class="keyword-tags" id="core-keywords"></div>
+                            <div class="mbti-celebrities" id="mbti-celebrities"></div>
+                            <div class="mbti-dimensions" id="mbti-dimensions"></div>
+                            <div class="result-desc" id="core-desc"></div>
+                            <div class="result-extras compact">
+                                <div class="result-extra-item">
+                                    <span class="extra-label">核心力量</span>
+                                    <p class="extra-text" id="core-strengths"></p>
+                                </div>
+                                <div class="result-extra-item">
+                                    <span class="extra-label">核心驱力</span>
+                                    <p class="extra-text" id="core-drive"></p>
+                                </div>
+                                <div class="result-extra-item">
+                                    <span class="extra-label">深层恐惧</span>
+                                    <p class="extra-text" id="core-fear"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Tabs (L2): 认知/关系/工作/压力/成长 -->
+                        <nav class="result-tabs" id="result-tabs" role="tablist">
+                            <button class="result-tab active" data-tab="cognitive" role="tab" aria-selected="true">认知</button>
+                            <button class="result-tab" data-tab="relationships" role="tab" aria-selected="false">关系</button>
+                            <button class="result-tab" data-tab="work" role="tab" aria-selected="false">工作</button>
+                            <button class="result-tab" data-tab="stress" role="tab" aria-selected="false">压力</button>
+                            <button class="result-tab" data-tab="growth" role="tab" aria-selected="false">成长</button>
+                        </nav>
+
+                        <!-- Tab Panels -->
+                        <div class="tab-panels" id="tab-panels">
+                            <div class="tab-panel active" data-panel="cognitive" role="tabpanel">
+                                <div class="result-card" id="card-cognitive">
+                                    <div class="holo-overlay"></div>
+                                    <div class="cognitive-fn-arcs" id="cognitive-fn-arcs"></div>
+                                    <div class="cognitive-fn-stack" id="cognitive-functions"></div>
+                                    <div class="result-desc" id="cognitive-desc"></div>
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="relationships" role="tabpanel">
+                                <div class="result-card" id="card-relationships">
+                                    <div class="holo-overlay"></div>
+                                    <div class="social-quadrant" id="social-quadrant"></div>
+                                    <div class="result-desc" id="relationships-desc"></div>
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="work" role="tabpanel">
+                                <div class="result-card" id="card-work">
+                                    <div class="holo-overlay"></div>
+                                    <div class="energy-spectrums" id="energy-spectrums"></div>
+                                    <div class="result-desc" id="work-desc"></div>
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="stress" role="tabpanel">
+                                <div class="result-card" id="card-stress">
+                                    <div class="holo-overlay"></div>
+                                    <div class="big5-chart" id="big5-chart"></div>
+                                    <div class="big5-dims" id="big5-dims"></div>
+                                    <div class="result-desc" id="stress-desc"></div>
+                                </div>
+                            </div>
+                            <div class="tab-panel" data-panel="growth" role="tabpanel">
+                                <div class="result-card" id="card-growth">
+                                    <div class="holo-overlay"></div>
+                                    <div class="enn-path" id="enn-path"></div>
+                                    <div class="result-desc" id="growth-desc"></div>
+                                    <div class="result-extras">
+                                        <div class="result-extra-item">
+                                            <span class="extra-label">认知发展</span>
+                                            <p class="extra-text" id="growth-cognitive"></p>
+                                        </div>
+                                        <div class="result-extra-item">
+                                            <span class="extra-label">行动建议</span>
+                                            <p class="extra-text" id="growth-actions"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cross-system: 人格×命盘 -->
+                        <div class="result-card cross-insight-card" id="card-personality-cross">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">三维交汇</div>
+                            <p class="cross-insight-text" id="personality-cross-text"></p>
+                        </div>
                     </div>
 
-                    <!-- AI Status -->
-                    <div id="ai-status" class="ai-status hidden">
-                        <div class="ai-loading-indicator">
-                            <span class="ai-loading-dot"></span>
-                            <span class="ai-loading-text">AI 解读生成中</span>
+                    <!-- Primary Panel: 卦象 (I Ching) -->
+                    <div class="primary-panel" data-ppanel="iching">
+                        <!-- Primary Hexagram -->
+                        <div class="result-card" id="card-iching-primary">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">本卦</div>
+                            <div class="hexagram-display" id="hexagram-display">
+                                <!-- 6 lines rendered by JS -->
+                            </div>
+                            <h3 class="hexagram-name text-shimmer" id="hexagram-name"></h3>
+                            <p class="hexagram-nature" id="hexagram-nature"></p>
+                            <p class="hexagram-judgement" id="hexagram-judgement"></p>
+                            <p class="hexagram-image" id="hexagram-image"></p>
+                        </div>
+
+                        <!-- Transformed Hexagram (if changing lines exist) -->
+                        <div class="result-card hidden" id="card-iching-transformed">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">变卦</div>
+                            <div class="hexagram-transform-row">
+                                <div class="hexagram-mini" id="hexagram-mini-primary"></div>
+                                <span class="hexagram-arrow">→</span>
+                                <div class="hexagram-mini" id="hexagram-mini-transformed"></div>
+                            </div>
+                            <h3 class="hexagram-name" id="hexagram-trans-name"></h3>
+                            <p class="hexagram-nature" id="hexagram-trans-nature"></p>
+                        </div>
+
+                        <!-- Changing Line Texts (爻辞) -->
+                        <div class="result-card hidden" id="card-iching-lines">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">变爻爻辞</div>
+                            <div class="yao-lines-list" id="yao-lines-list">
+                                <!-- Rendered by JS: individual line texts for changing lines -->
+                            </div>
+                        </div>
+
+                        <!-- Interpretation -->
+                        <div class="result-card" id="card-iching-reading">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">卦象解读</div>
+                            <div class="result-desc" id="iching-interpretation"></div>
+                        </div>
+
+                        <!-- Cross-system: 卦象×人格 -->
+                        <div class="result-card cross-insight-card" id="card-iching-cross">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">三维交汇</div>
+                            <p class="cross-insight-text" id="iching-cross-text"></p>
+                        </div>
+
+                        <!-- Cosmic Advice -->
+                        <div class="result-card" id="card-iching-advice">
+                            <div class="holo-overlay"></div>
+                            <div class="result-badge">宇宙寄语</div>
+                            <p class="cosmic-advice-text" id="iching-cosmic-advice"></p>
+                        </div>
+
+                        <!-- Quick Ask Buttons -->
+                        <div class="iching-quick-asks" id="iching-quick-asks">
+                            <button class="quick-ask-btn" data-ask="changing">变爻含义</button>
+                            <button class="quick-ask-btn" data-ask="relation">本卦与变卦</button>
+                            <button class="quick-ask-btn" data-ask="advice">应对建议</button>
+                        </div>
+                    </div>
+
+                    <!-- Primary Panel: AI Deep Insight -->
+                    <div class="primary-panel" data-ppanel="ai">
+                        <div class="result-card ai-insight-card" id="card-ai-insight">
+                            <div class="holo-overlay"></div>
+                            <div class="result-desc" id="ai-insight-text"></div>
+                        </div>
+                        <div id="ai-status" class="ai-status hidden">
+                            <div class="ai-loading-indicator">
+                                <span class="ai-loading-dot"></span>
+                                <span class="ai-loading-text">AI 解读生成中</span>
+                            </div>
                         </div>
                     </div>
 
@@ -673,7 +860,7 @@
                         <div class="ai-chat-body">
                             <div class="ai-chat-messages" id="ai-chat-messages"></div>
                             <div class="ai-chat-input-row">
-                                <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="关于你的人格，想了解什么？" maxlength="200" />
+                                <input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="关于你的命运，想了解什么？" maxlength="200" />
                                 <button id="ai-chat-send" class="ai-chat-send" aria-label="发送">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
                                 </button>
@@ -695,7 +882,17 @@
                 </div>
                 <div class="archive-grid" id="archive-grid"></div>
                 <div class="archive-grid hidden" id="test-archive-grid"></div>
+                <!-- Compare bar -->
+                <div class="archive-compare-bar hidden" id="archive-compare-bar">
+                    <span class="compare-count" id="compare-count">已选 0/2</span>
+                    <button class="glass-btn small" id="compare-go-btn" disabled>
+                        <span class="btn-text">开始对比</span>
+                    </button>
+                </div>
+                <!-- Compare panel -->
+                <div class="archive-compare-panel hidden" id="archive-compare-panel"></div>
                 <div class="archive-actions">
+                    <button id="archive-compare-toggle" class="text-btn secondary" aria-label="对比模式">对比模式</button>
                     <button id="archive-close" class="glass-btn small" aria-label="关闭星辰档案">
                         <span class="btn-text">关闭</span>
                     </button>
@@ -794,6 +991,7 @@
                     <div class="share-card-tag" id="share-card-enn"></div>
                 </div>
                 <div class="share-card-keywords" id="share-card-keywords"></div>
+                <div class="share-card-tag share-card-iching" id="share-card-iching" style="display:none;"></div>
                 <div class="share-card-ai-insight" id="share-card-ai-insight"></div>
             </div>
             <div class="share-card-footer">
@@ -805,6 +1003,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="js/bazi.js"></script>
+    <script src="js/iching.js"></script>
     <script src="js/stars.js"></script>
     <script src="js/personality.js"></script>
     <script src="js/audio.js"></script>

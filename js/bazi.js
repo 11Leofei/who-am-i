@@ -123,6 +123,48 @@ class BaziCalculator {
             '金': { color: '白色、金色', direction: '西方', activity: '音乐欣赏、精密手工、呼吸练习', season: '秋季' },
             '水': { color: '黑色、深蓝', direction: '北方', activity: '游泳潜水、阅读思考、夜间冥想', season: '冬季' }
         };
+
+        // Hidden Stems (藏干): each branch contains 1-3 hidden stems (本气/中气/余气)
+        this.hiddenStems = {
+            '子': ['癸'],
+            '丑': ['己', '癸', '辛'],
+            '寅': ['甲', '丙', '戊'],
+            '卯': ['乙'],
+            '辰': ['戊', '乙', '癸'],
+            '巳': ['丙', '庚', '戊'],
+            '午': ['丁', '己'],
+            '未': ['己', '丁', '乙'],
+            '申': ['庚', '壬', '戊'],
+            '酉': ['辛'],
+            '戌': ['戊', '辛', '丁'],
+            '亥': ['壬', '甲']
+        };
+
+        // Five element indices for ten god calculation
+        this.elementIndex = { '木': 0, '火': 1, '土': 2, '金': 3, '水': 4 };
+
+        // Ten God descriptions (十神解读)
+        this.tenGodDescriptions = {
+            '比肩': '独立自主，重义气，自我意识强，喜欢与人并肩前行。',
+            '劫财': '果敢行动，竞争意识强，敢于争取，魄力十足。',
+            '食神': '才华横溢，性情温和，享受生活之美，创造力旺盛。',
+            '伤官': '聪明机敏，追求完美，表达力强，不拘传统。',
+            '偏财': '慷慨大方，善于交际，理财灵活，人缘广泛。',
+            '正财': '勤俭务实，稳健理财，重信守诺，脚踏实地。',
+            '七杀': '魄力非凡，敢于挑战，抗压力强，英雄气概。',
+            '正官': '正直守规，责任心强，注重秩序，温文尔雅。',
+            '偏印': '悟性极高，思想独特，直觉敏锐，博学多才。',
+            '正印': '仁慈宽厚，学识渊博，受人庇护，内心充盈。'
+        };
+
+        // Month branch → season element (月令五行)
+        this.monthSeasonElement = {
+            '寅': '木', '卯': '木',
+            '巳': '火', '午': '火',
+            '辰': '土', '未': '土', '戌': '土', '丑': '土',
+            '申': '金', '酉': '金',
+            '亥': '水', '子': '水'
+        };
     }
 
     // Year pillar (年柱)
@@ -178,6 +220,167 @@ class BaziCalculator {
         };
     }
 
+    // Get hidden stems for a branch
+    getHiddenStems(branch) {
+        return this.hiddenStems[branch] || [];
+    }
+
+    // Ten God relationship: given day stem and another stem, return the ten god name
+    getTenGod(dayStem, otherStem) {
+        const dayEl = this.stemElements[dayStem];
+        const otherEl = this.stemElements[otherStem];
+        const dayYY = this.stemYinYang[dayStem];
+        const otherYY = this.stemYinYang[otherStem];
+        const samePolarity = dayYY === otherYY;
+
+        const dayIdx = this.elementIndex[dayEl];
+        const otherIdx = this.elementIndex[otherEl];
+
+        // Relationship: 0=same, 1=I generate, 2=generated overcomes me(克我生), 3=I overcome, 4=generates me
+        // Using cycle: 木0→火1→土2→金3→水4
+        const diff = (otherIdx - dayIdx + 5) % 5;
+
+        if (diff === 0) return samePolarity ? '比肩' : '劫财';
+        if (diff === 1) return samePolarity ? '食神' : '伤官'; // I generate
+        if (diff === 2) return samePolarity ? '偏财' : '正财'; // I overcome
+        if (diff === 3) return samePolarity ? '七杀' : '正官'; // Overcomes me
+        if (diff === 4) return samePolarity ? '偏印' : '正印'; // Generates me
+        return '';
+    }
+
+    // Analyze ten gods for all pillars
+    analyzeTenGods(bazi) {
+        const ds = bazi.dayMaster;
+
+        // Stem ten gods (skip day stem itself)
+        const yearStemGod = this.getTenGod(ds, bazi.year.stem);
+        const monthStemGod = this.getTenGod(ds, bazi.month.stem);
+        const hourStemGod = this.getTenGod(ds, bazi.hour.stem);
+
+        // Hidden stem ten gods for all four branches
+        const hiddenGods = {
+            year: this.getHiddenStems(bazi.year.branch).map(s => ({ stem: s, god: this.getTenGod(ds, s) })),
+            month: this.getHiddenStems(bazi.month.branch).map(s => ({ stem: s, god: this.getTenGod(ds, s) })),
+            day: this.getHiddenStems(bazi.day.branch).map(s => ({ stem: s, god: this.getTenGod(ds, s) })),
+            hour: this.getHiddenStems(bazi.hour.branch).map(s => ({ stem: s, god: this.getTenGod(ds, s) }))
+        };
+
+        // Distribution count
+        const distribution = {};
+        const allGods = [yearStemGod, monthStemGod, hourStemGod];
+        Object.values(hiddenGods).forEach(arr => arr.forEach(h => allGods.push(h.god)));
+        allGods.forEach(g => { distribution[g] = (distribution[g] || 0) + 1; });
+
+        return {
+            yearStem: yearStemGod,
+            monthStem: monthStemGod,
+            hourStem: hourStemGod,
+            hidden: hiddenGods,
+            distribution
+        };
+    }
+
+    // Assess day master strength
+    assessDayMasterStrength(bazi) {
+        const ds = bazi.dayMaster;
+        const dayEl = this.stemElements[ds];
+        const rel = this.wuxingCycle[dayEl];
+        let score = 50; // Start neutral
+
+        // 1. Month branch (月令) — 40% weight
+        const monthBranch = bazi.month.branch;
+        const monthEl = this.monthSeasonElement[monthBranch];
+        if (monthEl === dayEl) score += 16;           // 得令
+        else if (monthEl === rel.generatedBy) score += 10; // 月令生我
+        else if (monthEl === rel.overcomedBy) score -= 14; // 月令克我
+        else if (monthEl === rel.generates) score -= 6;    // 我泄气
+        else if (monthEl === rel.overcomes) score -= 4;    // 我耗气
+
+        // 2. Hidden stems (藏干) — 30% weight
+        const branches = [bazi.year.branch, bazi.month.branch, bazi.day.branch, bazi.hour.branch];
+        branches.forEach(branch => {
+            const hidden = this.getHiddenStems(branch);
+            hidden.forEach((stem, idx) => {
+                const el = this.stemElements[stem];
+                const weight = idx === 0 ? 3 : (idx === 1 ? 1.5 : 1); // 本气>中气>余气
+                if (el === dayEl) score += weight;
+                else if (el === rel.generatedBy) score += weight * 0.6;
+                else if (el === rel.overcomedBy) score -= weight * 0.5;
+            });
+        });
+
+        // 3. Heavenly stems (天干) — 30% weight
+        [bazi.year.stem, bazi.month.stem, bazi.hour.stem].forEach(stem => {
+            const el = this.stemElements[stem];
+            if (el === dayEl) score += 5;
+            else if (el === rel.generatedBy) score += 3;
+            else if (el === rel.overcomedBy) score -= 4;
+            else if (el === rel.generates) score -= 2;
+        });
+
+        // Clamp to 0-100
+        score = Math.max(0, Math.min(100, Math.round(score)));
+
+        let strength, analysis;
+        if (score >= 65) {
+            strength = '偏强';
+            analysis = `日主${dayEl}得令有助，根基深厚，气势充沛。宜以泄耗之法导引过剩能量，${rel.generates}与${rel.overcomes}皆为良方。`;
+        } else if (score <= 35) {
+            strength = '偏弱';
+            analysis = `日主${dayEl}失令少助，力量不足。宜以生扶之道补充元气，${rel.generatedBy}相生、${dayEl}比和皆可增益。`;
+        } else {
+            strength = '中和';
+            analysis = `日主${dayEl}强弱适中，格局平衡。既不过刚也不过柔，顺势而为，灵活应变即可。`;
+        }
+
+        return { strength, score, analysis };
+    }
+
+    // Classify pattern (格局判定)
+    classifyPattern(bazi) {
+        const tenGods = this.analyzeTenGods(bazi);
+        const dist = tenGods.distribution;
+        const monthHidden = this.getHiddenStems(bazi.month.branch);
+        const ds = bazi.dayMaster;
+
+        // Check what the month branch's main hidden stem produces as ten god
+        const monthMainGod = monthHidden.length > 0 ? this.getTenGod(ds, monthHidden[0]) : '';
+
+        // Check if month main god is "transparent" (透出) in stem
+        const stems = [bazi.year.stem, bazi.month.stem, bazi.hour.stem];
+        const stemGods = stems.map(s => this.getTenGod(ds, s));
+
+        // Pattern priority: check if month god matches a stem god (透出)
+        const transparentGod = stemGods.find(g => g === monthMainGod);
+
+        const patterns = {
+            '正官': { name: '正官格', desc: '正直守规，天赋领导力。注重秩序与原则，适合管理与公职。' },
+            '七杀': { name: '七杀格', desc: '魄力非凡，敢于突破。抗压力强，适合开创事业或竞争环境。' },
+            '正印': { name: '正印格', desc: '学识丰富，受人尊敬。心性仁厚，适合学术、教育或文化领域。' },
+            '偏印': { name: '偏印格', desc: '思想独特，悟性超群。创意丰富，适合研究、技术或艺术。' },
+            '正财': { name: '正财格', desc: '勤俭持家，稳健务实。善于积累，适合金融、管理或实业。' },
+            '偏财': { name: '偏财格', desc: '交际广泛，财运灵活。为人慷慨，适合商业、投资或社交行业。' },
+            '食神': { name: '食神格', desc: '才华横溢，性情淡泊。享受生活之美，适合餐饮、艺术或自由职业。' },
+            '伤官': { name: '伤官格', desc: '聪明过人，表达力强。追求极致，适合演艺、设计或技术创新。' },
+            '比肩': { name: '比肩格', desc: '独立自主，重义气。行事坚定，适合合伙经营或团队协作。' },
+            '劫财': { name: '劫财格', desc: '果断行动，进取心强。竞争意识强烈，适合销售、体育或创业。' }
+        };
+
+        // Determine pattern
+        let patternGod = transparentGod || monthMainGod;
+
+        // Fallback: find the most frequent ten god (excluding 比肩/劫财 if possible)
+        if (!patternGod || !patterns[patternGod]) {
+            const sorted = Object.entries(dist)
+                .filter(([g]) => g !== '比肩' && g !== '劫财')
+                .sort((a, b) => b[1] - a[1]);
+            patternGod = sorted.length > 0 ? sorted[0][0] : '比肩';
+        }
+
+        const p = patterns[patternGod] || patterns['比肩'];
+        return { name: p.name, desc: p.desc, god: patternGod };
+    }
+
     // Main calculation — day stem is the "self" (日主)
     calculate(year, month, day, hour = 12) {
         const yearPillar = this.getYearPillar(year);
@@ -208,22 +411,41 @@ class BaziCalculator {
         result.stemZodiacSynthesis = this.getStemZodiacSynthesis(dayMaster, yearPillar.zodiac);
         result.complementaryAdvice = this.getComplementaryAdvice(mainElement, result.elementCounts);
 
+        // Phase 1 deep analysis
+        result.hiddenStems = {
+            year: this.getHiddenStems(yearPillar.branch),
+            month: this.getHiddenStems(monthPillar.branch),
+            day: this.getHiddenStems(dayPillar.branch),
+            hour: this.getHiddenStems(hourPillar.branch)
+        };
+        result.tenGods = this.analyzeTenGods(result);
+        result.dayMasterStrength = this.assessDayMasterStrength(result);
+        result.pattern = this.classifyPattern(result);
+        result.tenGodDistribution = result.tenGods.distribution;
+
         return result;
     }
 
-    // Analyze element distribution across all 8 characters
+    // Analyze element distribution using all hidden stems (weighted)
     analyzeElements(bazi) {
         const counts = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 };
 
-        // 4 stems
+        // 4 heavenly stems (weight 1 each)
         [bazi.year.stem, bazi.month.stem, bazi.day.stem, bazi.hour.stem].forEach(stem => {
             counts[this.stemElements[stem]]++;
         });
 
-        // 4 branches (primary hidden stem element)
+        // 4 branches — use all hidden stems with decreasing weight
         [bazi.year.branch, bazi.month.branch, bazi.day.branch, bazi.hour.branch].forEach(branch => {
-            counts[this.branchElements[branch]]++;
+            const hidden = this.getHiddenStems(branch);
+            hidden.forEach((stem, idx) => {
+                const weight = idx === 0 ? 1 : (idx === 1 ? 0.5 : 0.3);
+                counts[this.stemElements[stem]] += weight;
+            });
         });
+
+        // Round for display
+        Object.keys(counts).forEach(k => { counts[k] = Math.round(counts[k] * 10) / 10; });
 
         return counts;
     }

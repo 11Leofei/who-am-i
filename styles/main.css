@@ -1442,7 +1442,7 @@ body::after {
     will-change: transform;
 }
 
-/* Progressive reveal */
+/* Progressive reveal — hero card only */
 .result-card.reveal-hidden {
     opacity: 0;
     transform: translateY(40px) scale(0.96);
@@ -1457,6 +1457,90 @@ body::after {
 @keyframes revealCard {
     from { opacity: 0; transform: translateY(40px) scale(0.96); filter: blur(6px); }
     to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ==================== Result Tabs ==================== */
+.result-tabs {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    margin: 0.8rem 0 0;
+    padding: 0.3rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.result-tabs.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.result-tab {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: color 0.3s ease, background 0.3s ease;
+    white-space: nowrap;
+}
+
+.result-tab:hover {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.result-tab.active {
+    background: rgba(200, 160, 255, 0.1);
+    color: rgba(200, 160, 255, 0.9);
+    font-weight: 600;
+}
+
+.result-tab.tab-ai {
+    color: rgba(200, 160, 255, 0.4);
+}
+
+.result-tab.tab-ai.active {
+    background: linear-gradient(135deg, rgba(200, 160, 255, 0.12), rgba(140, 180, 255, 0.08));
+    color: rgba(200, 160, 255, 0.95);
+}
+
+/* Tab Panels */
+.tab-panels {
+    position: relative;
+    min-height: 300px;
+    margin-top: 0.6rem;
+}
+
+.tab-panel {
+    display: none;
+    animation: tabFadeIn 0.4s ease-out;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+@keyframes tabFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards inside tabs don't need margin-bottom or the badge */
+.tab-panel .result-card {
+    margin-bottom: 0;
 }
 
 .result-card::before {
@@ -2222,54 +2306,142 @@ body::after {
     animation: splashFadeOut 1.2s ease-in 2.2s forwards;
 }
 
-.splash-star {
-    width: 8px;
-    height: 8px;
+/* --- Nucleus: central star birth --- */
+.splash-nucleus {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: white;
-    box-shadow: 0 0 20px rgba(200, 220, 255, 0.8), 0 0 60px rgba(200, 220, 255, 0.4);
-    animation: splashStarGrow 0.3s ease-out forwards;
-    margin-bottom: 1.5rem;
+    background: #fff;
+    box-shadow:
+        0 0 8px 2px rgba(255,255,255,0.9),
+        0 0 30px 8px rgba(180,200,255,0.7),
+        0 0 80px 20px rgba(140,120,255,0.4),
+        0 0 120px 40px rgba(100,80,200,0.15);
+    animation: splashNucleusBirth 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+    margin-bottom: 2rem;
 }
 
-.splash-title {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    color: white;
-    opacity: 0;
-    filter: blur(12px);
-    animation: splashTitleIn 0.8s ease-out 0.3s forwards;
-}
-
-.splash-line {
-    width: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(200, 160, 255, 0.6), transparent);
-    margin-top: 1rem;
-    animation: splashLineGrow 0.6s ease-out 1.1s forwards;
-}
-
-@keyframes splashStarGrow {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(2); opacity: 1; }
+@keyframes splashNucleusBirth {
+    0%   { transform: scale(0); opacity: 0; }
+    40%  { transform: scale(2.8); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes splashTitleIn {
-    0% { opacity: 0; filter: blur(12px); transform: translateY(10px); }
-    100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+/* --- Expanding rings --- */
+.splash-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    margin-left: -80px;
+    margin-top: -80px;
+    border-radius: 50%;
+    border: 1px solid rgba(180,200,255,0.4);
+    box-shadow:
+        0 0 12px rgba(180,200,255,0.15),
+        inset 0 0 12px rgba(180,200,255,0.08);
+    opacity: 0;
+    transform: scale(0);
+    animation: splashRingExpand 0.9s cubic-bezier(0.25,1,0.5,1) forwards;
+    pointer-events: none;
+}
+
+.splash-ring:nth-child(2) {
+    animation-delay: 100ms;
+}
+.splash-ring:nth-child(3) {
+    width: 220px;
+    height: 220px;
+    margin-left: -110px;
+    margin-top: -110px;
+    animation-delay: 220ms;
+}
+.splash-ring:nth-child(4) {
+    width: 300px;
+    height: 300px;
+    margin-left: -150px;
+    margin-top: -150px;
+    animation-delay: 360ms;
+    border-color: rgba(160,140,255,0.25);
+}
+
+@keyframes splashRingExpand {
+    0%   { transform: scale(0); opacity: 0.6; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+/* --- Title: character-by-character --- */
+.splash-title-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.15em;
+    z-index: 1;
+    margin-bottom: 0.8rem;
+}
+
+.splash-char {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(15px);
+    animation: splashCharIn 0.5s cubic-bezier(0.25,1,0.5,1) forwards;
+    animation-delay: calc(400ms + var(--ci) * 90ms);
+    text-shadow: 0 0 20px rgba(180,200,255,0.5);
+}
+
+.splash-char.splash-dot {
+    font-size: clamp(1.4rem, 4vw, 2.4rem);
+    opacity: 0;
+    color: rgba(200,180,255,0.7);
+}
+
+@keyframes splashCharIn {
+    0%   { opacity: 0; filter: blur(8px); transform: translateY(15px); }
+    100% { opacity: 1; filter: blur(0);   transform: translateY(0); }
+}
+
+/* --- Tagline --- */
+.splash-tagline {
+    font-family: var(--font-sans);
+    font-size: clamp(0.65rem, 1.8vw, 0.9rem);
+    font-weight: 200;
+    letter-spacing: 0.5em;
+    color: rgba(200,210,255,0.5);
+    opacity: 0;
+    transform: translateY(8px);
+    animation: splashTaglineIn 0.5s ease-out 1.15s forwards;
+    z-index: 1;
+    margin-bottom: 1rem;
+}
+
+@keyframes splashTaglineIn {
+    0%   { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Decorative line --- */
+.splash-line {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,160,255,0.5), transparent);
+    animation: splashLineGrow 0.4s ease-out 1.6s forwards;
+    z-index: 1;
 }
 
 @keyframes splashLineGrow {
-    0% { width: 0; opacity: 0; }
+    0%   { width: 0; opacity: 0; }
     100% { width: 120px; opacity: 1; }
 }
 
+/* --- Fade out with subtle zoom --- */
 @keyframes splashFadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; pointer-events: none; }
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.03); pointer-events: none; }
 }
 
 /* ==================== PHASE 3: CELEBRATION CANVAS ==================== */
@@ -3761,4 +3933,1183 @@ body::after {
 
 .constellation-label.visible {
     opacity: 1;
+}
+
+/* ==================== PRIMARY TABS (L1) ==================== */
+
+.primary-tabs {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    padding: 6px;
+    margin: 16px 0 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.primary-tabs.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.primary-tab {
+    flex: 1;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    letter-spacing: 0.1em;
+}
+
+.primary-tab.active {
+    background: rgba(200, 160, 255, 0.1);
+    border-color: rgba(200, 160, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.primary-tab:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.primary-tab.tab-ai {
+    color: rgba(200, 160, 255, 0.5);
+}
+
+.primary-tab.tab-ai.active {
+    color: rgba(200, 160, 255, 0.9);
+}
+
+.primary-panel {
+    display: none;
+}
+
+.primary-panel.active {
+    display: block;
+}
+
+/* ==================== BAZI ENHANCED DISPLAY ==================== */
+
+.bazi-hero-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.element-orb-small {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--element-bg, rgba(140, 180, 255, 0.08));
+    border: 1px solid var(--element-color, rgba(140, 180, 255, 0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px var(--element-glow, rgba(140, 180, 255, 0.2));
+}
+
+.element-symbol-small {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--element-color, rgba(140, 180, 255, 0.9));
+}
+
+.bazi-hero-info {
+    flex: 1;
+}
+
+.bazi-hero-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.bazi-hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Enhanced Four Pillars */
+
+.bazi-pillars-enhanced {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.bazi-pillar-enhanced {
+    text-align: center;
+    padding: 12px 4px 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+}
+
+.bazi-pillar-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.bazi-tengod-tag {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(200, 160, 255, 0.12);
+    color: rgba(200, 160, 255, 0.8);
+    display: inline-block;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+}
+
+.bazi-tengod-tag.dim {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.bazi-pillar-stem {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--element-color, rgba(200, 160, 255, 0.9));
+    line-height: 1.3;
+}
+
+.bazi-pillar-branch {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.3;
+    margin-bottom: 6px;
+}
+
+.bazi-hidden-stems {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    min-height: 20px;
+}
+
+.bazi-hidden-stem {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 1px 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 3px;
+}
+
+/* Day Master Strength */
+
+.day-master-strength {
+    margin: 16px 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dms-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.dms-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+}
+
+.dms-element {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--element-color, rgba(200, 160, 255, 0.9));
+}
+
+.dms-strength {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.dms-strong {
+    background: rgba(74, 222, 128, 0.12);
+    color: rgba(74, 222, 128, 0.9);
+}
+
+.dms-weak {
+    background: rgba(251, 146, 60, 0.12);
+    color: rgba(251, 146, 60, 0.9);
+}
+
+.dms-neutral {
+    background: rgba(96, 165, 250, 0.12);
+    color: rgba(96, 165, 250, 0.9);
+}
+
+.dms-analysis {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+}
+
+/* Pattern Section */
+
+.pattern-section {
+    text-align: center;
+    margin: 12px 0;
+}
+
+.pattern-badge-large {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(200, 160, 255, 0.1);
+    border: 1px solid rgba(200, 160, 255, 0.25);
+    color: rgba(200, 160, 255, 0.9);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+}
+
+.pattern-desc {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    max-width: 360px;
+    margin: 0 auto;
+}
+
+/* ==================== HEXAGRAM DISPLAY ==================== */
+
+.hexagram-display {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.hexagram-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.hex-line {
+    position: relative;
+    width: 120px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hex-line-solid {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+}
+
+.hex-line-broken {
+    display: flex;
+    width: 100%;
+    gap: 16px;
+    justify-content: center;
+}
+
+.hex-line-broken span {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+}
+
+/* Changing line highlight */
+.hex-line.changing .hex-line-solid {
+    background: var(--element-color, rgba(200, 160, 255, 0.9));
+    box-shadow: 0 0 8px var(--element-glow, rgba(200, 160, 255, 0.4));
+}
+
+.hex-line.changing .hex-line-broken span {
+    background: var(--element-color, rgba(200, 160, 255, 0.9));
+    box-shadow: 0 0 8px var(--element-glow, rgba(200, 160, 255, 0.4));
+}
+
+.hex-changing-mark {
+    position: absolute;
+    right: -24px;
+    font-size: 0.7rem;
+    color: var(--element-color, rgba(200, 160, 255, 0.8));
+}
+
+/* Hexagram text */
+.hexagram-name {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 12px 0 6px;
+}
+
+.hexagram-nature {
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(200, 160, 255, 0.7);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+}
+
+.hexagram-judgement {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 6px;
+    font-style: italic;
+}
+
+.hexagram-image {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 4px;
+}
+
+/* Transform row */
+.hexagram-transform-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 16px 0;
+}
+
+.hexagram-arrow {
+    font-size: 1.4rem;
+    color: var(--element-color, rgba(200, 160, 255, 0.6));
+}
+
+/* Mini hexagram */
+.hexagram-lines-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.hex-line-mini {
+    width: 48px;
+    height: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hex-line-solid-mini {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1px;
+}
+
+.hex-line-broken-mini {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    justify-content: center;
+}
+
+.hex-line-broken-mini span {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1px;
+}
+
+/* Cosmic advice */
+.cosmic-advice-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.8;
+    text-align: center;
+    padding: 8px 0;
+    font-style: italic;
+}
+
+/* ==================== YAO LINE TEXTS (爻辞) ==================== */
+
+.yao-lines-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.yao-line-item {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border-left: 3px solid var(--element-color, rgba(200, 160, 255, 0.4));
+}
+
+.yao-line-position {
+    font-size: 0.7rem;
+    color: var(--element-color, rgba(200, 160, 255, 0.7));
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.yao-line-classical {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    margin-bottom: 6px;
+    font-style: italic;
+}
+
+.yao-line-interpretation {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+}
+
+/* ==================== CROSS-SYSTEM INSIGHT ==================== */
+
+.cross-insight-card {
+    border-top: 1px solid rgba(200, 160, 255, 0.1);
+}
+
+.cross-insight-text {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.8;
+    text-align: left;
+}
+
+/* ==================== MOBILE: NEW ELEMENTS ==================== */
+
+@media (max-width: 768px) {
+    .primary-tabs {
+        gap: 3px;
+        padding: 4px;
+        margin: 12px 0 6px;
+    }
+
+    .primary-tab {
+        padding: 8px 8px;
+        font-size: 0.78rem;
+        letter-spacing: 0.05em;
+    }
+
+    .bazi-hero-header {
+        gap: 12px;
+    }
+
+    .element-orb-small {
+        width: 48px;
+        height: 48px;
+    }
+
+    .element-symbol-small {
+        font-size: 1.2rem;
+    }
+
+    .bazi-hero-name {
+        font-size: 1.2rem;
+    }
+
+    .bazi-pillars-enhanced {
+        gap: 6px;
+    }
+
+    .bazi-pillar-enhanced {
+        padding: 10px 2px 8px;
+    }
+
+    .bazi-pillar-stem,
+    .bazi-pillar-branch {
+        font-size: 1.15rem;
+    }
+
+    .hexagram-lines {
+        gap: 7px;
+    }
+
+    .hex-line {
+        width: 100px;
+    }
+
+    .hexagram-transform-row {
+        gap: 16px;
+    }
+
+    .hexagram-arrow {
+        font-size: 1.2rem;
+    }
+
+    .hex-line-mini {
+        width: 40px;
+    }
+
+    .hexagram-name {
+        font-size: 1.15rem;
+    }
+
+    .pattern-desc {
+        max-width: 280px;
+    }
+
+    .yao-line-item {
+        padding: 10px;
+    }
+
+    .cross-insight-text {
+        font-size: 0.78rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .primary-tabs {
+        gap: 2px;
+        padding: 3px;
+        margin: 8px 0 4px;
+        border-radius: 8px;
+    }
+
+    .primary-tab {
+        padding: 7px 4px;
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+        border-radius: 6px;
+    }
+
+    .bazi-hero-header {
+        gap: 10px;
+    }
+
+    .element-orb-small {
+        width: 42px;
+        height: 42px;
+    }
+
+    .element-symbol-small {
+        font-size: 1.05rem;
+    }
+
+    .bazi-hero-name {
+        font-size: 1.05rem;
+    }
+
+    .bazi-pillars-enhanced {
+        gap: 4px;
+        margin: 12px 0;
+    }
+
+    .bazi-pillar-enhanced {
+        padding: 8px 2px 6px;
+        border-radius: 8px;
+    }
+
+    .bazi-pillar-label {
+        font-size: 0.6rem;
+        margin-bottom: 4px;
+    }
+
+    .bazi-tengod-tag {
+        font-size: 0.55rem;
+        padding: 1px 4px;
+        margin-bottom: 4px;
+    }
+
+    .bazi-pillar-stem,
+    .bazi-pillar-branch {
+        font-size: 1.05rem;
+    }
+
+    .bazi-hidden-stem {
+        font-size: 0.58rem;
+        padding: 1px 3px;
+    }
+
+    .day-master-strength {
+        padding: 10px;
+        margin: 12px 0;
+    }
+
+    .dms-label {
+        font-size: 0.65rem;
+    }
+
+    .dms-element {
+        font-size: 0.82rem;
+    }
+
+    .dms-analysis {
+        font-size: 0.72rem;
+    }
+
+    .pattern-badge-large {
+        font-size: 0.78rem;
+        padding: 5px 12px;
+    }
+
+    .pattern-desc {
+        font-size: 0.72rem;
+        max-width: 260px;
+    }
+
+    .hexagram-display {
+        margin: 14px 0;
+    }
+
+    .hexagram-lines {
+        gap: 6px;
+    }
+
+    .hex-line {
+        width: 88px;
+        height: 10px;
+    }
+
+    .hex-changing-mark {
+        right: -20px;
+        font-size: 0.6rem;
+    }
+
+    .hexagram-name {
+        font-size: 1.05rem;
+        margin: 10px 0 4px;
+    }
+
+    .hexagram-nature {
+        font-size: 0.78rem;
+    }
+
+    .hexagram-judgement,
+    .hexagram-image {
+        font-size: 0.72rem;
+    }
+
+    .hexagram-transform-row {
+        gap: 12px;
+        margin: 12px 0;
+    }
+
+    .hexagram-arrow {
+        font-size: 1rem;
+    }
+
+    .hex-line-mini {
+        width: 36px;
+        height: 5px;
+    }
+
+    .hex-line-solid-mini {
+        height: 2px;
+    }
+
+    .hex-line-broken-mini {
+        gap: 6px;
+    }
+
+    .hex-line-broken-mini span {
+        height: 2px;
+    }
+
+    .cosmic-advice-text {
+        font-size: 0.78rem;
+        line-height: 1.7;
+    }
+
+    .yao-lines-list {
+        gap: 10px;
+    }
+
+    .yao-line-item {
+        padding: 8px 10px;
+    }
+
+    .yao-line-classical {
+        font-size: 0.8rem;
+    }
+
+    .yao-line-interpretation {
+        font-size: 0.72rem;
+    }
+
+    .cross-insight-text {
+        font-size: 0.75rem;
+        line-height: 1.7;
+    }
+
+    .iching-quick-asks {
+        gap: 6px;
+    }
+
+    .quick-ask-btn {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
+}
+
+/* ==================== HEXAGRAM REVEAL ANIMATION ==================== */
+
+@keyframes hex-line-draw {
+    from { opacity: 0; transform: scaleX(0.15); }
+    to { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes hex-pulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.6); }
+}
+
+.hexagram-lines.animating .hex-line {
+    opacity: 0;
+    transform: scaleX(0.15);
+}
+
+.hexagram-lines.animating .hex-line.revealed {
+    animation: hex-line-draw 0.4s ease-out forwards;
+}
+
+.hexagram-lines.animating .hex-line.changing.revealed {
+    animation: hex-line-draw 0.4s ease-out forwards, hex-pulse 1.8s ease-in-out 0.5s infinite;
+}
+
+/* ==================== PRIMARY TAB SLIDE TRANSITION ==================== */
+
+@keyframes panel-slide-right {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes panel-slide-left {
+    from { opacity: 0; transform: translateX(-24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.primary-panel.active.slide-right {
+    animation: panel-slide-right 0.28s ease-out;
+}
+
+.primary-panel.active.slide-left {
+    animation: panel-slide-left 0.28s ease-out;
+}
+
+/* ==================== HEX LINE CLICKABLE ==================== */
+
+.hex-line {
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.hex-line:hover {
+    transform: scale(1.08);
+}
+
+.hex-line-detail {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    padding: 0 10px;
+    margin: 0 auto;
+    width: 240px;
+    text-align: center;
+}
+
+.hex-line-detail.expanded {
+    max-height: 100px;
+    opacity: 1;
+    padding: 8px 10px;
+    margin: 4px auto;
+}
+
+.hex-line-detail-classical {
+    font-size: 0.78rem;
+    color: var(--iching-accent, rgba(200, 160, 255, 0.7));
+    font-style: italic;
+    margin-bottom: 2px;
+}
+
+.hex-line-detail-text {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* ==================== AI QUICK ASKS ==================== */
+
+.iching-quick-asks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: center;
+}
+
+.quick-ask-btn {
+    padding: 7px 16px;
+    background: rgba(200, 160, 255, 0.06);
+    border: 1px solid rgba(200, 160, 255, 0.18);
+    border-radius: 20px;
+    color: rgba(200, 160, 255, 0.65);
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-ask-btn:hover {
+    background: rgba(200, 160, 255, 0.14);
+    color: rgba(200, 160, 255, 0.9);
+    border-color: rgba(200, 160, 255, 0.4);
+}
+
+/* ==================== I CHING THEME COLORS ==================== */
+
+.iching-theme-metal {
+    --iching-accent: rgba(192, 192, 220, 0.8);
+    --iching-glow: rgba(192, 192, 220, 0.3);
+}
+
+.iching-theme-wood {
+    --iching-accent: rgba(120, 200, 140, 0.8);
+    --iching-glow: rgba(120, 200, 140, 0.3);
+}
+
+.iching-theme-water {
+    --iching-accent: rgba(100, 160, 255, 0.8);
+    --iching-glow: rgba(100, 160, 255, 0.3);
+}
+
+.iching-theme-fire {
+    --iching-accent: rgba(255, 140, 100, 0.8);
+    --iching-glow: rgba(255, 140, 100, 0.3);
+}
+
+.iching-theme-earth {
+    --iching-accent: rgba(220, 190, 120, 0.8);
+    --iching-glow: rgba(220, 190, 120, 0.3);
+}
+
+[class*="iching-theme-"] .hexagram-nature {
+    color: var(--iching-accent);
+}
+
+[class*="iching-theme-"] .hex-line.changing .hex-line-solid {
+    background: var(--iching-accent);
+    box-shadow: 0 0 10px var(--iching-glow);
+}
+
+[class*="iching-theme-"] .hex-line.changing .hex-line-broken span {
+    background: var(--iching-accent);
+    box-shadow: 0 0 10px var(--iching-glow);
+}
+
+[class*="iching-theme-"] .hex-changing-mark {
+    color: var(--iching-accent);
+}
+
+[class*="iching-theme-"] .hexagram-arrow {
+    color: var(--iching-accent);
+}
+
+[class*="iching-theme-"] .yao-line-item {
+    border-left-color: var(--iching-accent);
+}
+
+[class*="iching-theme-"] .quick-ask-btn {
+    border-color: var(--iching-glow);
+    color: var(--iching-accent);
+}
+
+[class*="iching-theme-"] .quick-ask-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+[class*="iching-theme-"] .hex-line-detail-classical {
+    color: var(--iching-accent);
+}
+
+/* ==================== BAGUA BACKGROUND ==================== */
+
+.primary-panel[data-ppanel="iching"].active::before {
+    content: '\262F';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 18rem;
+    color: rgba(255, 255, 255, 0.012);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bagua-spin 90s linear infinite;
+}
+
+@keyframes bagua-spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hexagram-lines.animating .hex-line.revealed {
+        animation: none;
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    .primary-panel.active.slide-right,
+    .primary-panel.active.slide-left {
+        animation: none;
+    }
+
+    .primary-panel[data-ppanel="iching"].active::before {
+        animation: none;
+    }
+}
+
+/* ==================== ARCHIVE COMPARE ==================== */
+
+.archive-compare-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 0;
+    margin-top: 8px;
+}
+
+.compare-count {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.archive-item.compare-mode {
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.archive-item.compare-mode:hover {
+    border-color: rgba(200, 160, 255, 0.2);
+}
+
+.archive-item.compare-selected {
+    border-color: rgba(200, 160, 255, 0.5);
+    background: rgba(200, 160, 255, 0.06);
+}
+
+.archive-item.compare-selected::after {
+    content: '\2713';
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.7rem;
+    color: rgba(200, 160, 255, 0.8);
+}
+
+.archive-compare-panel {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.compare-header {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 16px;
+    letter-spacing: 0.1em;
+}
+
+.compare-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.compare-side {
+    flex: 1;
+    text-align: center;
+}
+
+.compare-type {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 2px;
+}
+
+.compare-cosmic {
+    font-size: 0.75rem;
+    color: rgba(200, 160, 255, 0.6);
+}
+
+.compare-vs {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+}
+
+.compare-date {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 2px;
+}
+
+.compare-section-label {
+    font-size: 0.7rem;
+    color: rgba(200, 160, 255, 0.5);
+    text-align: center;
+    margin: 12px 0 6px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.compare-dim-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.compare-dim-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.compare-dim-bars {
+    flex: 1;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.compare-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.compare-bar-a {
+    height: 100%;
+    background: rgba(200, 160, 255, 0.5);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.compare-bar-b {
+    height: 100%;
+    background: rgba(140, 200, 255, 0.5);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.compare-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.compare-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.compare-legend-dot-a {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(200, 160, 255, 0.5);
+}
+
+.compare-legend-dot-b {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(140, 200, 255, 0.5);
+}
+
+.compare-enn-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.compare-enn-item {
+    text-align: center;
+}
+
+.compare-enn-num {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.compare-enn-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.compare-hex-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.compare-hex-item {
+    text-align: center;
+}
+
+.compare-hex-name {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 480px) {
+    .archive-compare-panel {
+        padding: 12px 10px;
+    }
+
+    .compare-type {
+        font-size: 0.95rem;
+    }
+
+    .compare-dim-label {
+        width: 32px;
+        font-size: 0.65rem;
+    }
 }

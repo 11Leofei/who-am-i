@@ -1,5 +1,5 @@
 // Service Worker — Cache-first strategy for Stardust Identity
-const CACHE_NAME = 'stardust-v2';
+const CACHE_NAME = 'stardust-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
     './js/app.js',
     './js/audio.js',
     './js/bazi.js',
+    './js/iching.js',
     './js/stars.js',
     './js/personality.js',
     './js/ai.js',

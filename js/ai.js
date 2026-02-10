@@ -25,11 +25,14 @@ class CosmicAI {
 
     // ==================== 缓存层 ====================
 
-    _getCacheKey(results) {
+    _getCacheKey(results, bazi, iching) {
         const m = results.mbti;
         const e = results.enneagram;
         const d = m.dimensions;
-        return `ai_p_${m.type}_${e.type}w${e.wing}_${d.ei}_${d.sn}_${d.tf}_${d.jp}`;
+        let key = `ai_p_${m.type}_${e.type}w${e.wing}_${d.ei}_${d.sn}_${d.tf}_${d.jp}`;
+        if (bazi) key += `_${bazi.dayMaster}_${bazi.pattern?.name || ''}`;
+        if (iching) key += `_${iching.primary?.num || 0}_${iching.transformed?.num || 0}`;
+        return key;
     }
 
     _getMatchCacheKey(resultsA, resultsB, compatibility) {
@@ -48,14 +51,14 @@ class CosmicAI {
 
     // ==================== 个人结果 AI 增强 ====================
 
-    async enhancePersonalityResults(results, onChunk) {
-        const cacheKey = this._getCacheKey(results);
+    async enhancePersonalityResults(results, bazi, iching, onChunk) {
+        const cacheKey = this._getCacheKey(results, bazi, iching);
         const cached = this._getCache(cacheKey);
         if (cached) {
             onChunk(cached);
             return cached;
         }
-        const prompt = this._buildPersonalityPrompt(results);
+        const prompt = this._buildUnifiedPrompt(results, bazi || null, iching || null);
         const fullText = await this._streamGenerate(prompt, onChunk);
         this._setCache(cacheKey, fullText);
         return fullText;
@@ -78,28 +81,47 @@ class CosmicAI {
 
     // ==================== Prompt 构建 ====================
 
-    _buildPersonalityPrompt(results) {
+    _buildUnifiedPrompt(results, bazi, iching) {
         const mbti = results.mbti;
         const b5 = results.big5;
         const enn = results.enneagram;
         const dims = mbti.dimensions;
         const pcts = b5.percentages;
 
-        return `你是「星尘·身份」的灵魂解读师，精通 MBTI、大五人格和九型人格。
-根据以下测试数据，写一篇深度灵魂解读。
+        let baziSection = '';
+        if (bazi) {
+            baziSection = `
+- 八字: ${bazi.year.stem}${bazi.year.branch}年 ${bazi.month.stem}${bazi.month.branch}月 ${bazi.day.stem}${bazi.day.branch}日 ${bazi.hour.stem}${bazi.hour.branch}时
+- 日主: ${bazi.dayMaster}${bazi.mainElement}（${bazi.dayMasterStrength.strength}）
+- 格局: ${bazi.pattern.name}
+- 生肖: ${bazi.year.zodiac}
+- 十神分布: ${Object.entries(bazi.tenGodDistribution).map(([k, v]) => `${k}${v}`).join(', ')}`;
+        }
 
-## 测试数据
+        let ichingSection = '';
+        if (iching) {
+            ichingSection = `
+- 本卦: ${iching.primary.name}（第${iching.primary.num}卦）${iching.changingLines.length > 0 ? `，变爻: ${iching.changingLines.map(i => ['初', '二', '三', '四', '五', '上'][i]).join('、')}` : ''}
+- ${iching.transformed ? `变卦: ${iching.transformed.name}（第${iching.transformed.num}卦）` : '无变卦'}
+- 卦象要义: ${iching.primary.nature}`;
+        }
+
+        return `你是「星尘·身份」的灵魂解读师，精通 MBTI、大五人格、九型人格、八字命理和周易卦象。
+根据以下完整数据，写一篇融合「过去（八字命盘）、现在（人格测试）、未来（卦象）」的深度灵魂解读。
+
+## 人格测试数据
 - MBTI: ${mbti.type}「${mbti.cosmic}」
   E/I=${dims.ei}%, S/N=${dims.sn}%, T/F=${dims.tf}%, J/P=${dims.jp}%
 - 大五: 开放性=${pcts.o}%, 尽责性=${pcts.c}%, 外向性=${pcts.ex}%, 宜人性=${pcts.a}%, 情绪性=${pcts.n}%
 - 九型: Type ${enn.type} w${enn.wing}「${enn.cosmic}」（${enn.name}）
+${baziSection}${ichingSection}
 
 ## 输出要求
 写一篇流畅的综合灵魂解读，不使用标题或分隔符。涵盖：
-1. 你是谁——三系统交汇的核心人格画像
-2. 你如何思考和决策——认知模式与行为风格
-3. 你如何连接他人——关系模式与情感表达
-4. 你的成长方向——具体且有建设性的建议
+1. 你的命盘根基——八字与日主如何塑造你的底色
+2. 你的人格频率——MBTI、大五、九型三系统交汇的核心画像
+3. 你的未来走向——卦象揭示的趋势与建议
+4. 三维合一——命盘+人格+卦象如何相互印证，给出深度整合洞察
 
 语言风格：有洞察力、温暖、适度融入宇宙/星辰意象但不过度。
 以鼓励和深度洞察结尾。
@@ -108,7 +130,11 @@ class CosmicAI {
 - 直接输出内容，不要加任何 markdown 标记（不要 #、*、** 等）
 - 不要使用 === 分隔符或标题
 - 每段之间用空行分隔
-- 总字数控制在 600-900 字`;
+- 总字数控制在 800-1200 字`;
+    }
+
+    _buildPersonalityPrompt(results) {
+        return this._buildUnifiedPrompt(results, null, null);
     }
 
     _buildMatchPrompt(resultsA, resultsB, compatibility, names) {
@@ -137,12 +163,25 @@ class CosmicAI {
 
     // ==================== 追问对话 ====================
 
-    buildChatSystemPrompt(results) {
+    buildChatSystemPrompt(results, bazi, iching) {
         const mbti = results.mbti;
         const b5 = results.big5;
         const enn = results.enneagram;
         const dims = mbti.dimensions;
         const pcts = b5.percentages;
+
+        let baziChat = '';
+        if (bazi) {
+            baziChat = `
+- 八字: ${bazi.year.stem}${bazi.year.branch}年 ${bazi.month.stem}${bazi.month.branch}月 ${bazi.day.stem}${bazi.day.branch}日 ${bazi.hour.stem}${bazi.hour.branch}时
+- 日主: ${bazi.dayMaster}${bazi.mainElement}（${bazi.dayMasterStrength.strength}），格局: ${bazi.pattern.name}`;
+        }
+
+        let ichingChat = '';
+        if (iching) {
+            ichingChat = `
+- 本卦: ${iching.primary.name}（第${iching.primary.num}卦）${iching.transformed ? `→ 变卦: ${iching.transformed.name}` : ''}`;
+        }
 
         return `你是「星尘·身份」的灵魂解读师，正在与一位完成了人格测试的旅者对话。
 保持宇宙/星辰意象风格，回答温暖而有洞察力。
@@ -150,9 +189,9 @@ class CosmicAI {
 旅者的测试数据：
 - MBTI: ${mbti.type}「${mbti.cosmic}」, E/I=${dims.ei}%, S/N=${dims.sn}%, T/F=${dims.tf}%, J/P=${dims.jp}%
 - 大五: 开放性=${pcts.o}%, 尽责性=${pcts.c}%, 外向性=${pcts.ex}%, 宜人性=${pcts.a}%, 情绪性=${pcts.n}%
-- 九型: Type ${enn.type} w${enn.wing}「${enn.cosmic}」（${enn.name}）
+- 九型: Type ${enn.type} w${enn.wing}「${enn.cosmic}」（${enn.name}）${baziChat}${ichingChat}
 
-请根据旅者的数据回答问题，每次回复控制在 150-300 字。不要使用 markdown 标记。`;
+请根据旅者的完整数据回答问题，每次回复控制在 150-300 字。不要使用 markdown 标记。`;
     }
 
     async chat(messages, onChunk) {
