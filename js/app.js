@@ -1350,6 +1350,7 @@ class App {
             toggle.textContent = '对比模式';
             this.ui.testArchiveGrid.querySelectorAll('.archive-item').forEach(el => {
                 el.classList.remove('compare-mode', 'compare-selected');
+                el.removeAttribute('aria-selected');
             });
         }
         this.updateCompareCount();
@@ -1361,9 +1362,11 @@ class App {
         if (idx >= 0) {
             this._compareSelected.splice(idx, 1);
             itemEl.classList.remove('compare-selected');
+            itemEl.setAttribute('aria-selected', 'false');
         } else if (this._compareSelected.length < 2) {
             this._compareSelected.push(id);
             itemEl.classList.add('compare-selected');
+            itemEl.setAttribute('aria-selected', 'true');
         }
         this.updateCompareCount();
     }
@@ -3210,6 +3213,7 @@ class App {
         if (!text) return;
 
         input.value = '';
+        input.disabled = true;
         this._chatBusy = true;
         this.ui.aiChatSend.disabled = true;
 
@@ -3256,6 +3260,8 @@ class App {
         } finally {
             this._chatBusy = false;
             this.ui.aiChatSend.disabled = false;
+            input.disabled = false;
+            input.focus();
         }
     }
 

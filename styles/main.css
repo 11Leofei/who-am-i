@@ -1519,7 +1519,7 @@ body::after {
     animation: cardMaterialize 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
     transform-style: preserve-3d;
     transition: transform 0.15s ease-out;
-    will-change: transform;
+    contain: content;
 }
 
 /* Progressive reveal — hero card only */
@@ -2162,12 +2162,36 @@ body::after {
 
 @media (max-width: 480px) {
     .answer-scale {
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        flex-wrap: nowrap;
+        gap: 0.3rem;
     }
 
     .scale-btn {
-        min-width: 55px;
+        min-width: 0;
+        flex: 1;
+        padding: 0.8rem 0.2rem;
+        min-height: 56px;
+    }
+
+    .scale-dot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .scale-btn[data-value="1"] .scale-dot,
+    .scale-btn[data-value="5"] .scale-dot {
+        width: 26px;
+        height: 26px;
+    }
+
+    .scale-btn[data-value="2"] .scale-dot,
+    .scale-btn[data-value="4"] .scale-dot {
+        width: 22px;
+        height: 22px;
+    }
+
+    .scale-label {
+        font-size: 0.48rem;
     }
 
     .question-text {
