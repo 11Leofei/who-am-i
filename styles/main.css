@@ -310,12 +310,55 @@ body::after {
     max-width: 200px;
 }
 
+.input-group.full-width {
+    max-width: 100%;
+    min-width: auto;
+    flex: 0 0 100%;
+}
+
 .input-group label {
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
     margin-bottom: 0.7rem;
     opacity: 0.45;
+}
+
+.date-selects {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 380px;
+}
+
+.date-selects select {
+    flex: 1;
+    min-width: 0;
+}
+
+.time-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+    max-width: 380px;
+}
+
+.time-row select {
+    flex: 1;
+    min-width: 0;
+}
+
+.time-row input[type="time"] {
+    flex: 0 0 110px;
+    text-align: center;
+}
+
+.time-divider {
+    font-size: 0.7rem;
+    opacity: 0.35;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
 }
 
 .input-group input,
@@ -997,6 +1040,14 @@ body::after {
     .input-group {
         max-width: 280px;
         width: 100%;
+    }
+
+    .input-group.full-width {
+        max-width: 320px;
+    }
+
+    .date-selects {
+        max-width: 100%;
     }
 
     .pillars-grid {

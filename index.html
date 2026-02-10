@@ -92,9 +92,31 @@
                 <h2 class="ritual-title text-shimmer">命运编织者</h2>
                 <p class="ritual-subtitle">输入你的降生坐标，让星辰为你指路</p>
                 <div class="ritual-inputs">
-                    <div class="input-group">
-                        <label for="birth-date">诞生日</label>
-                        <input type="date" id="birth-date">
+                    <div class="input-group full-width">
+                        <label>诞生日</label>
+                        <div class="date-selects">
+                            <select id="birth-year" aria-label="出生年份">
+                                <option value="">年</option>
+                            </select>
+                            <select id="birth-month" aria-label="出生月份">
+                                <option value="">月</option>
+                                <option value="1">1月</option>
+                                <option value="2">2月</option>
+                                <option value="3">3月</option>
+                                <option value="4">4月</option>
+                                <option value="5">5月</option>
+                                <option value="6">6月</option>
+                                <option value="7">7月</option>
+                                <option value="8">8月</option>
+                                <option value="9">9月</option>
+                                <option value="10">10月</option>
+                                <option value="11">11月</option>
+                                <option value="12">12月</option>
+                            </select>
+                            <select id="birth-day" aria-label="出生日">
+                                <option value="">日</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="birth-city">降临之地</label>
@@ -181,27 +203,27 @@
                             </optgroup>
                         </select>
                     </div>
-                    <div class="input-group">
-                        <label for="birth-time">精确出生时刻 <span class="label-hint">（可选，用于真太阳时修正）</span></label>
-                        <input type="time" id="birth-time" placeholder="HH:MM">
-                    </div>
-                    <div class="input-group">
-                        <label for="birth-hour">降临时辰 <span class="label-hint">（不知精确时刻时手动选择）</span></label>
-                        <select id="birth-hour">
-                            <option value="">-- 选择 --</option>
-                            <option value="0">子时 (23:00-01:00)</option>
-                            <option value="2">丑时 (01:00-03:00)</option>
-                            <option value="4">寅时 (03:00-05:00)</option>
-                            <option value="6">卯时 (05:00-07:00)</option>
-                            <option value="8">辰时 (07:00-09:00)</option>
-                            <option value="10">巳时 (09:00-11:00)</option>
-                            <option value="12">午时 (11:00-13:00)</option>
-                            <option value="14">未时 (13:00-15:00)</option>
-                            <option value="16">申时 (15:00-17:00)</option>
-                            <option value="18">酉时 (17:00-19:00)</option>
-                            <option value="20">戌时 (19:00-21:00)</option>
-                            <option value="22">亥时 (21:00-23:00)</option>
-                        </select>
+                    <div class="input-group full-width">
+                        <label>降临时辰</label>
+                        <div class="time-row">
+                            <select id="birth-hour" aria-label="选择时辰">
+                                <option value="">-- 选择时辰 --</option>
+                                <option value="0">子时 (23-01)</option>
+                                <option value="2">丑时 (01-03)</option>
+                                <option value="4">寅时 (03-05)</option>
+                                <option value="6">卯时 (05-07)</option>
+                                <option value="8">辰时 (07-09)</option>
+                                <option value="10">巳时 (09-11)</option>
+                                <option value="12">午时 (11-13)</option>
+                                <option value="14">未时 (13-15)</option>
+                                <option value="16">申时 (15-17)</option>
+                                <option value="18">酉时 (17-19)</option>
+                                <option value="20">戌时 (19-21)</option>
+                                <option value="22">亥时 (21-23)</option>
+                            </select>
+                            <span class="time-divider">或</span>
+                            <input type="time" id="birth-time" aria-label="精确出生时刻">
+                        </div>
                         <div class="solar-time-note hidden" id="solar-time-note"></div>
                     </div>
                 </div>

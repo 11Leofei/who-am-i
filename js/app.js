@@ -436,6 +436,48 @@ class App {
             });
         }
 
+        // Date select initialization (year/month/day dropdowns)
+        const birthYearSel = document.getElementById('birth-year');
+        const birthMonthSel = document.getElementById('birth-month');
+        const birthDaySel = document.getElementById('birth-day');
+        if (birthYearSel) {
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear; y >= 1920; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                birthYearSel.appendChild(opt);
+            }
+        }
+        const updateDayOptions = () => {
+            if (!birthDaySel) return;
+            const y = parseInt(birthYearSel?.value) || 2000;
+            const m = parseInt(birthMonthSel?.value) || 1;
+            const maxDay = new Date(y, m, 0).getDate();
+            const curDay = parseInt(birthDaySel.value) || 0;
+            const oldLen = birthDaySel.options.length - 1; // minus placeholder
+            if (oldLen === maxDay) return;
+            // Keep placeholder, rebuild day options
+            while (birthDaySel.options.length > 1) birthDaySel.remove(1);
+            for (let d = 1; d <= maxDay; d++) {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d + '日';
+                birthDaySel.appendChild(opt);
+            }
+            if (curDay > 0 && curDay <= maxDay) birthDaySel.value = curDay;
+        };
+        birthYearSel?.addEventListener('change', updateDayOptions);
+        birthMonthSel?.addEventListener('change', updateDayOptions);
+        // Helper: get date string from selects
+        this._getBirthDateStr = () => {
+            const y = birthYearSel?.value;
+            const m = birthMonthSel?.value;
+            const d = birthDaySel?.value;
+            if (!y || !m || !d) return '';
+            return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        };
+
         // True solar time auto-calculation
         const birthTimeInput = document.getElementById('birth-time');
         const birthCitySelect = document.getElementById('birth-city');
@@ -445,21 +487,19 @@ class App {
         const updateSolarTime = () => {
             const timeVal = birthTimeInput?.value;
             const cityVal = birthCitySelect?.value;
-            const dateVal = document.getElementById('birth-date')?.value;
-            if (!timeVal || !cityVal || !dateVal) {
+            const mon = parseInt(birthMonthSel?.value) || 0;
+            const day = parseInt(birthDaySel?.value) || 0;
+            if (!timeVal || !cityVal || !mon || !day) {
                 if (solarNote) solarNote.classList.add('hidden');
                 return;
             }
             const cityInfo = BaziCalculator.getCityData(cityVal);
             if (!cityInfo) { solarNote?.classList.add('hidden'); return; }
             const [h, m] = timeVal.split(':').map(Number);
-            const [, mon, day] = dateVal.split('-').map(Number);
-            const solarHour = this.baziCalc.trueSolarHour(h, m, cityInfo.lng, mon || 1, day || 1, cityInfo.tz);
+            const solarHour = this.baziCalc.trueSolarHour(h, m, cityInfo.lng, mon, day, cityInfo.tz);
             const branchIndex = Math.floor((solarHour + 1) / 2) % 12;
             const shiChenValue = (branchIndex * 2) % 24;
-            // Auto-select the corrected 时辰
             if (birthHourSelect) birthHourSelect.value = String(shiChenValue);
-            // Show note
             const solarH = Math.floor(solarHour);
             const solarM = Math.round((solarHour - solarH) * 60);
             if (solarNote) {
@@ -469,7 +509,8 @@ class App {
         };
         birthTimeInput?.addEventListener('change', updateSolarTime);
         birthCitySelect?.addEventListener('change', updateSolarTime);
-        document.getElementById('birth-date')?.addEventListener('change', updateSolarTime);
+        birthMonthSel?.addEventListener('change', updateSolarTime);
+        birthDaySel?.addEventListener('change', updateSolarTime);
 
         // Personality test listeners
         this.ui.startTestBtn.addEventListener('click', () => { this.audio.playClick(); this.startTest(); });
@@ -765,7 +806,7 @@ class App {
     }
 
     async enterTestIntroFromRitual() {
-        const dateStr = document.getElementById('birth-date').value;
+        const dateStr = this._getBirthDateStr();
         const city = document.getElementById('birth-city').value;
         const hourStr = document.getElementById('birth-hour').value;
 
