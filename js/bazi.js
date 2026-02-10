@@ -381,6 +381,76 @@ class BaziCalculator {
         return { name: p.name, desc: p.desc, god: patternGod };
     }
 
+    // True solar time correction (真太阳时修正)
+    // Formula: solar_time = local_clock_time + (longitude - tz_meridian) × 4min + EoT
+    // tz_meridian = utcOffset × 15 (e.g. UTC+8 → 120°E)
+    trueSolarHour(clockHour, clockMinute, longitude, month, day, utcOffset = 8) {
+        // The standard meridian for the given timezone
+        const tzMeridian = utcOffset * 15;
+        // Geographic correction: difference from timezone's standard meridian
+        const geoOffsetMin = (longitude - tzMeridian) * 4;
+
+        // Equation of Time approximation (minutes) — accounts for Earth's elliptical orbit
+        const dayOfYear = this._dayOfYear(month, day);
+        const B = (2 * Math.PI * (dayOfYear - 81)) / 365;
+        const eotMin = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+
+        const totalMinutes = clockHour * 60 + clockMinute + geoOffsetMin + eotMin;
+        // Wrap to 0-1440
+        const wrapped = ((totalMinutes % 1440) + 1440) % 1440;
+        return wrapped / 60; // return as decimal hour
+    }
+
+    _dayOfYear(month, day) {
+        const daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let d = day;
+        for (let i = 1; i < month; i++) d += daysInMonth[i];
+        return d;
+    }
+
+    // City database: { longitude, utcOffset (hours) }
+    // Chinese cities all use UTC+8; international cities use their standard timezone
+    static CITY_DATA = {
+        // 直辖市 (UTC+8)
+        '北京': { lng: 116.41, tz: 8 }, '上海': { lng: 121.47, tz: 8 },
+        '天津': { lng: 117.19, tz: 8 }, '重庆': { lng: 106.55, tz: 8 },
+        // 省会
+        '哈尔滨': { lng: 126.63, tz: 8 }, '长春': { lng: 125.32, tz: 8 },
+        '沈阳': { lng: 123.43, tz: 8 }, '呼和浩特': { lng: 111.75, tz: 8 },
+        '石家庄': { lng: 114.51, tz: 8 }, '太原': { lng: 112.55, tz: 8 },
+        '济南': { lng: 117.00, tz: 8 }, '郑州': { lng: 113.65, tz: 8 },
+        '西安': { lng: 108.94, tz: 8 }, '兰州': { lng: 103.83, tz: 8 },
+        '银川': { lng: 106.27, tz: 8 }, '西宁': { lng: 101.77, tz: 8 },
+        '乌鲁木齐': { lng: 87.62, tz: 8 }, '成都': { lng: 104.07, tz: 8 },
+        '昆明': { lng: 102.71, tz: 8 }, '贵阳': { lng: 106.71, tz: 8 },
+        '南宁': { lng: 108.32, tz: 8 }, '拉萨': { lng: 91.13, tz: 8 },
+        '武汉': { lng: 114.30, tz: 8 }, '长沙': { lng: 112.98, tz: 8 },
+        '南昌': { lng: 115.89, tz: 8 }, '合肥': { lng: 117.28, tz: 8 },
+        '南京': { lng: 118.78, tz: 8 }, '杭州': { lng: 120.15, tz: 8 },
+        '福州': { lng: 119.30, tz: 8 }, '广州': { lng: 113.26, tz: 8 },
+        '海口': { lng: 110.35, tz: 8 }, '台北': { lng: 121.56, tz: 8 },
+        // 其他主要城市
+        '大连': { lng: 121.61, tz: 8 }, '青岛': { lng: 120.37, tz: 8 },
+        '深圳': { lng: 114.06, tz: 8 }, '厦门': { lng: 118.09, tz: 8 },
+        '苏州': { lng: 120.62, tz: 8 }, '宁波': { lng: 121.55, tz: 8 },
+        '无锡': { lng: 120.31, tz: 8 }, '佛山': { lng: 113.12, tz: 8 },
+        '东莞': { lng: 113.75, tz: 8 }, '珠海': { lng: 113.58, tz: 8 },
+        '温州': { lng: 120.67, tz: 8 }, '烟台': { lng: 121.45, tz: 8 },
+        // 海外
+        '东京': { lng: 139.69, tz: 9 }, '首尔': { lng: 126.98, tz: 9 },
+        '新加坡': { lng: 103.85, tz: 8 }, '吉隆坡': { lng: 101.69, tz: 8 },
+        '曼谷': { lng: 100.50, tz: 7 }, '悉尼': { lng: 151.21, tz: 10 },
+        '墨尔本': { lng: 144.96, tz: 10 }, '伦敦': { lng: -0.12, tz: 0 },
+        '纽约': { lng: -74.01, tz: -5 }, '洛杉矶': { lng: -118.24, tz: -8 },
+        '旧金山': { lng: -122.42, tz: -8 }, '温哥华': { lng: -123.12, tz: -8 },
+        '多伦多': { lng: -79.38, tz: -5 }, '巴黎': { lng: 2.35, tz: 1 },
+        '柏林': { lng: 13.40, tz: 1 }, '迪拜': { lng: 55.27, tz: 4 }
+    };
+
+    static getCityData(cityName) {
+        return BaziCalculator.CITY_DATA[cityName] ?? null;
+    }
+
     // Main calculation — day stem is the "self" (日主)
     calculate(year, month, day, hour = 12) {
         const yearPillar = this.getYearPillar(year);

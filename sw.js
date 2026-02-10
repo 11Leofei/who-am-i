@@ -1,5 +1,5 @@
 // Service Worker — Cache-first strategy for Stardust Identity
-const CACHE_NAME = 'stardust-v5';
+const CACHE_NAME = 'stardust-v6';
 const ASSETS = [
     './',
     './index.html',

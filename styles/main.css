@@ -349,6 +349,35 @@ body::after {
     color: white;
 }
 
+.input-group select optgroup {
+    color: rgba(200, 160, 255, 0.7);
+    font-style: normal;
+    font-size: 0.8rem;
+}
+
+.label-hint {
+    font-size: 0.55rem;
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+    text-transform: none;
+}
+
+.solar-time-note {
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    color: rgba(180, 200, 255, 0.7);
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 0.4rem 0.8rem;
+    background: rgba(140, 180, 255, 0.06);
+    border-radius: 6px;
+    border: 1px solid rgba(140, 180, 255, 0.12);
+}
+
+.solar-time-note.hidden {
+    display: none;
+}
+
 .input-group input:hover,
 .input-group select:hover {
     background: rgba(255, 255, 255, 0.06);

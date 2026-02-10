@@ -436,6 +436,41 @@ class App {
             });
         }
 
+        // True solar time auto-calculation
+        const birthTimeInput = document.getElementById('birth-time');
+        const birthCitySelect = document.getElementById('birth-city');
+        const birthHourSelect = document.getElementById('birth-hour');
+        const solarNote = document.getElementById('solar-time-note');
+        const shiChenNames = ['子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时', '未时', '申时', '酉时', '戌时', '亥时'];
+        const updateSolarTime = () => {
+            const timeVal = birthTimeInput?.value;
+            const cityVal = birthCitySelect?.value;
+            const dateVal = document.getElementById('birth-date')?.value;
+            if (!timeVal || !cityVal || !dateVal) {
+                if (solarNote) solarNote.classList.add('hidden');
+                return;
+            }
+            const cityInfo = BaziCalculator.getCityData(cityVal);
+            if (!cityInfo) { solarNote?.classList.add('hidden'); return; }
+            const [h, m] = timeVal.split(':').map(Number);
+            const [, mon, day] = dateVal.split('-').map(Number);
+            const solarHour = this.baziCalc.trueSolarHour(h, m, cityInfo.lng, mon || 1, day || 1, cityInfo.tz);
+            const branchIndex = Math.floor((solarHour + 1) / 2) % 12;
+            const shiChenValue = (branchIndex * 2) % 24;
+            // Auto-select the corrected 时辰
+            if (birthHourSelect) birthHourSelect.value = String(shiChenValue);
+            // Show note
+            const solarH = Math.floor(solarHour);
+            const solarM = Math.round((solarHour - solarH) * 60);
+            if (solarNote) {
+                solarNote.textContent = `真太阳时 ${String(solarH).padStart(2,'0')}:${String(solarM).padStart(2,'0')} → ${shiChenNames[branchIndex]}`;
+                solarNote.classList.remove('hidden');
+            }
+        };
+        birthTimeInput?.addEventListener('change', updateSolarTime);
+        birthCitySelect?.addEventListener('change', updateSolarTime);
+        document.getElementById('birth-date')?.addEventListener('change', updateSolarTime);
+
         // Personality test listeners
         this.ui.startTestBtn.addEventListener('click', () => { this.audio.playClick(); this.startTest(); });
         this.ui.testPrevBtn.addEventListener('click', () => { this.audio.playClick(); this.prevQuestion(); });
@@ -747,6 +782,22 @@ class App {
         const hour = hourStr !== '' ? parseInt(hourStr, 10) : 12;
 
         const bazi = this.baziCalc.calculate(y, m, d, hour);
+
+        // Attach solar time info if precise time was provided
+        const preciseTime = document.getElementById('birth-time')?.value;
+        const cityInfo = BaziCalculator.getCityData(city);
+        if (preciseTime && cityInfo) {
+            const [ph, pm] = preciseTime.split(':').map(Number);
+            const solarH = this.baziCalc.trueSolarHour(ph, pm, cityInfo.lng, m, d, cityInfo.tz);
+            bazi.solarTimeInfo = {
+                clockTime: preciseTime,
+                city: city,
+                longitude: cityInfo.lng,
+                timezone: cityInfo.tz,
+                solarHour: solarH
+            };
+        }
+
         this.currentBazi = bazi;
 
         this.applyElementTheme(bazi.theme);

@@ -97,7 +97,96 @@
                         <input type="date" id="birth-date">
                     </div>
                     <div class="input-group">
-                        <label for="birth-hour">降临时辰</label>
+                        <label for="birth-city">降临之地</label>
+                        <select id="birth-city">
+                            <option value="">-- 选择城市 --</option>
+                            <optgroup label="直辖市">
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="天津">天津</option>
+                                <option value="重庆">重庆</option>
+                            </optgroup>
+                            <optgroup label="东北">
+                                <option value="哈尔滨">哈尔滨</option>
+                                <option value="长春">长春</option>
+                                <option value="沈阳">沈阳</option>
+                                <option value="大连">大连</option>
+                            </optgroup>
+                            <optgroup label="华北">
+                                <option value="石家庄">石家庄</option>
+                                <option value="太原">太原</option>
+                                <option value="呼和浩特">呼和浩特</option>
+                                <option value="济南">济南</option>
+                                <option value="青岛">青岛</option>
+                                <option value="烟台">烟台</option>
+                            </optgroup>
+                            <optgroup label="华中">
+                                <option value="郑州">郑州</option>
+                                <option value="武汉">武汉</option>
+                                <option value="长沙">长沙</option>
+                                <option value="南昌">南昌</option>
+                            </optgroup>
+                            <optgroup label="华东">
+                                <option value="南京">南京</option>
+                                <option value="合肥">合肥</option>
+                                <option value="杭州">杭州</option>
+                                <option value="宁波">宁波</option>
+                                <option value="苏州">苏州</option>
+                                <option value="无锡">无锡</option>
+                                <option value="温州">温州</option>
+                                <option value="福州">福州</option>
+                                <option value="厦门">厦门</option>
+                                <option value="台北">台北</option>
+                            </optgroup>
+                            <optgroup label="华南">
+                                <option value="广州">广州</option>
+                                <option value="深圳">深圳</option>
+                                <option value="东莞">东莞</option>
+                                <option value="佛山">佛山</option>
+                                <option value="珠海">珠海</option>
+                                <option value="海口">海口</option>
+                                <option value="南宁">南宁</option>
+                            </optgroup>
+                            <optgroup label="西南">
+                                <option value="成都">成都</option>
+                                <option value="重庆">重庆</option>
+                                <option value="昆明">昆明</option>
+                                <option value="贵阳">贵阳</option>
+                                <option value="拉萨">拉萨</option>
+                            </optgroup>
+                            <optgroup label="西北">
+                                <option value="西安">西安</option>
+                                <option value="兰州">兰州</option>
+                                <option value="银川">银川</option>
+                                <option value="西宁">西宁</option>
+                                <option value="乌鲁木齐">乌鲁木齐</option>
+                            </optgroup>
+                            <optgroup label="海外">
+                                <option value="东京">东京</option>
+                                <option value="首尔">首尔</option>
+                                <option value="新加坡">新加坡</option>
+                                <option value="吉隆坡">吉隆坡</option>
+                                <option value="曼谷">曼谷</option>
+                                <option value="悉尼">悉尼</option>
+                                <option value="墨尔本">墨尔本</option>
+                                <option value="伦敦">伦敦</option>
+                                <option value="巴黎">巴黎</option>
+                                <option value="柏林">柏林</option>
+                                <option value="迪拜">迪拜</option>
+                                <option value="纽约">纽约</option>
+                                <option value="洛杉矶">洛杉矶</option>
+                                <option value="旧金山">旧金山</option>
+                                <option value="温哥华">温哥华</option>
+                                <option value="多伦多">多伦多</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="birth-time">精确出生时刻 <span class="label-hint">（可选，用于真太阳时修正）</span></label>
+                        <input type="time" id="birth-time" placeholder="HH:MM">
+                    </div>
+                    <div class="input-group">
+                        <label for="birth-hour">降临时辰 <span class="label-hint">（不知精确时刻时手动选择）</span></label>
                         <select id="birth-hour">
                             <option value="">-- 选择 --</option>
                             <option value="0">子时 (23:00-01:00)</option>
@@ -113,10 +202,7 @@
                             <option value="20">戌时 (19:00-21:00)</option>
                             <option value="22">亥时 (21:00-23:00)</option>
                         </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="birth-city">降临之地</label>
-                        <input type="text" id="birth-city" placeholder="例如：上海">
+                        <div class="solar-time-note hidden" id="solar-time-note"></div>
                     </div>
                 </div>
                 <button id="summon-btn" class="glass-btn" aria-label="召唤过往，开始计算">
