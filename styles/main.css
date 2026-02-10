@@ -4284,6 +4284,7 @@ body::after {
     display: flex;
     justify-content: center;
     margin: 20px 0;
+    overflow: visible;
 }
 
 .hexagram-lines {
@@ -4336,9 +4337,17 @@ body::after {
 
 .hex-changing-mark {
     position: absolute;
-    right: -24px;
-    font-size: 0.7rem;
+    right: -22px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.65rem;
     color: var(--element-color, rgba(200, 160, 255, 0.8));
+    line-height: 1;
+}
+
+/* Let changing marks be visible outside hex-lines */
+#card-iching-primary {
+    overflow: visible;
 }
 
 /* Hexagram text */
@@ -4364,6 +4373,9 @@ body::after {
     color: rgba(255, 255, 255, 0.5);
     margin-bottom: 6px;
     font-style: italic;
+    word-break: break-word;
+    line-height: 1.6;
+    padding: 0 0.5rem;
 }
 
 .hexagram-image {
@@ -4371,6 +4383,9 @@ body::after {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.45);
     margin-bottom: 4px;
+    word-break: break-word;
+    line-height: 1.6;
+    padding: 0 0.5rem;
 }
 
 /* Transform row */
@@ -4463,12 +4478,14 @@ body::after {
     line-height: 1.6;
     margin-bottom: 6px;
     font-style: italic;
+    word-break: break-word;
 }
 
 .yao-line-interpretation {
     font-size: 0.78rem;
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.5;
+    word-break: break-word;
 }
 
 /* ==================== CROSS-SYSTEM INSIGHT ==================== */
@@ -4670,8 +4687,8 @@ body::after {
     }
 
     .hex-changing-mark {
-        right: -20px;
-        font-size: 0.6rem;
+        right: -18px;
+        font-size: 0.55rem;
     }
 
     .hexagram-name {
@@ -4815,12 +4832,12 @@ body::after {
     border-radius: 6px;
     padding: 0 10px;
     margin: 0 auto;
-    width: 240px;
+    width: min(240px, 90vw);
     text-align: center;
 }
 
 .hex-line-detail.expanded {
-    max-height: 100px;
+    max-height: 160px;
     opacity: 1;
     padding: 8px 10px;
     margin: 4px auto;
@@ -4936,19 +4953,24 @@ body::after {
 
 .primary-panel[data-ppanel="iching"].active::before {
     content: '\262F';
-    position: fixed;
-    top: 50%;
+    position: absolute;
+    top: 200px;
     left: 50%;
-    font-size: 18rem;
+    font-size: clamp(10rem, 40vw, 18rem);
     color: rgba(255, 255, 255, 0.012);
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     pointer-events: none;
     z-index: 0;
     animation: bagua-spin 90s linear infinite;
 }
 
+.primary-panel[data-ppanel="iching"] {
+    position: relative;
+    overflow: hidden;
+}
+
 @keyframes bagua-spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
