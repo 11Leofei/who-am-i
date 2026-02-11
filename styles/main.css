@@ -778,6 +778,107 @@ body::after {
     content: ')';
 }
 
+/* Entrance Footer — Disclaimer + Privacy */
+.entrance-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.disclaimer-text {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+}
+
+.footer-link {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: var(--font-sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 0.3rem 0.5rem;
+    transition: color 0.3s;
+}
+
+.footer-link:hover {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* Privacy Policy Modal */
+.privacy-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.privacy-overlay.hidden {
+    display: none;
+}
+
+.privacy-modal {
+    background: linear-gradient(180deg, rgba(20, 18, 35, 0.98), rgba(10, 8, 20, 0.99));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 520px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.privacy-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.privacy-content {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.privacy-content h3 {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+}
+
+.privacy-content p {
+    margin-bottom: 0.6rem;
+}
+
+.privacy-content strong {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.privacy-close-btn {
+    display: block;
+    margin: 1.5rem auto 0;
+    padding: 0.6rem 2rem;
+    font-size: 0.8rem;
+}
+
 /* Archive Overlay */
 .overlay {
     position: fixed;

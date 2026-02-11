@@ -371,6 +371,18 @@ class App {
         this.ui.archiveBtn.addEventListener('click', () => this.showArchive());
         this.ui.archiveClose.addEventListener('click', () => { this.audio.playClick(); this.hideArchive(); });
 
+        // Privacy policy modal
+        const privacyLink = document.getElementById('privacy-link');
+        const privacyOverlay = document.getElementById('privacy-overlay');
+        const privacyClose = document.getElementById('privacy-close');
+        if (privacyLink && privacyOverlay) {
+            privacyLink.addEventListener('click', () => privacyOverlay.classList.remove('hidden'));
+            privacyClose?.addEventListener('click', () => privacyOverlay.classList.add('hidden'));
+            privacyOverlay.addEventListener('click', (e) => {
+                if (e.target === privacyOverlay) privacyOverlay.classList.add('hidden');
+            });
+        }
+
         // Archive tab switching
         document.querySelectorAll('.archive-tab').forEach(tab => {
             tab.addEventListener('click', () => {

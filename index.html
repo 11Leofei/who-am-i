@@ -83,8 +83,34 @@
                         星辰档案 <span id="archive-count"></span>
                     </button>
                 </div>
+                <div class="entrance-footer">
+                    <p class="disclaimer-text">本测试仅供娱乐参考，不构成心理咨询建议</p>
+                    <button id="privacy-link" class="footer-link" aria-label="隐私政策">隐私政策</button>
+                </div>
             </div>
         </section>
+
+        <!-- 隐私政策弹窗 -->
+        <div id="privacy-overlay" class="privacy-overlay hidden" role="dialog" aria-label="隐私政策">
+            <div class="privacy-modal">
+                <h2 class="privacy-title">隐私政策</h2>
+                <div class="privacy-content">
+                    <p><strong>最后更新：2025年2月</strong></p>
+                    <p>「星尘·身份」尊重并保护您的隐私。以下说明我们如何处理您的数据：</p>
+                    <h3>数据收集与存储</h3>
+                    <p>您输入的出生信息和测试答案仅存储在您的设备本地（浏览器 localStorage），不会上传到任何服务器。清除浏览器数据即可彻底删除所有记录。</p>
+                    <h3>AI 解读服务</h3>
+                    <p>当您使用「AI 深度解读」功能时，您的测试结果摘要（MBTI 类型、九型人格类型、大五维度百分比等统计数据）会发送至阿里云通义千问 API 以生成个性化解读。我们不会存储这些请求记录。</p>
+                    <h3>第三方服务</h3>
+                    <p>本应用使用 Google Fonts 加载字体，这可能使 Google 获取您的 IP 地址。除此之外，我们不使用任何第三方追踪或广告服务。</p>
+                    <h3>数据删除</h3>
+                    <p>您可以随时在「星辰档案」中删除已保存的测试记录，或清除浏览器数据以删除所有本地存储。</p>
+                    <h3>联系方式</h3>
+                    <p>如有隐私相关问题，请通过 GitHub 仓库提交 Issue。</p>
+                </div>
+                <button id="privacy-close" class="glass-btn privacy-close-btn">我知道了</button>
+            </div>
+        </div>
 
         <!-- Phase 2: Birth Ritual (Data Entry) -->
         <section id="ritual" class="screen hidden" role="region" aria-label="出生信息输入">

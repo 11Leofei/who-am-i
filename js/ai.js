@@ -3,23 +3,46 @@
 
 class CosmicAI {
     constructor() {
-        this.apiKey = localStorage.getItem('cosmic_ai_key') || 'sk-5e952d8898d8439bb61c3a356f0c55d1';
+        // 优先使用用户自定义 key（直连通义千问），否则走服务端代理
+        this.customApiKey = localStorage.getItem('cosmic_ai_key') || '';
         this.model = 'qwen-turbo';
-        this.endpoint = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+        this.directEndpoint = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+        this.proxyEndpoint = '/api/chat';
         this.timeout = 30000;
     }
 
     get hasKey() {
-        return this.apiKey.length > 0;
+        // 代理模式下始终可用；自定义 key 模式需检查 key
+        return true;
+    }
+
+    get _useProxy() {
+        return !this.customApiKey;
+    }
+
+    get _endpoint() {
+        return this._useProxy ? this.proxyEndpoint : this.directEndpoint;
+    }
+
+    get _headers() {
+        const h = { 'Content-Type': 'application/json' };
+        if (!this._useProxy) {
+            h['Authorization'] = `Bearer ${this.customApiKey}`;
+        }
+        return h;
     }
 
     setKey(key) {
-        this.apiKey = key.trim();
-        localStorage.setItem('cosmic_ai_key', this.apiKey);
+        this.customApiKey = key.trim();
+        if (this.customApiKey) {
+            localStorage.setItem('cosmic_ai_key', this.customApiKey);
+        } else {
+            localStorage.removeItem('cosmic_ai_key');
+        }
     }
 
     clearKey() {
-        this.apiKey = '';
+        this.customApiKey = '';
         localStorage.removeItem('cosmic_ai_key');
     }
 
@@ -203,12 +226,9 @@ ${baziSection}${ichingSection}
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
         try {
-            const res = await fetch(this.endpoint, {
+            const res = await fetch(this._endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
-                },
+                headers: this._headers,
                 body: JSON.stringify({
                     model: this.model,
                     messages: messages,
@@ -271,12 +291,9 @@ ${baziSection}${ichingSection}
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
         try {
-            const res = await fetch(this.endpoint, {
+            const res = await fetch(this._endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
-                },
+                headers: this._headers,
                 body: JSON.stringify({
                     model: this.model,
                     messages: [{ role: 'user', content: prompt }],
