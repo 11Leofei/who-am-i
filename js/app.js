@@ -1182,6 +1182,7 @@ class App {
     }
 
     showArchive() {
+        StardustAnalytics.archiveViewed();
         // Reset to bazi tab
         document.querySelectorAll('.archive-tab').forEach(t => {
             t.classList.toggle('active', t.dataset.tab === 'bazi');
@@ -1582,6 +1583,8 @@ class App {
         this._runningScores = { ei: 0, sn: 0, tf: 0, jp: 0 };
         this._runningCounts = { ei: 0, sn: 0, tf: 0, jp: 0 };
 
+        StardustAnalytics.testStarted(this.testMode);
+
         // Update ARIA max
         const progressRegion = document.getElementById('test-progress-region');
         if (progressRegion) progressRegion.setAttribute('aria-valuemax', total);
@@ -1738,6 +1741,7 @@ class App {
             : null;
         const results = this.personalityTest.calculateResults(this.testAnswers, questionIndices);
         this._lastTestResults = results;
+        StardustAnalytics.testCompleted(this.testMode, results.mbti.type, results.enneagram.type);
 
         // Cast I Ching hexagram (deterministic from bazi + test results)
         if (this.currentBazi) {
@@ -3027,6 +3031,7 @@ class App {
         } catch {}
 
         this.showToast(`感谢反馈 ${'★'.repeat(rating)}`);
+        StardustAnalytics.ratingSubmitted(rating);
     }
 
     resetAccuracyFeedback() {
@@ -3138,6 +3143,7 @@ class App {
     async triggerAIPersonality() {
         if (!this.ai.hasKey || !this._lastTestResults || this._aiRunning) return;
         this._aiRunning = true;
+        StardustAnalytics.aiInsightRequested();
 
         // Show AI primary tab, switch to it, show loading
         this.ui.tabAI.classList.remove('hidden');
@@ -3160,11 +3166,12 @@ class App {
             this.applyAIPersonalityResults(fullText, true);
             this.audio.playAIDone();
             this.ui.aiStatus.classList.add('hidden');
+            StardustAnalytics.aiInsightCompleted();
         } catch (err) {
             this.ui.aiStatus.classList.add('hidden');
             this.ui.aiUnlockBtn.classList.remove('hidden');
             this.showToast('AI 解读暂时不可用');
-            console.warn('AI enhancement failed:', err);
+            StardustAnalytics.captureError(err, { context: 'ai_personality' });
         } finally {
             this._aiRunning = false;
         }
@@ -3241,6 +3248,7 @@ class App {
         const input = this.ui.aiChatInput;
         const text = input.value.trim();
         if (!text) return;
+        StardustAnalytics.aiChatSent();
 
         input.value = '';
         input.disabled = true;
@@ -3384,6 +3392,7 @@ class App {
     copyShareText() {
         const text = this.generateShareText();
         this.copyToClipboard(text, '结果已复制到剪贴板');
+        StardustAnalytics.shareTextCopied(this._lastTestResults?.mbti?.type);
     }
 
     showToast(message) {
@@ -3494,6 +3503,7 @@ class App {
                 link.download = 'stardust-personality.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                StardustAnalytics.shareCardSaved('personality');
             }).catch(() => {
                 this.showToast('图片生成失败，请重试');
             }).finally(() => {
@@ -3603,6 +3613,7 @@ class App {
         link.download = `stardust-${r.mbti.type}-wallpaper.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
+        StardustAnalytics.shareCardSaved('wallpaper');
 
         this.showToast('壁纸已生成');
     }
@@ -3630,6 +3641,7 @@ class App {
             link.download = 'stardust-identity.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+            StardustAnalytics.shareCardSaved('identity');
         }).catch(() => {
             this.showToast('图片生成失败，请重试');
         }).finally(() => {
@@ -3652,6 +3664,7 @@ class App {
         this.dualCurrentPerson = 0;
         this.dualMode = true;
         this.testMode = 'quick'; // Dual mode always uses quick
+        StardustAnalytics.dualModeStarted();
 
         const total = this.testTotal;
         this.testAnswers = new Array(total).fill(null);
@@ -3950,6 +3963,7 @@ class App {
             link.download = 'stardust-resonance.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+            StardustAnalytics.shareCardSaved('dual');
         }).catch(() => {
             this.showToast('保存失败，请重试');
         }).finally(() => {
@@ -3995,6 +4009,7 @@ class App {
 
     async startRemoteMatch() {
         const myName = (this.ui.remoteMyName.value || '').trim() || '旅者';
+        StardustAnalytics.remoteModeStarted();
 
         // Setup dual mode with inviter as person 0
         this.dualMode = true;

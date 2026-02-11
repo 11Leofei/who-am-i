@@ -1,0 +1,14 @@
+{
+  "name": "stardust-identity",
+  "version": "1.0.0",
+  "private": true,
+  "description": "星尘·身份 — 宇宙主题人格测试",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "npx serve ."
+  },
+  "devDependencies": {
+    "terser": "^5.31.0",
+    "clean-css": "^5.3.3"
+  }
+}
