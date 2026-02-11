@@ -545,7 +545,7 @@ class PersonalityTest {
                     big5Scores[key] += centered * weight;
                     big5Max[key] += Math.abs(weight) * 2;
                 } else if (key in enneagramScores) {
-                    enneagramScores[key] += answer * weight;
+                    enneagramScores[key] += centered * weight;
                 }
             });
         };
@@ -953,7 +953,7 @@ class PersonalityTest {
                 ennScore = 0.8;
                 ennRelation = '能量互补';
             } else {
-                ennScore = 0.6 + Math.random() * 0.15;
+                ennScore = 0.6 + ((ennA * 9 + ennB) % 15) * 0.01;
                 ennRelation = '引力交汇';
             }
         }

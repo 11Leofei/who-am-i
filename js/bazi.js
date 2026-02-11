@@ -179,13 +179,17 @@ class BaziCalculator {
         };
     }
 
-    // Month pillar (月柱) — improved with year-stem-based month stem rule
+    // Month pillar (月柱) — year-stem-based month stem + 立春 approximation
     getMonthPillar(year, month) {
-        const yearStemIndex = (year - 4) % 10;
+        // January is before 立春 (~Feb 4), belongs to previous year's cycle
+        const adjustedYear = month >= 2 ? year : year - 1;
+        const yearStemIndex = (adjustedYear - 4) % 10;
         // 甲己之年丙作首, 乙庚之岁戊为头...
         const monthStemStart = (yearStemIndex % 5) * 2 + 2;
-        const stemIndex = (monthStemStart + month - 1) % 10;
-        const branchIndex = (month + 1) % 12;
+        // Branch: Feb=寅(2), Mar=卯(3), ..., Dec=子(0), Jan=丑(1)
+        const branchIndex = month % 12;
+        const monthNum = (branchIndex - 2 + 12) % 12; // 0=寅月(1st), 11=丑月(12th)
+        const stemIndex = (monthStemStart + monthNum) % 10;
         return {
             stem: this.heavenlyStems[stemIndex],
             branch: this.earthlyBranches[branchIndex],
@@ -193,12 +197,14 @@ class BaziCalculator {
         };
     }
 
-    // Day pillar (日柱)
+    // Day pillar (日柱) — Gregorian calendar JDN
     getDayPillar(year, month, day) {
         const a = Math.floor((14 - month) / 12);
         const y = year - a;
         const m = month + 12 * a - 3;
-        const jd = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4);
+        // Gregorian correction: -floor(y/100) + floor(y/400); +19 ≡ +1721119 (mod 60)
+        const jd = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4)
+            - Math.floor(y / 100) + Math.floor(y / 400) + 19;
         const stemIndex = (jd + 9) % 10;
         const branchIndex = (jd + 1) % 12;
         return {
@@ -455,7 +461,13 @@ class BaziCalculator {
     calculate(year, month, day, hour = 12) {
         const yearPillar = this.getYearPillar(year);
         const monthPillar = this.getMonthPillar(year, month);
-        const dayPillar = this.getDayPillar(year, month, day);
+        // 23:00-23:59 is 早子时, belongs to next day's cycle
+        let dayY = year, dayM = month, dayD = day;
+        if (hour >= 23) {
+            const dt = new Date(year, month - 1, day + 1);
+            dayY = dt.getFullYear(); dayM = dt.getMonth() + 1; dayD = dt.getDate();
+        }
+        const dayPillar = this.getDayPillar(dayY, dayM, dayD);
         const hourPillar = this.getHourPillar(hour, dayPillar.stem);
 
         const dayMaster = dayPillar.stem;

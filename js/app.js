@@ -911,7 +911,7 @@ class App {
                 adv.color,
                 adv.direction,
                 adv.season
-            ].map(t => `<span class="complement-tag">${t}</span>`).join('');
+            ].map(t => `<span class="complement-tag">${escapeHTML(t)}</span>`).join('');
             this.ui.complementText.textContent = adv.text;
         }
     }
@@ -1393,10 +1393,10 @@ class App {
         // MBTI dimensions
         const mbtiDims = ['E/I', 'S/N', 'T/F', 'J/P'];
         const dimKeys = [
-            { key: 'EI', left: 'E', right: 'I' },
-            { key: 'SN', left: 'S', right: 'N' },
-            { key: 'TF', left: 'T', right: 'F' },
-            { key: 'JP', left: 'J', right: 'P' }
+            { key: 'ei', left: 'E', right: 'I' },
+            { key: 'sn', left: 'S', right: 'N' },
+            { key: 'tf', left: 'T', right: 'F' },
+            { key: 'jp', left: 'J', right: 'P' }
         ];
 
         let dimsHtml = '';
@@ -1417,8 +1417,8 @@ class App {
         let b5Html = '';
         if (a.results.big5?.percentages && b.results.big5?.percentages) {
             Object.entries(b5Labels).forEach(([key, label]) => {
-                const aV = Math.round((a.results.big5.percentages[key] || 0) * 100);
-                const bV = Math.round((b.results.big5.percentages[key] || 0) * 100);
+                const aV = Math.round(a.results.big5.percentages[key] || 0);
+                const bV = Math.round(b.results.big5.percentages[key] || 0);
                 b5Html += `<div class="compare-dim-row">
                     <div class="compare-dim-label">${label}</div>
                     <div class="compare-dim-bars">
@@ -1618,10 +1618,23 @@ class App {
     }
 
     async selectAnswer(value) {
+        const q = this.getQuestionByIndex(this.testCurrentQ);
+        const oldValue = this.testAnswers[this.testCurrentQ];
+
+        // Rollback old answer's contribution if re-answering (after prevQuestion)
+        if (oldValue != null && q && q.w) {
+            const oldCentered = oldValue - 3;
+            ['ei', 'sn', 'tf', 'jp'].forEach(dim => {
+                if (q.w[dim]) {
+                    this._runningScores[dim] -= q.w[dim] * oldCentered;
+                    this._runningCounts[dim]--;
+                }
+            });
+        }
+
         this.testAnswers[this.testCurrentQ] = value;
 
         // Update running dimension scores for dynamic starfield
-        const q = this.getQuestionByIndex(this.testCurrentQ);
         if (q && q.w) {
             const centered = value - 3; // -2 to +2
             ['ei', 'sn', 'tf', 'jp'].forEach(dim => {
@@ -2101,26 +2114,31 @@ class App {
             }, 200 + i * 280);
         });
 
-        // Click-to-expand yao detail (event delegation)
-        displayEl.addEventListener('click', (e) => {
-            const line = e.target.closest('.hex-line');
-            if (!line) return;
-            const yaoIdx = parseInt(line.dataset.yao);
-            const detail = displayEl.querySelector(`[data-yao-detail="${yaoIdx}"]`);
-            if (!detail) return;
-            if (detail.classList.contains('expanded')) {
-                detail.classList.remove('expanded');
-            } else {
-                displayEl.querySelectorAll('.hex-line-detail.expanded').forEach(d => d.classList.remove('expanded'));
-                if (!detail.innerHTML) {
-                    const lt = this.iching.getLineText(result.primary.num, yaoIdx);
-                    detail.innerHTML = `<div class="hex-line-detail-classical">${escapeHTML(lt.text)}</div>
-                        <div class="hex-line-detail-text">${escapeHTML(lt.interpretation)}</div>`;
+        // Click-to-expand yao detail (event delegation, bind once)
+        displayEl._ichingResult = result; // update reference for click handler
+        if (!displayEl._yaoClickBound) {
+            displayEl._yaoClickBound = true;
+            displayEl.addEventListener('click', (e) => {
+                const line = e.target.closest('.hex-line');
+                if (!line) return;
+                const yaoIdx = parseInt(line.dataset.yao);
+                const detail = displayEl.querySelector(`[data-yao-detail="${yaoIdx}"]`);
+                if (!detail) return;
+                if (detail.classList.contains('expanded')) {
+                    detail.classList.remove('expanded');
+                } else {
+                    displayEl.querySelectorAll('.hex-line-detail.expanded').forEach(d => d.classList.remove('expanded'));
+                    if (!detail.innerHTML) {
+                        const curResult = displayEl._ichingResult;
+                        const lt = this.iching.getLineText(curResult.primary.num, yaoIdx);
+                        detail.innerHTML = `<div class="hex-line-detail-classical">${escapeHTML(lt.text)}</div>
+                            <div class="hex-line-detail-text">${escapeHTML(lt.interpretation)}</div>`;
+                    }
+                    detail.classList.add('expanded');
+                    this.audio.playClick();
                 }
-                detail.classList.add('expanded');
-                this.audio.playClick();
-            }
-        });
+            });
+        }
 
         // Transformed hexagram
         const transCard = document.getElementById('card-iching-transformed');
@@ -3232,9 +3250,12 @@ class App {
         // Keep max 5 user-assistant turns (+ system)
         while (this._chatHistory.filter(m => m.role === 'user').length > 5) {
             const idx = this._chatHistory.findIndex((m, i) => i > 0 && m.role === 'user');
-            if (idx > 0) {
-                this._chatHistory.splice(idx, 2); // Remove user + assistant pair
-            } else break;
+            if (idx <= 0) break;
+            this._chatHistory.splice(idx, 1); // Remove oldest user message
+            // Remove its assistant response if present
+            if (idx < this._chatHistory.length && this._chatHistory[idx].role === 'assistant') {
+                this._chatHistory.splice(idx, 1);
+            }
         }
 
         // Add assistant placeholder
@@ -3406,7 +3427,7 @@ class App {
         // Keywords
         const kws = r.mbti.keywords || [];
         document.getElementById('share-card-keywords').innerHTML =
-            kws.map(k => `<span class="share-kw">${k}</span>`).join('');
+            kws.map(k => `<span class="share-kw">${escapeHTML(k)}</span>`).join('');
 
         // I Ching hexagram summary
         const ichingTag = document.getElementById('share-card-iching');
@@ -3913,12 +3934,15 @@ class App {
             logging: false,
             useCORS: true
         }).then(canvas => {
-            resultCards.forEach(rc => { rc.style.transform = ''; });
-            watermark.remove();
             const link = document.createElement('a');
             link.download = 'stardust-resonance.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+        }).catch(() => {
+            this.showToast('保存失败，请重试');
+        }).finally(() => {
+            resultCards.forEach(rc => { rc.style.transform = ''; });
+            watermark.remove();
         });
     }
 

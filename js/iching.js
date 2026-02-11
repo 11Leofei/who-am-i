@@ -218,13 +218,19 @@ class IChing {
             stems.indexOf(bazi.day.stem) * 12 + branches.indexOf(bazi.day.branch)
         ];
 
-        // Generate 6 yao values (6-9)
+        // Generate 6 yao values (6-9) using base hash + xorshift PRNG
+        // Previous approach had bias: FNV low bits correlate across similar seeds
+        const baseHash = this._hash(values);
         const yaoValues = [];
+        let state = baseHash || 1; // Avoid zero state
         for (let i = 0; i < 6; i++) {
-            // Use different hash seeds for each yao
-            const seed = values.map((v, j) => v + i * 37 + j * 13);
-            const h = this._hash(seed);
-            yaoValues.push(6 + (h % 4)); // 6=old yin, 7=young yang, 8=young yin, 9=old yang
+            // xorshift32 — good independence between iterations
+            state ^= state << 13;
+            state ^= state >>> 17;
+            state ^= state << 5;
+            state = state >>> 0;
+            // Extract from middle bits (>>> 8) to avoid low-bit bias
+            yaoValues.push(6 + ((state >>> 8) % 4)); // 6=old yin, 7=young yang, 8=young yin, 9=old yang
         }
 
         // Build primary hexagram lines (6=yin, 7=yang, 8=yin, 9=yang)

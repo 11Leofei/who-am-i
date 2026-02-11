@@ -128,7 +128,7 @@ body::after {
 /* Exit variants for screen transitions — reduced blur values for perf */
 .screen.exit-zoom {
     transform: scale(1.2) translateZ(0);
-    filter: blur(10px);
+    filter: blur(6px);
     opacity: 0;
 }
 
@@ -157,7 +157,7 @@ body::after {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textShimmer 6s linear infinite;
+    animation: textShimmer 8s linear infinite;
 }
 
 /* Stagger Animations */
@@ -261,7 +261,7 @@ body::after {
 .glass-btn:hover {
     box-shadow: 0 0 50px var(--primary-glow);
     border-color: rgba(255, 255, 255, 0.3);
-    letter-spacing: 0.25em;
+    letter-spacing: 0.22em;
 }
 
 /* Warp RGB Shift */
@@ -507,7 +507,7 @@ body::after {
 }
 
 .glass-card.fade-in-up {
-    animation: materialize 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation: materialize 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 /* Element Orb */
@@ -712,7 +712,17 @@ body::after {
     height: 100%;
     border-radius: 2px;
     width: 0;
-    transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease 1.5s;
+}
+
+.chart-bar-fill[style*="width"] {
+    animation: barGlow 0.6s ease 1.5s forwards;
+}
+
+@keyframes barGlow {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.4); }
+    100% { filter: brightness(1); }
 }
 
 .chart-row[data-element="木"] .chart-bar-fill { background: #4ade80; box-shadow: 0 0 6px rgba(74, 222, 128, 0.4); }
@@ -1374,7 +1384,7 @@ body::after {
 
 .question-text {
     font-family: var(--font-serif);
-    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-size: clamp(1.2rem, 3vw, 1.4rem);
     line-height: 1.8;
     letter-spacing: 0.08em;
     color: rgba(255, 255, 255, 0.85);
@@ -1481,7 +1491,7 @@ body::after {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 2rem 0 calc(2rem + env(safe-area-inset-bottom, 0px));
+    padding: 3rem 0 calc(2rem + env(safe-area-inset-bottom, 0px));
 }
 
 .results-container {
@@ -1516,11 +1526,17 @@ body::after {
     overflow: hidden;
     text-align: center;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
-    animation: cardMaterialize 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    animation: cardMaterialize 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
     transform-style: preserve-3d;
     transition: transform 0.15s ease-out;
     contain: content;
 }
+
+/* Card stagger — cascading entrance within tab panes */
+.result-card:nth-child(2) { animation-delay: 0.1s; }
+.result-card:nth-child(3) { animation-delay: 0.2s; }
+.result-card:nth-child(4) { animation-delay: 0.3s; }
+.result-card:nth-child(5) { animation-delay: 0.4s; }
 
 /* Progressive reveal — hero card only */
 .result-card.reveal-hidden {
@@ -2114,17 +2130,27 @@ body::after {
 
 /* AI Deep Insight Card */
 .ai-insight-card {
-    border-color: rgba(200, 160, 255, 0.12);
-    background: linear-gradient(180deg, rgba(20, 15, 30, 0.9), rgba(10, 8, 20, 0.95));
+    border-color: rgba(200, 160, 255, 0.2);
+    background: linear-gradient(180deg, rgba(20, 15, 30, 0.92), rgba(10, 8, 20, 0.96));
+    box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(200, 160, 255, 0.06),
+        inset 0 0 30px rgba(200, 160, 255, 0.02);
 }
 
 .ai-insight-card::before {
-    background: linear-gradient(90deg, transparent, rgba(200, 160, 255, 0.5), rgba(140, 180, 255, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(200, 160, 255, 0.6), rgba(140, 180, 255, 0.4), transparent);
+    animation: holoFlow 3s ease-in-out infinite;
 }
 
 .ai-insight-card .result-badge {
-    background: linear-gradient(135deg, rgba(200, 160, 255, 0.15), rgba(140, 180, 255, 0.1));
-    border-color: rgba(200, 160, 255, 0.3);
+    background: linear-gradient(135deg, rgba(200, 160, 255, 0.18), rgba(140, 180, 255, 0.12));
+    border-color: rgba(200, 160, 255, 0.35);
+}
+
+@keyframes holoFlow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
 }
 
 .results-actions {
@@ -2195,7 +2221,7 @@ body::after {
     }
 
     .question-text {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
     .result-type {
